@@ -1,7 +1,7 @@
 {
   "settings": {
     "max_inboxes_per_user": 7,
-    "max_email_changes_per_inbox": 2,
+    "max_email_changes_per_inbox": 3,
     "retention_days": 7,
     "service_enabled": true,
     "maintenance_message": "Our email servers are currently undergoing scheduled maintenance. New inbox generation will resume shortly. Thank you for your patience!",
@@ -16,49 +16,13 @@
     "custom_head_scripts": ""
   },
   "stats": {
-    "lifetime_inboxes_created": 1420,
-    "lifetime_messages_received": 8640
+    "lifetime_inboxes_created": 0,
+    "lifetime_messages_received": 0
   },
-  "inboxes": [
-    {
-      "address": "demo.falcon88@tempemails.site",
-      "device_id": "Desktop-macOS-DEMO88",
-      "created_at": "2026-10-06T17:30:58.322Z",
-      "expires_at": "2026-10-13T17:30:58.323Z",
-      "is_active": true
-    },
-    {
-      "address": "swift.pilot99@tempemails.site",
-      "device_id": "Mobile-iOS-APPL01",
-      "created_at": "2026-10-08T05:30:58.323Z",
-      "expires_at": "2026-10-15T05:30:58.323Z",
-      "is_active": true
-    }
-  ],
-  "messages": [
-    {
-      "id": "msg-seed-1",
-      "inbox_address": "demo.falcon88@tempemails.site",
-      "from": "Twitter / X Security <verify@x.com>",
-      "from_name": "Twitter / X Security",
-      "subject": "Your confirmation code is 849201",
-      "body_html": "<div style=\"font-family:sans-serif;padding:15px;\"><h2>Confirm your email</h2><p>Your code is: <strong>849201</strong></p></div>",
-      "snippet": "Your confirmation code is 849201. Expires in 10 minutes.",
-      "otp": "849201",
-      "created_at": "2026-10-08T12:30:58.323Z",
-      "is_unread": true
-    }
-  ],
+  "inboxes": [],
+  "messages": [],
+  "device_sessions": {},
   "blogs": [
-    {
-      "id": "blog-1791480968235",
-      "title": "hh",
-      "slug": "hh",
-      "category": "c",
-      "cover_image": "https://www.google.com/imgres?q=temp%20email%3B&imgurl=https%3A%2F%2Ftempail.com%2Fimages%2Fscreenshot.png&imgrefurl=https%3A%2F%2Ftempail.com%2F&docid=y_eQsCIB3TOldM&tbnid=ApwiRW9m1eObXM&vet=12ahUKEwjf0JvR-qqXAxV1xDgGHZSUMvYQnPAOegQIMxAA..i&w=1114&h=955&hcb=2&ved=2ahUKEwjf0JvR-qqXAxV1xDgGHZSUMvYQnPAOegQIMxAA",
-      "summary": "hi",
-      "created_at": "2026-10-08T17:36:08.236Z"
-    },
     {
       "id": "blog-1",
       "title": "Protecting Your Primary Email from Data Breaches in 2026",

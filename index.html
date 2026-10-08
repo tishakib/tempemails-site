@@ -256,20 +256,23 @@
 
           </div>
 
-          <!-- Bottom Status & Auto Refresh Bar -->
+          <!-- Bottom Status & Live Sync Bar -->
           <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 flex-wrap gap-2">
             <div class="flex items-center gap-2">
-              <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-              <span>Autorefreshing every 15s</span>
-              <span id="refresh-timer-count" class="font-mono font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">15s</span>
+              <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              </span>
+              <span class="font-medium text-slate-700">Live Auto-Sync Active</span>
+              <span class="text-slate-400 hidden sm:inline">• Incoming emails arrive instantly</span>
             </div>
             <button 
               onclick="triggerInboxRefresh(true)"
-              class="flex items-center gap-1 font-semibold text-slate-600 hover:text-[#F4413D] transition-colors">
+              class="flex items-center gap-1.5 font-semibold text-slate-700 hover:text-[#F4413D] bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors">
               <svg id="refresh-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              Refresh Now
+              <span>Reload</span>
             </button>
           </div>
 

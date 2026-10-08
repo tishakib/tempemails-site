@@ -16,81 +16,8 @@ const CONFIG = {
   API_ENDPOINT: '/api' // Ready for Cloudflare Worker hookup
 };
 
-// Initial Sample Demo Emails for Rich Interactive Experience
-const DEMO_EMAILS = [
-  {
-    id: 'msg-101',
-    from: 'Twitter / X Security <verify@x.com>',
-    fromName: 'Twitter / X Security',
-    to: '', // populated dynamically
-    subject: 'Your confirmation code is 849201',
-    snippet: 'Confirm your email address. Use this code to complete verification: 849201. This code expires in 10 minutes.',
-    bodyHtml: `
-      <div style="font-family: Arial, sans-serif; max-width: 580px; margin: 0 auto; color: #111;">
-        <h2 style="color: #0F172A; font-size: 22px; margin-bottom: 8px;">Confirm your email address</h2>
-        <p style="color: #475569; font-size: 15px; line-height: 1.5;">There's one quick step you need to complete before creating your account. Please enter this verification code:</p>
-        <div style="background: #FFF5F5; border: 2px dashed #F4413D; border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0;">
-          <span style="font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #F4413D;">849201</span>
-        </div>
-        <p style="color: #64748B; font-size: 13px;">Verification codes expire after 10 minutes. If you did not request this, please disregard this email.</p>
-      </div>
-    `,
-    otp: '849201',
-    partnerLink: null,
-    isUnread: true,
-    isStarred: true,
-    receivedAt: 'Just now',
-    timestamp: Date.now() - 60000
-  },
-  {
-    id: 'msg-102',
-    from: 'Discord Notifications <noreply@discord.com>',
-    fromName: 'Discord',
-    to: '',
-    subject: 'Verify your email address for Discord',
-    snippet: 'Hey! Thanks for registering an account on Discord. Before we can get started, we need you to verify your email.',
-    bodyHtml: `
-      <div style="font-family: Arial, sans-serif; max-width: 580px; margin: 0 auto; color: #111;">
-        <h2 style="color: #5865F2; font-size: 22px;">Verify your Discord account</h2>
-        <p style="color: #475569; font-size: 15px; line-height: 1.5;">Thanks for signing up! Click the button below to verify your email address:</p>
-        <div style="margin: 24px 0;">
-          <a href="https://discord.com/verify?token=demo123" target="_blank" style="display: inline-block; background: #5865F2; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">Verify Email</a>
-        </div>
-      </div>
-    `,
-    otp: null,
-    partnerLink: 'https://discord.com/verify?token=demo123',
-    isUnread: true,
-    isStarred: false,
-    receivedAt: '5 min ago',
-    timestamp: Date.now() - 300000
-  },
-  {
-    id: 'msg-103',
-    from: 'tempemails.site Team <support@tempemails.site>',
-    fromName: 'tempemails.site',
-    to: '',
-    subject: 'Welcome to tempemails.site! Your 100% Free Disposable Inbox',
-    snippet: 'Welcome to your anonymous temporary inbox! Protect your personal email from spam, newsletters, and trackers.',
-    bodyHtml: `
-      <div style="font-family: Arial, sans-serif; max-width: 580px; margin: 0 auto; color: #111;">
-        <h2 style="color: #F4413D; font-size: 22px;">Welcome to tempemails.site! 🎉</h2>
-        <p style="color: #475569; font-size: 15px; line-height: 1.6;">You now have a secure, private, disposable email address. All incoming emails are processed in real-time and will automatically expire.</p>
-        <ul style="color: #475569; line-height: 1.8; margin: 16px 0 20px 20px;">
-          <li>🛡️ <strong>Zero Spam:</strong> Protect your real inbox from leaks.</li>
-          <li>⚡ <strong>Up to 5 inboxes:</strong> Manage up to 5 concurrent addresses simultaneously.</li>
-          <li>🔑 <strong>Instant OTP Extraction:</strong> Copy verification codes in one single click.</li>
-        </ul>
-      </div>
-    `,
-    otp: null,
-    partnerLink: null,
-    isUnread: false,
-    isStarred: false,
-    receivedAt: '15 min ago',
-    timestamp: Date.now() - 900000
-  }
-];
+// No demo emails - clean authentic inbox
+const DEMO_EMAILS = [];
 
 // App State
 const state = {
@@ -168,14 +95,35 @@ async function initApp() {
     console.log('Running in offline/local mode');
   }
   
-  // If no inboxes, create the initial first inbox
+  // Cross-Browser Device Synchronization:
+  // Fetch device session bound to this computer across all browsers (Chrome, Safari, Firefox, Edge, etc.)
+  try {
+    const sessionRes = await fetch('/api/inbox/device-session');
+    if (sessionRes.ok) {
+      const sessionData = await sessionRes.json();
+      if (sessionData.inboxes && sessionData.inboxes.length > 0) {
+        state.inboxes = sessionData.inboxes;
+        if (sessionData.changesCount) {
+          state.changesCount = sessionData.changesCount;
+        }
+        if (typeof sessionData.activeIndex === 'number' && sessionData.activeIndex < state.inboxes.length) {
+          state.activeIndex = sessionData.activeIndex;
+        }
+        if (sessionData.max_inboxes) CONFIG.MAX_INBOXES = sessionData.max_inboxes;
+        if (sessionData.max_changes) CONFIG.MAX_CHANGES = sessionData.max_changes;
+        saveStateToStorage();
+      }
+    }
+  } catch (err) {
+    console.log('Device session fetch error, using local fallback:', err);
+  }
+
+  // If no inboxes exist, create the initial first inbox (zero demo data)
   if (state.inboxes.length === 0) {
     const firstEmail = `${generateRandomUsername()}@${CONFIG.DOMAIN}`;
     state.inboxes.push(firstEmail);
     state.activeIndex = 0;
-    
-    // Seed demo emails for the first inbox
-    state.messages[firstEmail] = DEMO_EMAILS.map(e => ({ ...e, to: firstEmail }));
+    state.messages[firstEmail] = [];
     saveStateToStorage();
   }
 
@@ -184,8 +132,16 @@ async function initApp() {
     state.activeIndex = 0;
   }
 
+  // Ensure message container exists for all inboxes
+  state.inboxes.forEach(addr => {
+    if (!state.messages[addr]) state.messages[addr] = [];
+  });
+
   renderApp();
-  startRefreshTimer();
+  // Fetch messages immediately for active inbox
+  triggerInboxRefresh(false);
+  // Start continuous silent background auto-sync
+  startContinuousAutoSync();
 }
 
 // LocalStorage Persistence
@@ -359,51 +315,51 @@ window.selectInbox = function(index) {
   }
 };
 
-// Add New Inbox Slot (Up to dynamic max limit)
-window.addNewInboxSlot = function() {
+// Add New Inbox Slot (Up to dynamic max limit, synced across device browsers)
+window.addNewInboxSlot = async function() {
   if (state.inboxes.length >= CONFIG.MAX_INBOXES) {
     showToast(`Maximum ${CONFIG.MAX_INBOXES} inboxes limit reached!`, 'warning');
     return;
   }
 
-  const newEmail = `${generateRandomUsername()}@${CONFIG.DOMAIN}`;
-  state.inboxes.push(newEmail);
-  state.activeIndex = state.inboxes.length - 1; // switch to newly created
-  state.activeMessageId = null;
-
-  // Register inbox with backend
-  const deviceId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
-  fetch('/api/inbox/create', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ address: newEmail, device_id: deviceId })
-  }).catch(() => {});
-
-  // Add sample welcome email for new inbox
-  state.messages[newEmail] = [
-    {
-      id: 'msg-' + Date.now(),
-      from: 'tempemails.site Team <support@tempemails.site>',
-      fromName: 'tempemails.site Team',
-      to: newEmail,
-      subject: `Your new disposable inbox: ${newEmail.split('@')[0]}`,
-      snippet: 'This new temporary address is active and ready to receive emails.',
-      bodyHtml: `<p style="font-family: Arial; color: #334155;">Your new inbox <strong>${newEmail}</strong> is active. You can receive verification codes, OTPs, and downloads here.</p>`,
-      otp: null,
-      isUnread: true,
-      isStarred: false,
-      receivedAt: 'Just now',
-      timestamp: Date.now()
+  try {
+    const res = await fetch('/api/inbox/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) {
+      showToast(data.error || 'Failed to create inbox', 'warning');
+      return;
     }
-  ];
+    if (data.inboxes && Array.isArray(data.inboxes)) {
+      state.inboxes = data.inboxes;
+      state.activeIndex = state.inboxes.length - 1;
+    } else if (data.inbox && data.inbox.address) {
+      if (!state.inboxes.includes(data.inbox.address)) {
+        state.inboxes.push(data.inbox.address);
+      }
+      state.activeIndex = state.inboxes.indexOf(data.inbox.address);
+    }
+  } catch (e) {
+    const newEmail = `${generateRandomUsername()}@${CONFIG.DOMAIN}`;
+    state.inboxes.push(newEmail);
+    state.activeIndex = state.inboxes.length - 1;
+  }
+
+  const activeEmail = getActiveEmail();
+  state.messages[activeEmail] = [];
+  state.activeMessageId = null;
 
   saveStateToStorage();
   renderApp();
   showToast('New inbox created successfully!', 'success');
+  triggerInboxRefresh(false);
 };
 
-// Delete an Inbox Slot
-window.deleteInboxSlot = function(index, e) {
+// Delete an Inbox Slot (Synced across device browsers)
+window.deleteInboxSlot = async function(index, e) {
   if (e) e.stopPropagation();
   if (state.inboxes.length <= 1) {
     showToast('You must keep at least 1 active inbox.', 'warning');
@@ -423,10 +379,18 @@ window.deleteInboxSlot = function(index, e) {
   saveStateToStorage();
   renderApp();
   showToast('Inbox removed. Slot freed up!', 'info');
+
+  try {
+    await fetch('/api/inbox/delete-slot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address: removedEmail })
+    });
+  } catch (err) {}
 };
 
-// Randomize / Change Current Active Email (Respects Change Limit)
-window.randomizeCurrentEmail = function() {
+// Randomize / Change Current Active Email (Respects Change Limit & Synced)
+window.randomizeCurrentEmail = async function() {
   const current = getActiveEmail();
   const maxChanges = CONFIG.MAX_CHANGES || 3;
   const used = state.changesCount[current] || 0;
@@ -436,18 +400,40 @@ window.randomizeCurrentEmail = function() {
     return;
   }
 
-  const newEmail = `${generateRandomUsername()}@${CONFIG.DOMAIN}`;
-  state.inboxes[state.activeIndex] = newEmail;
-  delete state.messages[current];
-  delete state.changesCount[current];
-  state.changesCount[newEmail] = used + 1;
-  state.messages[newEmail] = [];
-  state.activeMessageId = null;
+  const changeBtn = document.getElementById('btn-change-email');
+  if (changeBtn) changeBtn.classList.add('opacity-50', 'pointer-events-none');
 
-  saveStateToStorage();
-  renderApp();
-  const remaining = maxChanges - (used + 1);
-  showToast(`Email changed! (${remaining} change${remaining === 1 ? '' : 's'} remaining)`, 'success');
+  try {
+    const res = await fetch('/api/inbox/change', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ oldAddress: current })
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) {
+      showToast(data.error || 'Failed to change address', 'warning');
+      if (changeBtn) changeBtn.classList.remove('opacity-50', 'pointer-events-none');
+      return;
+    }
+
+    const newEmail = data.newAddress || `${generateRandomUsername()}@${CONFIG.DOMAIN}`;
+    state.inboxes[state.activeIndex] = newEmail;
+    delete state.messages[current];
+    delete state.changesCount[current];
+    state.changesCount[newEmail] = used + 1;
+    state.messages[newEmail] = [];
+    state.activeMessageId = null;
+
+    saveStateToStorage();
+    renderApp();
+    const remaining = data.remainingChanges !== undefined ? data.remainingChanges : Math.max(0, maxChanges - (used + 1));
+    showToast(`Email changed! (${remaining} change${remaining === 1 ? '' : 's'} remaining)`, 'success');
+    triggerInboxRefresh(false);
+  } catch (err) {
+    showToast('Network error while changing address.', 'warning');
+  } finally {
+    if (changeBtn) changeBtn.classList.remove('opacity-50', 'pointer-events-none');
+  }
 };
 
 // 1-Click Copy Email to Clipboard
@@ -527,13 +513,11 @@ function renderInboxView() {
           </svg>
         </div>
         <h4 class="text-base font-bold text-slate-800 mb-1">Waiting for incoming emails...</h4>
-        <p class="text-sm text-slate-500 max-w-sm mx-auto mb-5">Send an email to <span class="font-mono font-semibold text-slate-700">${getActiveEmail()}</span> and it will appear here automatically.</p>
-        <button onclick="simulateIncomingEmail()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#F4413D] bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-200">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Send Test Simulation Email
-        </button>
+        <p class="text-sm text-slate-500 max-w-sm mx-auto mb-4">Send an email to <span class="font-mono font-semibold text-slate-700">${getActiveEmail()}</span> and it will appear here automatically.</p>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-slate-100 rounded-full text-xs text-slate-600 font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Live auto-sync active</span>
+        </div>
       </div>
     `;
     return;
@@ -835,33 +819,18 @@ window.clearCurrentInbox = function() {
   }
 };
 
-// Refresh Timer (15 Seconds Auto Countdown)
-function startRefreshTimer() {
-  clearInterval(state.timerInterval);
-  state.countdown = CONFIG.REFRESH_INTERVAL;
-
+// Continuous silent background auto-sync (polls every 3.5s for instant email arrival)
+function startContinuousAutoSync() {
+  if (state.timerInterval) clearInterval(state.timerInterval);
   state.timerInterval = setInterval(() => {
-    state.countdown--;
-    const timerEl = document.getElementById('refresh-timer-count');
-    if (timerEl) {
-      timerEl.textContent = `${state.countdown}s`;
-    }
-
-    if (state.countdown <= 0) {
-      state.countdown = CONFIG.REFRESH_INTERVAL;
-      triggerInboxRefresh(false);
-    }
-  }, 1000);
+    triggerInboxRefresh(false);
+  }, 3500);
 }
 
 // Manual or Automatic Inbox Refresh
-window.triggerInboxRefresh = async function(isManual = true) {
+window.triggerInboxRefresh = async function(isManual = false) {
   const icon = document.getElementById('refresh-icon');
-  if (icon) icon.classList.add('animate-spin');
-
-  if (isManual) {
-    state.countdown = CONFIG.REFRESH_INTERVAL;
-  }
+  if (icon && isManual) icon.classList.add('animate-spin');
 
   const currentEmail = getActiveEmail();
   if (currentEmail) {
@@ -908,10 +877,30 @@ window.triggerInboxRefresh = async function(isManual = true) {
     }
   }
 
-  if (icon) icon.classList.remove('animate-spin');
+  // Cross-browser session sync: occasionally check if another browser on this device created or changed an inbox
+  if (!isManual && Math.random() < 0.25) {
+    fetch('/api/inbox/device-session')
+      .then(r => r.ok ? r.json() : null)
+      .then(sessionData => {
+        if (sessionData && sessionData.inboxes && sessionData.inboxes.length > 0) {
+          if (JSON.stringify(sessionData.inboxes) !== JSON.stringify(state.inboxes)) {
+            state.inboxes = sessionData.inboxes;
+            if (state.activeIndex >= state.inboxes.length) state.activeIndex = 0;
+            saveStateToStorage();
+            renderSlotTabs();
+            renderEmailBox();
+          }
+        }
+      })
+      .catch(() => {});
+  }
+
+  if (icon && isManual) {
+    setTimeout(() => icon.classList.remove('animate-spin'), 400);
+  }
   renderInboxView();
   if (isManual) {
-    showToast('Inbox updated!', 'info');
+    showToast('Inbox refreshed!', 'info');
   }
 };
 

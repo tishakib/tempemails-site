@@ -39,39 +39,11 @@ const initialData = {
     custom_head_scripts: ''
   },
   stats: {
-    lifetime_inboxes_created: 1420,
-    lifetime_messages_received: 8640
+    lifetime_inboxes_created: 0,
+    lifetime_messages_received: 0
   },
-  inboxes: [
-    {
-      address: 'demo.falcon88@tempemails.site',
-      device_id: 'Desktop-macOS-DEMO88',
-      created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
-      expires_at: new Date(Date.now() + 3600000 * 24 * 5).toISOString(),
-      is_active: true
-    },
-    {
-      address: 'swift.pilot99@tempemails.site',
-      device_id: 'Mobile-iOS-APPL01',
-      created_at: new Date(Date.now() - 3600000 * 12).toISOString(),
-      expires_at: new Date(Date.now() + 3600000 * 24 * 6.5).toISOString(),
-      is_active: true
-    }
-  ],
-  messages: [
-    {
-      id: 'msg-seed-1',
-      inbox_address: 'demo.falcon88@tempemails.site',
-      from: 'Twitter / X Security <verify@x.com>',
-      from_name: 'Twitter / X Security',
-      subject: 'Your confirmation code is 849201',
-      body_html: '<div style="font-family:sans-serif;padding:15px;"><h2>Confirm your email</h2><p>Your code is: <strong>849201</strong></p></div>',
-      snippet: 'Your confirmation code is 849201. Expires in 10 minutes.',
-      otp: '849201',
-      created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
-      is_unread: true
-    }
-  ],
+  inboxes: [],
+  messages: [],
   blogs: [
     {
       id: 'blog-1',

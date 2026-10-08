@@ -5,7 +5,8 @@ const url = require('url');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = process.cwd();
-const DATA_FILE = process.env.VERCEL ? '/tmp/data_store.json' : path.join(__dirname, 'data_store.json');
+const LOCAL_DATA_FILE = path.join(__dirname, 'data_store.json');
+const DATA_FILE = process.env.VERCEL ? '/tmp/data_store.json' : LOCAL_DATA_FILE;
 
 // MIME types for static files
 const MIME_TYPES = {
@@ -40,32 +41,12 @@ const initialData = {
     custom_head_scripts: ''
   },
   stats: {
-    lifetime_inboxes_created: 1420,
-    lifetime_messages_received: 8640
+    lifetime_inboxes_created: 0,
+    lifetime_messages_received: 0
   },
-  inboxes: [
-    {
-      address: 'demo.falcon88@tempemails.site',
-      device_id: 'Desktop-macOS-DEMO88',
-      created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
-      expires_at: new Date(Date.now() + 3600000 * 24 * 5).toISOString(),
-      is_active: true
-    }
-  ],
-  messages: [
-    {
-      id: 'msg-seed-1',
-      inbox_address: 'demo.falcon88@tempemails.site',
-      from: 'Twitter / X Security <verify@x.com>',
-      from_name: 'Twitter / X Security',
-      subject: 'Your confirmation code is 849201',
-      body_html: '<div style="font-family:sans-serif;padding:15px;"><h2>Confirm your email</h2><p>Your code is: <strong>849201</strong></p></div>',
-      snippet: 'Your confirmation code is 849201. Expires in 10 minutes.',
-      otp: '849201',
-      created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
-      is_unread: true
-    }
-  ],
+  inboxes: [],
+  messages: [],
+  device_sessions: {},
   blogs: [
     {
       id: 'blog-1',
@@ -94,9 +75,30 @@ let storeCache = null;
 function getStore() {
   if (storeCache) return storeCache;
   try {
+    let content = null;
     if (fs.existsSync(DATA_FILE)) {
-      const content = fs.readFileSync(DATA_FILE, 'utf8');
+      content = fs.readFileSync(DATA_FILE, 'utf8');
+    } else if (fs.existsSync(LOCAL_DATA_FILE)) {
+      content = fs.readFileSync(LOCAL_DATA_FILE, 'utf8');
+    }
+    if (content) {
       storeCache = JSON.parse(content);
+      // Automatically purge legacy demo inboxes and fake seed messages
+      if (storeCache.inboxes) {
+        storeCache.inboxes = storeCache.inboxes.filter(i => !i.address.includes('demo.falcon88') && !i.address.includes('swift.pilot99'));
+      }
+      if (storeCache.messages) {
+        storeCache.messages = storeCache.messages.filter(m => m.id !== 'msg-seed-1');
+      }
+      if (!storeCache.device_sessions) {
+        storeCache.device_sessions = {};
+      }
+      if (!storeCache.stats) {
+        storeCache.stats = { lifetime_inboxes_created: 0, lifetime_messages_received: 0 };
+      }
+      if (process.env.VERCEL && !fs.existsSync(DATA_FILE)) {
+        saveStore(storeCache);
+      }
       return storeCache;
     }
   } catch (e) {
@@ -246,6 +248,27 @@ function parseServerMime(raw) {
   ) || cleanLinks[0] || null;
 
   return { finalHtml, snippet, otp, partnerLink };
+}
+
+function getClientIp(req) {
+  let ip = req.headers['cf-connecting-ip'] || 
+           (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : null) || 
+           req.headers['x-real-ip'] || 
+           (req.socket && req.socket.remoteAddress) || 
+           '127.0.0.1';
+  if (typeof ip === 'string') {
+    ip = ip.replace(/^::ffff:/, '').trim();
+  }
+  return ip || '127.0.0.1';
+}
+
+function generateRandomAddress() {
+  const adjectives = ['swift', 'quick', 'hyper', 'apex', 'bold', 'zen', 'prime', 'nova', 'cyber', 'pure', 'cool', 'flash', 'star', 'nexus', 'vivid', 'alpha', 'stellar'];
+  const nouns = ['inbox', 'pilot', 'falcon', 'tiger', 'orbit', 'wave', 'storm', 'shield', 'echo', 'guard', 'vortex', 'spark', 'flare', 'pulse', 'beacon', 'atlas'];
+  const num = Math.floor(100 + Math.random() * 900);
+  const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  return `${adj}.${noun}${num}@tempemails.site`;
 }
 
 // API Route Handler
@@ -466,31 +489,78 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     return true;
   }
 
-  // 10. Client Route: Create New Temporary Inbox
+  // 10. Cross-Browser Device Session (Identifies same physical device across Chrome, Safari, Firefox, etc.)
+  if (pathname === '/api/inbox/device-session' && method === 'GET') {
+    const store = getStore();
+    const clientIp = getClientIp(req);
+
+    if (!store.device_sessions[clientIp] || !store.device_sessions[clientIp].inboxes || store.device_sessions[clientIp].inboxes.length === 0) {
+      // First visit on this device: generate a clean initial inbox
+      const initialAddr = generateRandomAddress();
+      store.device_sessions[clientIp] = {
+        inboxes: [initialAddr],
+        activeIndex: 0,
+        changesCount: { [initialAddr]: 0 },
+        created_at: new Date().toISOString()
+      };
+
+      const newInboxRecord = {
+        address: initialAddr,
+        device_id: clientIp,
+        created_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + (store.settings.retention_days || 7) * 24 * 3600000).toISOString(),
+        is_active: true
+      };
+      store.inboxes.push(newInboxRecord);
+      store.stats.lifetime_inboxes_created++;
+      saveStore(store);
+    }
+
+    const session = store.device_sessions[clientIp];
+    sendJson(res, 200, {
+      device_id: clientIp,
+      inboxes: session.inboxes,
+      activeIndex: session.activeIndex || 0,
+      changesCount: session.changesCount || {},
+      max_inboxes: store.settings.max_inboxes_per_user || 7,
+      max_changes: store.settings.max_email_changes_per_inbox || 3
+    });
+    return true;
+  }
+
+  // 11. Client Route: Create New Temporary Inbox Slot
   if (pathname === '/api/inbox/create' && method === 'POST') {
     const body = await parseJsonBody(req);
     const store = getStore();
+    const clientIp = getClientIp(req);
 
     if (!store.settings.service_enabled) {
       sendJson(res, 503, { error: 'Service is temporarily paused for maintenance.' });
       return true;
     }
 
-    const deviceId = body.device_id || 'unknown-device';
     const maxLimit = store.settings.max_inboxes_per_user || 7;
+    const session = store.device_sessions[clientIp] || { inboxes: [], changesCount: {} };
 
-    const userInboxes = store.inboxes.filter(i => i.device_id === deviceId);
-    if (userInboxes.length >= maxLimit) {
+    if (session.inboxes && session.inboxes.length >= maxLimit) {
       sendJson(res, 429, { 
-        error: `Device limit reached. You can hold up to ${maxLimit} active inboxes.` 
+        error: `Device limit reached. You can hold up to ${maxLimit} active inboxes on this device.` 
       });
       return true;
     }
 
-    const address = (body.address || '').toLowerCase();
+    const address = (body.address || generateRandomAddress()).toLowerCase().trim();
+    if (!session.inboxes.includes(address)) {
+      session.inboxes.push(address);
+    }
+    session.changesCount = session.changesCount || {};
+    session.changesCount[address] = 0;
+    session.activeIndex = session.inboxes.length - 1;
+    store.device_sessions[clientIp] = session;
+
     const newInbox = {
       address: address,
-      device_id: deviceId,
+      device_id: clientIp,
       created_at: new Date().toISOString(),
       expires_at: new Date(Date.now() + (store.settings.retention_days || 7) * 24 * 3600000).toISOString(),
       is_active: true
@@ -500,7 +570,82 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     store.stats.lifetime_inboxes_created++;
     saveStore(store);
 
-    sendJson(res, 200, { success: true, inbox: newInbox });
+    sendJson(res, 200, { success: true, inbox: newInbox, inboxes: session.inboxes });
+    return true;
+  }
+
+  // 12. Client Route: Change / Randomize Active Address
+  if (pathname === '/api/inbox/change' && method === 'POST') {
+    const body = await parseJsonBody(req);
+    const store = getStore();
+    const clientIp = getClientIp(req);
+    const session = store.device_sessions[clientIp];
+    const maxChanges = store.settings.max_email_changes_per_inbox || 3;
+
+    if (!session || !session.inboxes) {
+      sendJson(res, 400, { error: 'No active session.' });
+      return true;
+    }
+
+    const oldAddress = (body.oldAddress || '').toLowerCase().trim();
+    const idx = session.inboxes.indexOf(oldAddress);
+    if (idx === -1) {
+      sendJson(res, 404, { error: 'Inbox not found in this device session.' });
+      return true;
+    }
+
+    const used = (session.changesCount && session.changesCount[oldAddress]) || 0;
+    if (used >= maxChanges) {
+      sendJson(res, 429, { error: `Maximum ${maxChanges} address changes reached for this inbox.` });
+      return true;
+    }
+
+    const newAddress = generateRandomAddress().toLowerCase().trim();
+    session.inboxes[idx] = newAddress;
+    session.changesCount = session.changesCount || {};
+    session.changesCount[newAddress] = used + 1;
+    delete session.changesCount[oldAddress];
+    store.device_sessions[clientIp] = session;
+
+    const newInbox = {
+      address: newAddress,
+      device_id: clientIp,
+      created_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + (store.settings.retention_days || 7) * 24 * 3600000).toISOString(),
+      is_active: true
+    };
+    store.inboxes.push(newInbox);
+    store.stats.lifetime_inboxes_created++;
+    saveStore(store);
+
+    sendJson(res, 200, { 
+      success: true, 
+      newAddress, 
+      inboxes: session.inboxes, 
+      remainingChanges: Math.max(0, maxChanges - (used + 1)) 
+    });
+    return true;
+  }
+
+  // 13. Client Route: Delete Inbox Slot for Device
+  if (pathname === '/api/inbox/delete-slot' && method === 'POST') {
+    const body = await parseJsonBody(req);
+    const store = getStore();
+    const clientIp = getClientIp(req);
+    const session = store.device_sessions[clientIp];
+
+    if (session && session.inboxes) {
+      const target = (body.address || '').toLowerCase().trim();
+      session.inboxes = session.inboxes.filter(addr => addr !== target);
+      if (session.changesCount) delete session.changesCount[target];
+      if (session.activeIndex >= session.inboxes.length) {
+        session.activeIndex = Math.max(0, session.inboxes.length - 1);
+      }
+      store.device_sessions[clientIp] = session;
+      saveStore(store);
+    }
+
+    sendJson(res, 200, { success: true, inboxes: (session && session.inboxes) || [] });
     return true;
   }
 
@@ -596,4 +741,6 @@ if (process.env.PORT || require.main === module) {
   });
 }
 
-module.exports = server;
+module.exports = requestHandler;
+module.exports.server = server;
+module.exports.requestHandler = requestHandler;
