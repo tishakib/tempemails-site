@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us & Feedback | tempemails.site</title>
+  <meta name="description" content="Get in touch with the tempemails.site engineering team and developer Shakil Hasan. Send feedback, feature suggestions, bug reports, or business inquiries.">
+  <meta name="keywords" content="contact tempemails, disposable email support, feedback, suggestion, temp mail customer care">
+  
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-red-500 selection:text-white">
+
+  <!-- HEADER -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo -->
+      <a href="./index.html" class="flex items-center gap-3 group">
+        <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-10 h-10 rounded-xl shadow-xs group-hover:scale-105 transition-transform object-cover border border-slate-200">
+        <div class="flex flex-col">
+          <span class="font-extrabold text-xl text-slate-900 tracking-tight leading-none">
+            tempemails<span class="text-[#F4413D]">.site</span>
+          </span>
+          <span class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">Disposable Mail Service</span>
+        </div>
+      </a>
+
+      <!-- Strictly 4 Navigation Links -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+        <a href="./index.html" class="hover:text-slate-900 transition-colors">Home</a>
+        <a href="./about.html" class="hover:text-slate-900 transition-colors">About Us</a>
+        <a href="./faq.html" class="hover:text-slate-900 transition-colors">FAQ</a>
+        <a href="./contact.html" class="text-[#F4413D] font-bold">Contact Us</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="./index.html" class="px-4 py-2 bg-[#F4413D] hover:bg-red-600 text-white text-xs font-bold rounded-xl transition-colors shadow-sm shadow-red-500/20">
+          Open Inbox
+        </a>
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:text-slate-900 focus:outline-none" aria-label="Toggle navigation">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-4 space-y-2 text-sm font-medium">
+      <a href="./index.html" class="block py-2 text-slate-700 hover:text-[#F4413D]">Home</a>
+      <a href="./about.html" class="block py-2 text-slate-700 hover:text-[#F4413D]">About Us</a>
+      <a href="./faq.html" class="block py-2 text-slate-700 hover:text-[#F4413D]">FAQ</a>
+      <a href="./contact.html" class="block py-2 text-[#F4413D] font-bold">Contact Us</a>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+    
+    <!-- Top Ad Placement (Dynamically Controlled) -->
+    <div id="ad-slot-top" class="hidden w-full my-4"></div>
+
+    <!-- Page Hero Banner -->
+    <div class="text-center max-w-2xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/10 text-[#F4413D] rounded-full text-xs font-bold border border-red-500/20 mb-3">
+        <span>📬 REACH OUT & FEEDBACK</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+        Contact Us & Share Your Suggestions
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed">
+        Have advice, a feature suggestion, or an issue to report? We welcome every message and continually improve tempemails.site based on your voice.
+      </p>
+    </div>
+
+    <!-- Main Grid: Form + Info Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column (7 Cols): Contact Form -->
+      <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8">
+        
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Send a Message</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Fill out the form below and we'll review your submission promptly.</p>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">* Required</span>
+        </div>
+
+        <!-- Success Alert (Hidden by default) -->
+        <div id="form-success" class="hidden mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-3">
+          <span class="text-base shrink-0">✅</span>
+          <div>
+            <h4 class="font-bold text-sm">Message Sent Successfully!</h4>
+            <p class="mt-0.5">Thank you! Your feedback has been safely submitted. Shakil Hasan and the engineering team will review it.</p>
+          </div>
+        </div>
+
+        <!-- Error Alert (Hidden by default) -->
+        <div id="form-error" class="hidden mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-start gap-3">
+          <span class="text-base shrink-0">⚠️</span>
+          <div>
+            <h4 class="font-bold text-sm">Submission Error</h4>
+            <p id="form-error-msg" class="mt-0.5">Something went wrong. Please check your fields and try again.</p>
+          </div>
+        </div>
+
+        <form id="contact-form" class="space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="contact-name" class="block text-xs font-semibold text-slate-700 mb-1">
+                Your Full Name <span class="text-red-500">*</span>
+              </label>
+              <input type="text" id="contact-name" name="name" required placeholder="Shakil Hasan" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F4413D] focus:bg-white transition-colors">
+            </div>
+
+            <div>
+              <label for="contact-email" class="block text-xs font-semibold text-slate-700 mb-1">
+                Your Email Address <span class="text-red-500">*</span>
+              </label>
+              <input type="email" id="contact-email" name="email" required placeholder="you@example.com" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F4413D] focus:bg-white transition-colors">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="contact-category" class="block text-xs font-semibold text-slate-700 mb-1">
+                Topic / Category <span class="text-red-500">*</span>
+              </label>
+              <select id="contact-category" name="category" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-[#F4413D] focus:bg-white transition-colors">
+                <option value="Suggestion & Advice">💡 Suggestion & Advice</option>
+                <option value="Feature Request">🚀 Feature Request</option>
+                <option value="Bug Report">🐛 Bug Report / Issue</option>
+                <option value="Coffee Treat & Appreciation">☕ Coffee Treat & Appreciation</option>
+                <option value="Business & Partnership">🤝 Business & Partnership</option>
+                <option value="General Inquiry">📩 General Inquiry</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="contact-subject" class="block text-xs font-semibold text-slate-700 mb-1">
+                Subject <span class="text-red-500">*</span>
+              </label>
+              <input type="text" id="contact-subject" name="subject" required placeholder="e.g., Idea for custom domain feature" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F4413D] focus:bg-white transition-colors">
+            </div>
+          </div>
+
+          <div>
+            <label for="contact-message" class="block text-xs font-semibold text-slate-700 mb-1">
+              Message & Suggestions <span class="text-red-500">*</span>
+            </label>
+            <textarea id="contact-message" name="message" rows="5" required placeholder="Write your advice, suggestions, or question in detail..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F4413D] focus:bg-white transition-colors leading-relaxed"></textarea>
+          </div>
+
+          <button type="submit" id="contact-submit-btn" class="w-full py-3.5 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-red-500/25 flex items-center justify-center gap-2 cursor-pointer">
+            <span id="btn-text">Submit Feedback & Message &rarr;</span>
+            <span id="btn-spinner" class="hidden">
+              <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+            </span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Column (5 Cols): Direct Contacts & Developer Card -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- Official Email Card -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-red-500/10 text-[#F4413D] flex items-center justify-center font-bold text-lg">
+              ✉️
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-sm">Direct Support Channel</h3>
+              <p class="text-[11px] text-slate-500">Fast 24-hour response turnaround</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Need urgent developer assistance or want to send attachments? You can write to us directly:
+          </p>
+          <a href="mailto:support@tempemails.site" class="block w-full text-center py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 font-mono text-xs font-bold rounded-xl transition-colors border border-slate-200">
+            support@tempemails.site
+          </a>
+        </div>
+
+        <!-- Developer Attribution & Coffee Treat Card -->
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 rounded-2xl border border-slate-800 shadow-lg p-6 text-white space-y-4 relative overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-red-500/10 rounded-full blur-xl pointer-events-none"></div>
+          
+          <div class="flex items-center gap-3 relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#F4413D] to-orange-500 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-red-500/30 shrink-0">
+              SH
+            </div>
+            <div>
+              <div class="text-[10px] font-bold text-red-400 uppercase tracking-wider">Lead Developer</div>
+              <h3 class="font-bold text-white text-base">Shakil Hasan (শাকিল হাসান)</h3>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-300 leading-relaxed relative z-10">
+            Founder & Architect of tempemails.site. If this tool helped protect your identity or rescued you from endless email spam, consider supporting ongoing hosting costs!
+          </p>
+
+          <div class="pt-2 relative z-10 space-y-2">
+            <a href="mailto:support@tempemails.site?subject=Coffee%20Support%20for%20Shakil%20Hasan" class="w-full py-2.5 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-amber-500/20">
+              <span>☕</span>
+              <span>Buy Me a Coffee (Get a Coffee)</span>
+            </a>
+            <a href="./about.html" class="block text-center text-[11px] text-slate-400 hover:text-white transition-colors">
+              Read about the project background &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Privacy & Spam Safeguard -->
+        <div class="bg-slate-100/80 rounded-2xl border border-slate-200/80 p-5 space-y-2">
+          <div class="flex items-center gap-2 text-xs font-bold text-slate-800">
+            <span>🛡️</span>
+            <span>Zero Spam & Privacy Pledge</span>
+          </div>
+          <p class="text-[11px] text-slate-600 leading-relaxed">
+            Your contact details are solely used to address your feedback. We never sell, track, or subscribe your email to marketing lists.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom Ad Placement (Dynamically Controlled) -->
+    <div id="ad-slot-bottom" class="hidden w-full my-8"></div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        
+        <!-- Brand Info -->
+        <div class="space-y-4 md:col-span-1">
+          <div class="flex items-center gap-3">
+            <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-9 h-9 rounded-xl shadow-xs object-cover border border-slate-200">
+            <span class="text-lg font-bold text-slate-900 tracking-tight">tempemails<span class="text-[#F4413D]">.site</span></span>
+          </div>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            The modern, privacy-focused disposable temporary email service. Shielding personal inboxes from spam, tracking, and data breaches worldwide.
+          </p>
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>All systems 100% operational</span>
+          </div>
+        </div>
+
+        <!-- Navigation (Strictly 4 links) -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Navigation</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="./index.html" class="hover:text-[#F4413D] transition-colors">Home</a></li>
+            <li><a href="./about.html" class="hover:text-[#F4413D] transition-colors">About Us</a></li>
+            <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">FAQ</a></li>
+            <li><a href="./contact.html" class="text-[#F4413D] font-bold">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <!-- Resources & Articles -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Resources & Guides</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Blog & Tech Articles</a></li>
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">How OTP Extraction Works</a></li>
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Email Privacy Protection</a></li>
+            <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">Disposable Email Safety</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal & Policies -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Legal & Policies</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="./privacy.html" class="hover:text-[#F4413D] transition-colors">Privacy Policy</a></li>
+            <li><a href="./terms.html" class="hover:text-[#F4413D] transition-colors">Terms of Service</a></li>
+            <li><a href="./privacy.html#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
+            <li><a href="./terms.html#disclaimer" class="hover:text-[#F4413D] transition-colors">Disclaimer & DMCA</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Copyright -->
+      <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+        <p>&copy; 2026 tempemails.site. Developed with ❤️ by <span class="font-bold text-slate-700">Shakil Hasan</span>.</p>
+        <p class="flex items-center gap-1.5">
+          <span>Protected with hardware fingerprinting & zero logging</span>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts: Form Handler & Dynamic Ads -->
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+    }
+
+    // Contact Form Submission
+    const contactForm = document.getElementById('contact-form');
+    const submitBtn = document.getElementById('contact-submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnSpinner = document.getElementById('btn-spinner');
+    const successAlert = document.getElementById('form-success');
+    const errorAlert = document.getElementById('form-error');
+    const errorMsg = document.getElementById('form-error-msg');
+
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      successAlert.classList.add('hidden');
+      errorAlert.classList.add('hidden');
+
+      const name = document.getElementById('contact-name').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const category = document.getElementById('contact-category').value;
+      const subject = document.getElementById('contact-subject').value.trim();
+      const message = document.getElementById('contact-message').value.trim();
+
+      if (!name || !email || !message) {
+        errorMsg.textContent = 'Please fill out all required fields.';
+        errorAlert.classList.remove('hidden');
+        return;
+      }
+
+      // UI Loading state
+      submitBtn.disabled = true;
+      btnText.textContent = 'Sending Message...';
+      btnSpinner.classList.remove('hidden');
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, category, subject, message })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          successAlert.classList.remove('hidden');
+          contactForm.reset();
+          successAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          errorMsg.textContent = data.message || 'Failed to submit message. Please try again.';
+          errorAlert.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorMsg.textContent = 'Network error. Please check your connection or write directly to support@tempemails.site.';
+        errorAlert.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Submit Feedback & Message →';
+        btnSpinner.classList.add('hidden');
+      }
+    });
+
+    // Dynamic Ads Loader Script
+    async function initAds() {
+      try {
+        const adsRes = await fetch('/api/ads');
+        if (adsRes.ok) {
+          const ads = await adsRes.json();
+          const renderSlot = (slotId, cfg) => {
+            const el = document.getElementById(slotId);
+            if (!el) return;
+            if (ads.master_enabled && cfg && cfg.enabled && cfg.code && cfg.code.trim()) {
+              el.classList.remove('hidden');
+              el.innerHTML = `
+                <div class="w-full flex flex-col items-center justify-center overflow-hidden my-4">
+                  <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Advertisement</span>
+                  <div class="ad-rendered-content w-full flex items-center justify-center">${cfg.code}</div>
+                </div>
+              `;
+              el.querySelectorAll('script').forEach(oldScript => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+              });
+            } else {
+              el.classList.add('hidden');
+              el.innerHTML = '';
+            }
+          };
+          renderSlot('ad-slot-top', ads.top_banner);
+          renderSlot('ad-slot-bottom', ads.bottom_banner);
+        }
+      } catch (e) {}
+    }
+    document.addEventListener('DOMContentLoaded', initAds);
+  </script>
+
+</body>
+</html>

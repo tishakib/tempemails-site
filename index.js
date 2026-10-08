@@ -73,7 +73,8 @@ const initialData = {
       summary: 'A comprehensive look at edge email routing, regex extraction, and how automated disposable inboxes catch one-time passwords instantly.',
       created_at: new Date().toISOString()
     }
-  ]
+  ],
+  contacts: []
 };
 
 // In-memory store cache
@@ -105,6 +106,9 @@ function getStore() {
       }
       if (!storeCache.ads) {
         storeCache.ads = JSON.parse(JSON.stringify(initialData.ads));
+      }
+      if (!storeCache.contacts) {
+        storeCache.contacts = [];
       }
       if (process.env.VERCEL && !fs.existsSync(DATA_FILE)) {
         saveStore(storeCache);
@@ -368,7 +372,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     return true;
   }
 
-  // 1. Settings
+  // 1. Settings (Public)
   if (pathname === '/api/settings' && method === 'GET') {
     const store = getStore();
     sendJson(res, 200, {
@@ -379,7 +383,6 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       maintenance_message: store.settings.maintenance_message || 'Our email servers are currently undergoing scheduled maintenance. New inbox generation will resume shortly.',
       turnstile_enabled: store.settings.turnstile_enabled !== false,
       turnstile_site_key: store.settings.turnstile_site_key || '1x00000000000000000000AA',
-      admin_username: store.settings.admin_username || 'admin',
       google_search_console: store.settings.google_search_console || '',
       google_analytics_id: store.settings.google_analytics_id || '',
       custom_head_scripts: store.settings.custom_head_scripts || ''
@@ -463,7 +466,29 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     return true;
   }
 
-  // 7. Admin Update Settings
+  // 7a. Admin Get Settings
+  if (pathname === '/api/admin/settings' && method === 'GET') {
+    const store = getStore();
+    sendJson(res, 200, {
+      max_inboxes_per_user: store.settings.max_inboxes_per_user || 7,
+      max_email_changes_per_inbox: store.settings.max_email_changes_per_inbox || 3,
+      retention_days: store.settings.retention_days || 7,
+      service_enabled: store.settings.service_enabled !== false,
+      maintenance_message: store.settings.maintenance_message || '',
+      turnstile_enabled: store.settings.turnstile_enabled !== false,
+      turnstile_site_key: store.settings.turnstile_site_key || '',
+      turnstile_secret_key: store.settings.turnstile_secret_key || '',
+      admin_username: store.settings.admin_username || 'admin',
+      supabase_url: store.settings.supabase_url || '',
+      supabase_key: store.settings.supabase_key || '',
+      google_search_console: store.settings.google_search_console || '',
+      google_analytics_id: store.settings.google_analytics_id || '',
+      custom_head_scripts: store.settings.custom_head_scripts || ''
+    });
+    return true;
+  }
+
+  // 7b. Admin Update Settings
   if (pathname === '/api/admin/settings' && method === 'POST') {
     const body = await parseJsonBody(req);
     const store = getStore();
@@ -809,6 +834,88 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     store.messages = store.messages.filter(m => m.id !== id);
     saveStore(store);
     sendJson(res, 200, { success: true });
+    return true;
+  }
+
+  // 13. Public Contact Form Submission
+  if (pathname === '/api/contact' && method === 'POST') {
+    const body = await parseJsonBody(req);
+    const name = String(body.name || '').trim();
+    const email = String(body.email || '').trim();
+    const message = String(body.message || '').trim();
+    const category = String(body.category || 'General Suggestion').trim();
+    const subject = String(body.subject || 'Website Feedback').trim();
+
+    if (!name || !email || !message) {
+      sendJson(res, 400, { success: false, message: 'Please provide your name, email, and message.' });
+      return true;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      sendJson(res, 400, { success: false, message: 'Please provide a valid email address.' });
+      return true;
+    }
+
+    const store = getStore();
+    if (!store.contacts) store.contacts = [];
+
+    const newContact = {
+      id: 'cnt_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+      name: name.slice(0, 100),
+      email: email.slice(0, 150),
+      category: category.slice(0, 50),
+      subject: subject.slice(0, 200),
+      message: message.slice(0, 5000),
+      status: 'unread',
+      created_at: new Date().toISOString(),
+      ip: getClientIp(req)
+    };
+
+    store.contacts.unshift(newContact);
+    saveStore(store);
+
+    sendJson(res, 200, {
+      success: true,
+      message: 'Thank you! Your feedback has been received successfully. We appreciate your thoughts!'
+    });
+    return true;
+  }
+
+  // 14. Admin Contacts List
+  if (pathname === '/api/admin/contacts' && method === 'GET') {
+    const store = getStore();
+    sendJson(res, 200, store.contacts || []);
+    return true;
+  }
+
+  // 15. Admin Mark Contact Status
+  if (pathname === '/api/admin/contacts/status' && method === 'POST') {
+    const body = await parseJsonBody(req);
+    const store = getStore();
+    if (!store.contacts) store.contacts = [];
+    const item = store.contacts.find(c => c.id === body.id);
+    if (item) {
+      item.status = body.status || 'read';
+      saveStore(store);
+      sendJson(res, 200, { success: true });
+    } else {
+      sendJson(res, 404, { success: false, message: 'Message not found.' });
+    }
+    return true;
+  }
+
+  // 16. Admin Delete Contact Message
+  if (pathname === '/api/admin/contacts' && method === 'DELETE') {
+    const id = parsedUrl.query.id;
+    if (!id) {
+      sendJson(res, 400, { success: false, message: 'Missing contact id.' });
+      return true;
+    }
+    const store = getStore();
+    store.contacts = (store.contacts || []).filter(c => c.id !== id);
+    saveStore(store);
+    sendJson(res, 200, { success: true, message: 'Message deleted successfully.' });
     return true;
   }
 
