@@ -4,7 +4,7 @@ const path = require('path');
 const url = require('url');
 
 const PORT = process.env.PORT || 3000;
-const PUBLIC_DIR = path.resolve(__dirname);
+const PUBLIC_DIR = process.cwd();
 const DATA_FILE = process.env.VERCEL ? '/tmp/data_store.json' : path.join(__dirname, 'data_store.json');
 
 // MIME types for static files
