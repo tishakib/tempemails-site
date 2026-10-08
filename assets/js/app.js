@@ -355,6 +355,7 @@ window.selectInbox = function(index) {
     saveStateToStorage();
     renderApp();
     showToast(`Switched to inbox #${index + 1}`, 'info');
+    if (window.triggerInboxRefresh) window.triggerInboxRefresh(false);
   }
 };
 
@@ -369,6 +370,14 @@ window.addNewInboxSlot = function() {
   state.inboxes.push(newEmail);
   state.activeIndex = state.inboxes.length - 1; // switch to newly created
   state.activeMessageId = null;
+
+  // Register inbox with backend
+  const deviceId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
+  fetch('/api/inbox/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ address: newEmail, device_id: deviceId })
+  }).catch(() => {});
 
   // Add sample welcome email for new inbox
   state.messages[newEmail] = [
@@ -772,6 +781,7 @@ window.deleteSingleMessage = function(id, e) {
   saveStateToStorage();
   renderInboxView();
   showToast('Email deleted.', 'info');
+  fetch(`/api/inbox/message?id=${encodeURIComponent(id)}`, { method: 'DELETE' }).catch(() => {});
 };
 
 // Clear All Messages in Current Inbox
@@ -806,24 +816,64 @@ function startRefreshTimer() {
 }
 
 // Manual or Automatic Inbox Refresh
-window.triggerInboxRefresh = function(isManual = true) {
+window.triggerInboxRefresh = async function(isManual = true) {
   const icon = document.getElementById('refresh-icon');
   if (icon) icon.classList.add('animate-spin');
 
-  // If manual, reset countdown
   if (isManual) {
     state.countdown = CONFIG.REFRESH_INTERVAL;
   }
 
-  // Hook point: Fetch latest messages from Cloudflare Worker API
-  // fetch(`${CONFIG.API_ENDPOINT}?email=${encodeURIComponent(getActiveEmail())}`) ...
-  setTimeout(() => {
-    if (icon) icon.classList.remove('animate-spin');
-    renderInboxView();
-    if (isManual) {
-      showToast('Inbox is up to date!', 'info');
+  const currentEmail = getActiveEmail();
+  if (currentEmail) {
+    try {
+      const res = await fetch(`/api/inbox/messages?email=${encodeURIComponent(currentEmail)}`);
+      if (res.ok) {
+        const serverMsgs = await res.json();
+        const existingMsgs = state.messages[currentEmail] || [];
+        const existingIds = new Set(existingMsgs.map(m => m.id));
+        let hasNew = false;
+
+        for (const sMsg of serverMsgs) {
+          if (!existingIds.has(sMsg.id)) {
+            existingMsgs.unshift({
+              id: sMsg.id,
+              from: sMsg.from,
+              fromName: sMsg.from_name || sMsg.fromName || sMsg.from,
+              to: sMsg.inbox_address || currentEmail,
+              subject: sMsg.subject || '(No Subject)',
+              snippet: sMsg.snippet || '',
+              bodyHtml: sMsg.body_html || sMsg.bodyHtml || `<p>${sMsg.snippet || ''}</p>`,
+              otp: sMsg.otp || null,
+              partnerLink: sMsg.partner_link || sMsg.partnerLink || null,
+              isUnread: sMsg.is_unread !== false,
+              isStarred: false,
+              receivedAt: 'Just now',
+              timestamp: new Date(sMsg.created_at || Date.now()).getTime()
+            });
+            hasNew = true;
+          }
+        }
+
+        if (hasNew) {
+          state.messages[currentEmail] = existingMsgs;
+          saveStateToStorage();
+          if (window.AppUtils && window.AppUtils.playNotificationSound) {
+            window.AppUtils.playNotificationSound();
+          }
+          showToast('New email arrived! ✉️', 'success');
+        }
+      }
+    } catch (e) {
+      console.warn('Sync error:', e);
     }
-  }, 600);
+  }
+
+  if (icon) icon.classList.remove('animate-spin');
+  renderInboxView();
+  if (isManual) {
+    showToast('Inbox updated!', 'info');
+  }
 };
 
 // Simulate an Incoming Test Email (for interactive testing)

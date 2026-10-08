@@ -5,7 +5,7 @@ const url = require('url');
 
 const PORT = 3000;
 const PUBLIC_DIR = __dirname;
-const DATA_FILE = path.join(__dirname, 'data_store.json');
+const DATA_FILE = process.env.VERCEL ? '/tmp/data_store.json' : path.join(__dirname, 'data_store.json');
 
 // MIME types for static files
 const MIME_TYPES = {
@@ -100,6 +100,14 @@ function getStore() {
     if (fs.existsSync(DATA_FILE)) {
       const content = fs.readFileSync(DATA_FILE, 'utf8');
       return JSON.parse(content);
+    } else if (process.env.VERCEL) {
+      const defaultPath = path.join(__dirname, 'data_store.json');
+      if (fs.existsSync(defaultPath)) {
+        const content = fs.readFileSync(defaultPath, 'utf8');
+        const parsed = JSON.parse(content);
+        try { fs.writeFileSync(DATA_FILE, JSON.stringify(parsed, null, 2), 'utf8'); } catch (err) {}
+        return parsed;
+      }
     }
   } catch (e) {
     console.error('Error reading data file, using default:', e);
@@ -170,8 +178,8 @@ function sendJson(res, statusCode, data) {
   res.end(JSON.stringify(data));
 }
 
-// Main HTTP Server
-const server = http.createServer(async (req, res) => {
+// Handle API Requests (Used by both local server and Vercel serverless functions)
+async function handleApiRequest(req, res) {
   const parsedUrl = url.parse(req.url, true);
   const pathname = parsedUrl.pathname;
   const method = req.method;
@@ -184,7 +192,11 @@ const server = http.createServer(async (req, res) => {
       'Access-Control-Allow-Headers': 'Content-Type, Authorization'
     });
     res.end();
-    return;
+    return true;
+  }
+
+  if (!pathname.startsWith('/api')) {
+    return false;
   }
 
   // --- API ROUTING ---
@@ -192,7 +204,7 @@ const server = http.createServer(async (req, res) => {
   // 1. Public Settings (used by frontend to respect dynamic max_inboxes and service status)
   if (pathname === '/api/settings' && method === 'GET') {
     const store = getStore();
-    return sendJson(res, 200, {
+    sendJson(res, 200, {
       max_inboxes_per_user: store.settings.max_inboxes_per_user || 7,
       max_email_changes_per_inbox: store.settings.max_email_changes_per_inbox || 3,
       retention_days: store.settings.retention_days || 7,
@@ -431,10 +443,43 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, { success: true, inbox: newInbox });
   }
 
-  // --- STATIC FILES & ADMIN ROUTING ---
+  // 11. Client Route: Get Messages for Inbox
+  if (pathname === '/api/inbox/messages' && method === 'GET') {
+    const email = (parsedUrl.query.email || '').toLowerCase().trim();
+    if (!email) {
+      return sendJson(res, 400, { error: 'Missing email query parameter.' });
+    }
+    const store = getStore();
+    const messages = store.messages.filter(m => (m.inbox_address || '').toLowerCase() === email);
+    return sendJson(res, 200, messages);
+  }
 
+  // 12. Client Route: Delete a Single Message
+  if (pathname === '/api/inbox/message' && method === 'DELETE') {
+    const id = parsedUrl.query.id;
+    if (!id) {
+      sendJson(res, 400, { error: 'Missing message id.' });
+      return true;
+    }
+    const store = getStore();
+    store.messages = store.messages.filter(m => m.id !== id);
+    saveStore(store);
+    sendJson(res, 200, { success: true });
+    return true;
+  }
+
+  return false;
+}
+
+// Main HTTP Server (Local development)
+const server = http.createServer(async (req, res) => {
+  const handled = await handleApiRequest(req, res);
+  if (handled) return;
+
+  const parsedUrl = url.parse(req.url, true);
+  const pathname = parsedUrl.pathname;
   let reqPath = pathname;
-  
+
   // Custom Secret Admin URL mapping: /admin-shakib -> admin-shakib.html
   if (reqPath === '/admin-shakib' || reqPath === '/admin-shakib/') {
     reqPath = '/admin-shakib.html';
@@ -472,9 +517,11 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`[tempemails.site] Server running on http://localhost:${PORT}`);
-  console.log(`[Admin Portal] Secret URL: http://localhost:${PORT}/admin-shakib`);
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`[tempemails.site] Server running on http://localhost:${PORT}`);
+    console.log(`[Admin Portal] Secret URL: http://localhost:${PORT}/admin-shakib`);
+  });
+}
 
-module.exports = server;
+module.exports = { server, handleApiRequest, getStore, saveStore };
