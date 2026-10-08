@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Us & Feedback | tempemails.site</title>
-  <meta name="description" content="Get in touch with the tempemails.site engineering team and developer Shakil Hasan. Send feedback, feature suggestions, bug reports, or business inquiries.">
+  <meta name="description" content="Get in touch with the tempemails.site engineering team and developer Shakib Hasan. Send feedback, feature suggestions, bug reports, or business inquiries.">
   <meta name="keywords" content="contact tempemails, disposable email support, feedback, suggestion, temp mail customer care">
   
   <link rel="icon" type="image/x-icon" href="./favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/img/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/img/apple-touch-icon.png">
 
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -99,7 +100,7 @@
           <span class="text-base shrink-0">✅</span>
           <div>
             <h4 class="font-bold text-sm">Message Sent Successfully!</h4>
-            <p class="mt-0.5">Thank you! Your feedback has been safely submitted. Shakil Hasan and the engineering team will review it.</p>
+            <p class="mt-0.5">Thank you! Your feedback has been safely submitted. Shakib Hasan and the engineering team will review it.</p>
           </div>
         </div>
 
@@ -118,7 +119,7 @@
               <label for="contact-name" class="block text-xs font-semibold text-slate-700 mb-1">
                 Your Full Name <span class="text-red-500">*</span>
               </label>
-              <input type="text" id="contact-name" name="name" required placeholder="Shakil Hasan" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F4413D] focus:bg-white transition-colors">
+              <input type="text" id="contact-name" name="name" required placeholder="Shakib Hasan" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F4413D] focus:bg-white transition-colors">
             </div>
 
             <div>
@@ -191,27 +192,27 @@
         </div>
 
         <!-- Developer Attribution & Coffee Treat Card -->
-        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 rounded-2xl border border-slate-800 shadow-lg p-6 text-white space-y-4 relative overflow-hidden">
+        <div id="contact-dev-card" class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 rounded-2xl border border-slate-800 shadow-lg p-6 text-white space-y-4 relative overflow-hidden">
           <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-red-500/10 rounded-full blur-xl pointer-events-none"></div>
           
           <div class="flex items-center gap-3 relative z-10">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#F4413D] to-orange-500 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-red-500/30 shrink-0">
+            <div id="contact-dev-avatar" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#F4413D] to-orange-500 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-red-500/30 shrink-0">
               SH
             </div>
             <div>
-              <div class="text-[10px] font-bold text-red-400 uppercase tracking-wider">Lead Developer</div>
-              <h3 class="font-bold text-white text-base">Shakil Hasan (শাকিল হাসান)</h3>
+              <div id="contact-dev-title" class="text-[10px] font-bold text-red-400 uppercase tracking-wider">Lead Developer</div>
+              <h3 id="contact-dev-name" class="font-bold text-white text-base">Shakib Hasan</h3>
             </div>
           </div>
 
-          <p class="text-xs text-slate-300 leading-relaxed relative z-10">
+          <p id="contact-dev-bio" class="text-xs text-slate-300 leading-relaxed relative z-10">
             Founder & Architect of tempemails.site. If this tool helped protect your identity or rescued you from endless email spam, consider supporting ongoing hosting costs!
           </p>
 
           <div class="pt-2 relative z-10 space-y-2">
-            <a href="mailto:support@tempemails.site?subject=Coffee%20Support%20for%20Shakil%20Hasan" class="w-full py-2.5 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-amber-500/20">
+            <a id="contact-dev-coffee-link" href="mailto:support@tempemails.site?subject=Coffee%20Support%20for%20Shakib%20Hasan" class="w-full py-2.5 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-amber-500/20">
               <span>☕</span>
-              <span>Buy Me a Coffee (Get a Coffee)</span>
+              <span id="contact-dev-coffee-text">Buy Me a Coffee (Get a Coffee)</span>
             </a>
             <a href="./about.html" class="block text-center text-[11px] text-slate-400 hover:text-white transition-colors">
               Read about the project background &rarr;
@@ -296,7 +297,7 @@
 
       <!-- Copyright -->
       <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-        <p>&copy; 2026 tempemails.site. Developed with ❤️ by <span class="font-bold text-slate-700">Shakil Hasan</span>.</p>
+        <p>&copy; 2026 tempemails.site. Developed with ❤️ by <span class="font-bold text-slate-700">Shakib Hasan</span>.</p>
         <p class="flex items-center gap-1.5">
           <span>Protected with hardware fingerprinting & zero logging</span>
         </p>
@@ -406,7 +407,34 @@
         }
       } catch (e) {}
     }
-    document.addEventListener('DOMContentLoaded', initAds);
+    // Load Dynamic Developer Profile from Backend
+    async function loadDeveloperProfile() {
+      try {
+        const res = await fetch('/api/settings');
+        if (!res.ok) return;
+        const data = await res.json();
+        const dev = data.developer;
+        if (!dev) return;
+
+        const card = document.getElementById('contact-dev-card');
+        if (dev.enabled === false) {
+          if (card) card.classList.add('hidden');
+          return;
+        }
+
+        if (document.getElementById('contact-dev-name')) document.getElementById('contact-dev-name').textContent = dev.name || 'Shakib Hasan';
+        if (document.getElementById('contact-dev-title')) document.getElementById('contact-dev-title').textContent = dev.title || 'Lead Developer';
+        if (document.getElementById('contact-dev-bio')) document.getElementById('contact-dev-bio').textContent = dev.bio || '';
+        if (document.getElementById('contact-dev-avatar')) document.getElementById('contact-dev-avatar').textContent = dev.avatar_initials || 'SH';
+        if (document.getElementById('contact-dev-coffee-text')) document.getElementById('contact-dev-coffee-text').textContent = dev.coffee_button_text || 'Buy Me a Coffee (Get a Coffee)';
+        if (document.getElementById('contact-dev-coffee-link') && dev.coffee_link) document.getElementById('contact-dev-coffee-link').href = dev.coffee_link;
+      } catch (e) {}
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAds();
+      loadDeveloperProfile();
+    });
   </script>
 
 </body>

@@ -65,9 +65,12 @@
   <div id="admin-app" class="hidden min-h-screen flex flex-col">
     
     <!-- Top Navbar -->
-    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30">
+      <div class="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center gap-3">
+          <button id="admin-sidebar-toggle" onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800" aria-label="Toggle Navigation">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          </button>
           <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-9 h-9 rounded-xl object-cover border border-slate-700 shadow-xs">
           <div>
             <span class="font-extrabold text-white text-base tracking-tight">tempemails<span class="text-[#F4413D]">.site</span></span>
@@ -75,22 +78,11 @@
           </div>
         </div>
 
-        <!-- Navigation Tabs -->
-        <nav class="hidden md:flex items-center gap-2">
-          <button onclick="switchTab('tab-overview')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors bg-[#F4413D] text-white" data-tab="tab-overview">Overview</button>
-          <button onclick="switchTab('tab-inboxes')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-inboxes">Live Inboxes</button>
-          <button onclick="switchTab('tab-settings')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-settings">System Limits</button>
-          <button onclick="switchTab('tab-seo')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-seo">Google SEO</button>
-          <button onclick="switchTab('tab-ads')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-ads">Ads Manager</button>
-          <button onclick="switchTab('tab-blogs')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-blogs">Blog Studio</button>
-          <button onclick="switchTab('tab-contacts')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white flex items-center gap-1.5" data-tab="tab-contacts">
-            <span>Feedback</span>
-            <span id="badge-unread-contacts" class="hidden px-1.5 py-0.5 text-[9px] bg-[#F4413D] text-white rounded-full font-bold leading-none">0</span>
-          </button>
-          <button onclick="switchTab('tab-supabase')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-supabase">Supabase</button>
-        </nav>
-
         <div class="flex items-center gap-3">
+          <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 bg-slate-800 text-slate-300 text-xs rounded-lg border border-slate-700">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            User: <strong id="header-admin-user" class="text-white font-mono ml-1">admin</strong>
+          </span>
           <a href="./index.html" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg transition-colors flex items-center gap-1">
             <span>View Website</span>
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
@@ -102,8 +94,94 @@
       </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1">
+    <!-- Main Workspace Layout: Left Sidebar + Content Area -->
+    <div class="flex-1 flex overflow-hidden relative">
+      
+      <!-- LEFT SIDEBAR -->
+      <aside id="admin-sidebar" class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 transition-transform duration-200 z-20 fixed inset-y-16 left-0 lg:static lg:inset-auto -translate-x-full lg:translate-x-0 overflow-y-auto">
+        <div class="p-4 space-y-1 flex-1">
+          <div class="px-3 py-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Main Control</div>
+          
+          <button onclick="switchTab('tab-overview')" class="nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all bg-[#F4413D] text-white shadow-lg shadow-red-500/20" data-tab="tab-overview">
+            <div class="flex items-center gap-3">
+              <span class="text-base">📊</span>
+              <span>Overview & Stats</span>
+            </div>
+          </button>
+          
+          <button onclick="switchTab('tab-inboxes')" class="nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/80" data-tab="tab-inboxes">
+            <div class="flex items-center gap-3">
+              <span class="text-base">📬</span>
+              <span>Live Inboxes</span>
+            </div>
+          </button>
+
+          <button onclick="switchTab('tab-settings')" class="nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/80" data-tab="tab-settings">
+            <div class="flex items-center gap-3">
+              <span class="text-base">⚙️</span>
+              <span>System Limits</span>
+            </div>
+          </button>
+
+          <button onclick="switchTab('tab-developer')" class="nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/80" data-tab="tab-developer">
+            <div class="flex items-center gap-3">
+              <span class="text-base">👨‍💻</span>
+              <span>Developer Profile</span>
+            </div>
+          </button>
+
+          <button onclick="switchTab('tab-contacts')" class="nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/80" data-tab="tab-contacts">
+            <div class="flex items-center gap-3">
+              <span class="text-base">💬</span>
+              <span>User Feedback</span>
+            </div>
+            <span id="badge-unread-contacts" class="hidden px-2 py-0.5 text-[10px] bg-[#F4413D] text-white rounded-full font-bold leading-none">0</span>
+          </button>
+
+          <div class="pt-4 px-3 py-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Monetization & CMS</div>
+
+          <button onclick="switchTab('tab-ads')" class="nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/80" data-tab="tab-ads">
+            <div class="flex items-center gap-3">
+              <span class="text-base">📢</span>
+              <span>Ads Manager</span>
+            </div>
+          </button>
+
+          <button onclick="switchTab('tab-blogs')" class="nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/80" data-tab="tab-blogs">
+            <div class="flex items-center gap-3">
+              <span class="text-base">✍️</span>
+              <span>Blog Studio</span>
+            </div>
+          </button>
+
+          <button onclick="switchTab('tab-seo')" class="nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/80" data-tab="tab-seo">
+            <div class="flex items-center gap-3">
+              <span class="text-base">🔍</span>
+              <span>Google SEO</span>
+            </div>
+          </button>
+
+          <div class="pt-4 px-3 py-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Database</div>
+
+          <button onclick="switchTab('tab-supabase')" class="nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/80" data-tab="tab-supabase">
+            <div class="flex items-center gap-3">
+              <span class="text-base">⚡</span>
+              <span>Supabase Cloud</span>
+            </div>
+          </button>
+        </div>
+
+        <div class="p-4 border-t border-slate-800 text-[11px] text-slate-500 bg-slate-950/40">
+          <div class="flex items-center gap-1.5 text-emerald-400 font-medium">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Engine Operational</span>
+          </div>
+          <div class="text-[10px] text-slate-500 mt-1">Creator: Shakib Hasan</div>
+        </div>
+      </aside>
+
+      <!-- RIGHT MAIN CONTENT CONTAINER -->
+      <main class="flex-1 min-w-0 p-4 sm:p-8 overflow-y-auto max-w-7xl">
       
       <!-- TAB 1: OVERVIEW & STATS -->
       <section id="tab-overview" class="tab-content space-y-8">
@@ -610,10 +688,92 @@ CREATE TABLE IF NOT EXISTS messages (
               </tbody>
             </table>
           </div>
+      <!-- TAB 8: DEVELOPER PROFILE & BRANDING (Dynamic Developer Section) -->
+      <section id="tab-developer" class="tab-content hidden max-w-3xl space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-white">Developer Profile & Attribution</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Configure your developer card, bio, and "Buy Me a Coffee" button shown on About and Contact pages</p>
+          </div>
+          <button type="button" onclick="loadDeveloperSettings()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition-colors">
+            ↻ Reload Profile
+          </button>
         </div>
+
+        <form id="developer-form" class="bg-slate-900 border border-slate-800 p-6 sm:p-8 rounded-2xl space-y-6 shadow-xl">
+          
+          <!-- Master Toggle -->
+          <div class="flex items-center justify-between p-4 bg-slate-950/80 rounded-xl border border-slate-800">
+            <div>
+              <span class="text-sm font-bold text-white">Show Developer Attribution Card</span>
+              <p class="text-xs text-slate-400 mt-0.5">Displays your developer info & coffee support button on About Us & Contact Us pages</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="dev-setting-enabled" checked class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#F4413D]"></div>
+            </label>
+          </div>
+
+          <!-- Name & Role -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Developer Full Name</label>
+              <input type="text" id="dev-setting-name" value="Shakib Hasan" placeholder="Shakib Hasan" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Role / Badge Title</label>
+              <input type="text" id="dev-setting-title" value="Lead Developer & Creator" placeholder="Lead Developer & Creator" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]" required>
+            </div>
+          </div>
+
+          <!-- Bio -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Developer Bio / Summary</label>
+            <textarea id="dev-setting-bio" rows="3" placeholder="Describe yourself and why you created tempemails.site..." class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D] leading-relaxed"></textarea>
+          </div>
+
+          <!-- Avatar / Initials -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Avatar Initials (2 Letters)</label>
+              <input type="text" id="dev-setting-initials" value="SH" maxlength="4" placeholder="SH" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#F4413D]">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Direct Inquiries Email</label>
+              <input type="email" id="dev-setting-email" value="support@tempemails.site" placeholder="support@tempemails.site" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]">
+            </div>
+          </div>
+
+          <!-- Support & Coffee Button Settings -->
+          <div class="p-5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-4">
+            <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>☕</span>
+              <span>Coffee / Donation Action Controls</span>
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Button Label</label>
+                <input type="text" id="dev-setting-coffee-text" value="Buy Me a Coffee (Get a Coffee)" placeholder="Buy Me a Coffee" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-[#F4413D]">
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Coffee URL or Mailto Link</label>
+                <input type="text" id="dev-setting-coffee-link" value="mailto:support@tempemails.site?subject=Coffee%20Support%20for%20Shakib%20Hasan" placeholder="https://buymeacoffee.com/username or mailto:..." class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-[#F4413D]">
+              </div>
+            </div>
+          </div>
+
+          <!-- Save Button & Feedback -->
+          <div class="flex items-center justify-between pt-2">
+            <span id="dev-save-msg" class="text-xs text-emerald-400 font-semibold hidden">✅ Developer profile saved successfully!</span>
+            <button type="submit" class="px-6 py-3 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-red-500/25 ml-auto">
+              Save Developer Profile &rarr;
+            </button>
+          </div>
+        </form>
       </section>
 
     </main>
+    </div>
   </div>
 
   <!-- MODAL: INSPECT INBOX MESSAGES -->
@@ -825,18 +985,31 @@ CREATE TABLE IF NOT EXISTS messages (
 
       document.querySelectorAll('.nav-tab').forEach(btn => {
         if (btn.getAttribute('data-tab') === tabId) {
-          btn.className = 'nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors bg-[#F4413D] text-white';
+          btn.className = 'nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all bg-[#F4413D] text-white shadow-lg shadow-red-500/20';
         } else {
-          btn.className = 'nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white';
+          btn.className = 'nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/80';
         }
       });
+
+      // Close mobile drawer on tab click
+      if (window.innerWidth < 1024) {
+        document.getElementById('admin-sidebar')?.classList.add('-translate-x-full');
+      }
 
       if (tabId === 'tab-overview') loadAdminStats();
       if (tabId === 'tab-inboxes') loadAdminInboxes();
       if (tabId === 'tab-settings') loadAdminSettings();
+      if (tabId === 'tab-developer') loadDeveloperSettings();
       if (tabId === 'tab-ads') loadAdminAds();
       if (tabId === 'tab-blogs') loadAdminBlogs();
       if (tabId === 'tab-contacts') loadAdminContacts();
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('admin-sidebar');
+      if (sidebar) {
+        sidebar.classList.toggle('-translate-x-full');
+      }
     }
 
     // Login Form Handler
@@ -870,6 +1043,8 @@ CREATE TABLE IF NOT EXISTS messages (
       document.getElementById('admin-app').classList.remove('hidden');
       loadAdminStats();
       loadAdminContacts();
+      loadAdminSettings();
+      loadDeveloperSettings();
     }
 
     function logoutAdmin() {
@@ -990,6 +1165,8 @@ CREATE TABLE IF NOT EXISTS messages (
         document.getElementById('setting-admin-username').value = s.admin_username || 'admin';
         const userBadge = document.getElementById('current-admin-user');
         if (userBadge) userBadge.textContent = s.admin_username || 'admin';
+        const headerBadge = document.getElementById('header-admin-user');
+        if (headerBadge) headerBadge.textContent = s.admin_username || 'admin';
         document.getElementById('setting-gsc').value = s.google_search_console || '';
         document.getElementById('setting-ga4').value = s.google_analytics_id || '';
         document.getElementById('setting-head-scripts').value = s.custom_head_scripts || '';
@@ -1023,6 +1200,8 @@ CREATE TABLE IF NOT EXISTS messages (
       if (payload.admin_username) {
         const userBadge = document.getElementById('current-admin-user');
         if (userBadge) userBadge.textContent = payload.admin_username;
+        const headerBadge = document.getElementById('header-admin-user');
+        if (headerBadge) headerBadge.textContent = payload.admin_username;
       }
       alert(data.message || 'Settings saved successfully!');
     });
@@ -1056,6 +1235,62 @@ CREATE TABLE IF NOT EXISTS messages (
         body: JSON.stringify(payload)
       });
       alert('Supabase credentials saved!');
+    }
+
+    // ==========================================
+    // DEVELOPER PROFILE CONTROLS & DYNAMIC PERSISTENCE
+    // ==========================================
+    async function loadDeveloperSettings() {
+      try {
+        const res = await fetch('/api/admin/settings');
+        const s = await res.json();
+        const d = s.developer || {};
+        const enabledCheckbox = document.getElementById('dev-setting-enabled');
+        if (enabledCheckbox) enabledCheckbox.checked = d.enabled !== false;
+        if (document.getElementById('dev-setting-name')) document.getElementById('dev-setting-name').value = d.name || 'Shakib Hasan';
+        if (document.getElementById('dev-setting-title')) document.getElementById('dev-setting-title').value = d.title || 'Lead Developer & Creator';
+        if (document.getElementById('dev-setting-bio')) document.getElementById('dev-setting-bio').value = d.bio || '';
+        if (document.getElementById('dev-setting-initials')) document.getElementById('dev-setting-initials').value = d.initials || 'SH';
+        if (document.getElementById('dev-setting-email')) document.getElementById('dev-setting-email').value = d.email || 'support@tempemails.site';
+        if (document.getElementById('dev-setting-coffee-text')) document.getElementById('dev-setting-coffee-text').value = d.coffee_text || 'Buy Me a Coffee (Get a Coffee)';
+        if (document.getElementById('dev-setting-coffee-link')) document.getElementById('dev-setting-coffee-link').value = d.coffee_link || '';
+      } catch (err) {
+        console.error('Failed to load developer settings:', err);
+      }
+    }
+
+    const devForm = document.getElementById('developer-form');
+    if (devForm) {
+      devForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+          enabled: document.getElementById('dev-setting-enabled').checked,
+          name: document.getElementById('dev-setting-name').value.trim() || 'Shakib Hasan',
+          title: document.getElementById('dev-setting-title').value.trim() || 'Lead Developer & Creator',
+          bio: document.getElementById('dev-setting-bio').value.trim(),
+          initials: document.getElementById('dev-setting-initials').value.trim() || 'SH',
+          email: document.getElementById('dev-setting-email').value.trim() || 'support@tempemails.site',
+          coffee_text: document.getElementById('dev-setting-coffee-text').value.trim() || 'Buy Me a Coffee (Get a Coffee)',
+          coffee_link: document.getElementById('dev-setting-coffee-link').value.trim()
+        };
+
+        try {
+          const res = await fetch('/api/admin/developer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          const msg = document.getElementById('dev-save-msg');
+          if (msg) {
+            msg.textContent = data.message || 'Developer profile saved successfully!';
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 4000);
+          }
+        } catch (err) {
+          alert('Error saving developer profile: ' + err.message);
+        }
+      });
     }
 
     // ==========================================

@@ -38,7 +38,18 @@ const initialData = {
     supabase_key: '',
     google_search_console: '',
     google_analytics_id: '',
-    custom_head_scripts: ''
+    custom_head_scripts: '',
+    developer: {
+      enabled: true,
+      name: 'Shakib Hasan',
+      title: 'Lead Developer & Creator',
+      bio: 'Full-Stack Developer passionate about digital privacy and frictionless web experiences. Built tempemails.site to give everyone instant, anonymous temporary email addresses protected by hardware fingerprinting and zero logs.',
+      avatar_initials: 'SH',
+      avatar_image: '',
+      coffee_button_text: 'Buy Me a Coffee (Get a Coffee)',
+      coffee_link: 'mailto:support@tempemails.site?subject=Coffee%20Support%20for%20Shakib%20Hasan',
+      contact_email: 'support@tempemails.site'
+    }
   },
   stats: {
     lifetime_inboxes_created: 0,
@@ -109,6 +120,11 @@ function getStore() {
       }
       if (!storeCache.contacts) {
         storeCache.contacts = [];
+      }
+      if (!storeCache.settings) {
+        storeCache.settings = JSON.parse(JSON.stringify(initialData.settings));
+      } else if (!storeCache.settings.developer) {
+        storeCache.settings.developer = JSON.parse(JSON.stringify(initialData.settings.developer));
       }
       if (process.env.VERCEL && !fs.existsSync(DATA_FILE)) {
         saveStore(storeCache);
@@ -385,7 +401,8 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       turnstile_site_key: store.settings.turnstile_site_key || '1x00000000000000000000AA',
       google_search_console: store.settings.google_search_console || '',
       google_analytics_id: store.settings.google_analytics_id || '',
-      custom_head_scripts: store.settings.custom_head_scripts || ''
+      custom_head_scripts: store.settings.custom_head_scripts || '',
+      developer: store.settings.developer || initialData.settings.developer
     });
     return true;
   }
@@ -483,7 +500,8 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       supabase_key: store.settings.supabase_key || '',
       google_search_console: store.settings.google_search_console || '',
       google_analytics_id: store.settings.google_analytics_id || '',
-      custom_head_scripts: store.settings.custom_head_scripts || ''
+      custom_head_scripts: store.settings.custom_head_scripts || '',
+      developer: store.settings.developer || initialData.settings.developer
     });
     return true;
   }
@@ -508,9 +526,42 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     if (body.google_search_console !== undefined) store.settings.google_search_console = body.google_search_console;
     if (body.google_analytics_id !== undefined) store.settings.google_analytics_id = body.google_analytics_id;
     if (body.custom_head_scripts !== undefined) store.settings.custom_head_scripts = body.custom_head_scripts;
+    if (body.developer && typeof body.developer === 'object') {
+      store.settings.developer = {
+        enabled: body.developer.enabled !== false,
+        name: (body.developer.name || 'Shakib Hasan').trim(),
+        title: (body.developer.title || 'Lead Developer & Creator').trim(),
+        bio: (body.developer.bio || '').trim(),
+        avatar_initials: (body.developer.avatar_initials || 'SH').trim(),
+        avatar_image: (body.developer.avatar_image || '').trim(),
+        coffee_button_text: (body.developer.coffee_button_text || 'Buy Me a Coffee (Get a Coffee)').trim(),
+        coffee_link: (body.developer.coffee_link || '').trim(),
+        contact_email: (body.developer.contact_email || 'support@tempemails.site').trim()
+      };
+    }
 
     saveStore(store);
     sendJson(res, 200, { success: true, message: 'Settings successfully updated!' });
+    return true;
+  }
+
+  // 7c. Admin Update Developer Profile Directly
+  if (pathname === '/api/admin/developer' && method === 'POST') {
+    const body = await parseJsonBody(req);
+    const store = getStore();
+    store.settings.developer = {
+      enabled: body.enabled !== false,
+      name: (body.name || 'Shakib Hasan').trim(),
+      title: (body.title || 'Lead Developer & Creator').trim(),
+      bio: (body.bio || '').trim(),
+      avatar_initials: (body.avatar_initials || 'SH').trim(),
+      avatar_image: (body.avatar_image || '').trim(),
+      coffee_button_text: (body.coffee_button_text || 'Buy Me a Coffee (Get a Coffee)').trim(),
+      coffee_link: (body.coffee_link || '').trim(),
+      contact_email: (body.contact_email || 'support@tempemails.site').trim()
+    };
+    saveStore(store);
+    sendJson(res, 200, { success: true, message: 'Developer profile updated successfully!' });
     return true;
   }
 

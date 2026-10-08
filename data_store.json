@@ -14,7 +14,18 @@
     "supabase_key": "",
     "google_search_console": "",
     "google_analytics_id": "",
-    "custom_head_scripts": ""
+    "custom_head_scripts": "",
+    "developer": {
+      "enabled": true,
+      "name": "Shakib Hasan",
+      "title": "Lead Developer & Creator",
+      "bio": "Full-Stack Developer passionate about digital privacy and frictionless web experiences. Built tempemails.site from the ground up to give netizens instant, anonymous temporary email addresses protected by hardware fingerprinting and zero logs.",
+      "avatar_initials": "SH",
+      "avatar_image": "",
+      "coffee_button_text": "Buy Me a Coffee (Get a Coffee)",
+      "coffee_link": "mailto:support@tempemails.site?subject=Coffee%20Support%20for%20Shakib%20Hasan",
+      "contact_email": "support@tempemails.site"
+    }
   },
   "stats": {
     "lifetime_inboxes_created": 1,
