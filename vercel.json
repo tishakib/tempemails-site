@@ -4,10 +4,6 @@
     {
       "source": "/admin-shakib",
       "destination": "/admin-shakib.html"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api"
     }
   ]
 }
