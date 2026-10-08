@@ -52,7 +52,7 @@
         <div>
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Password</label>
           <input type="password" id="admin-password" placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]" required>
-          <p class="text-[11px] text-slate-500 mt-1">Default Password: <code class="text-red-400">shakib2026</code></p>
+          <p class="text-[11px] text-slate-500 mt-1">Username: <code class="text-red-400">admin</code> (or <code class="text-red-400">shakib</code>) &bull; Password: <code class="text-red-400">shakib2026</code></p>
         </div>
 
         <button type="submit" class="w-full py-3 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-red-500/25">
@@ -279,12 +279,34 @@
             <p class="text-[11px] text-slate-500">Official Cloudflare Turnstile testing keys are active by default.</p>
           </div>
 
-          <!-- Change Admin Password -->
-          <div class="pt-4 border-t border-slate-800">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
-              Change Admin Password
-            </label>
-            <input type="password" id="setting-new-password" placeholder="Leave blank to keep current password" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]">
+          <!-- Change Admin Username & Password -->
+          <div class="pt-4 border-t border-slate-800 space-y-4">
+            <div>
+              <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                <span>Admin Login Credentials</span>
+              </h4>
+              <p class="text-xs text-slate-400 mt-0.5">
+                Current Active Username: <span id="current-admin-user" class="font-mono text-emerald-400 font-bold">admin</span>
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                  Change Username
+                </label>
+                <input type="text" id="setting-admin-username" placeholder="admin" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                  Change Password
+                </label>
+                <input type="password" id="setting-new-password" placeholder="Leave blank to keep current" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]">
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500">
+              Note: You can always log in using your custom username or default <code class="text-red-400">admin</code> / <code class="text-red-400">shakib</code>.
+            </p>
           </div>
 
           <button type="submit" class="w-full py-3 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-colors shadow-lg shadow-red-500/25">
@@ -922,6 +944,9 @@ CREATE TABLE IF NOT EXISTS messages (
         document.getElementById('setting-turnstile-enabled').checked = s.turnstile_enabled !== false;
         document.getElementById('setting-turnstile-sitekey').value = s.turnstile_site_key || '';
         document.getElementById('setting-turnstile-secretkey').value = s.turnstile_secret_key || '';
+        document.getElementById('setting-admin-username').value = s.admin_username || 'admin';
+        const userBadge = document.getElementById('current-admin-user');
+        if (userBadge) userBadge.textContent = s.admin_username || 'admin';
         document.getElementById('setting-gsc').value = s.google_search_console || '';
         document.getElementById('setting-ga4').value = s.google_analytics_id || '';
         document.getElementById('setting-head-scripts').value = s.custom_head_scripts || '';
@@ -942,6 +967,7 @@ CREATE TABLE IF NOT EXISTS messages (
         turnstile_enabled: document.getElementById('setting-turnstile-enabled').checked,
         turnstile_site_key: document.getElementById('setting-turnstile-sitekey').value,
         turnstile_secret_key: document.getElementById('setting-turnstile-secretkey').value,
+        admin_username: document.getElementById('setting-admin-username').value.trim() || undefined,
         new_admin_password: document.getElementById('setting-new-password').value || undefined
       };
 
@@ -951,7 +977,11 @@ CREATE TABLE IF NOT EXISTS messages (
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      alert(data.message || 'Settings saved!');
+      if (payload.admin_username) {
+        const userBadge = document.getElementById('current-admin-user');
+        if (userBadge) userBadge.textContent = payload.admin_username;
+      }
+      alert(data.message || 'Settings saved successfully!');
     });
 
     // Save SEO
@@ -1067,7 +1097,7 @@ CREATE TABLE IF NOT EXISTS messages (
     }
 
     function insertAdSenseTemplate(slot) {
-      const template = `<!-- Google AdSense Unit -->\n<ins class="adsbygoogle"\n     style="display:block"\n     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"\n     data-ad-slot="1234567890"\n     data-ad-format="auto"\n     data-full-width-responsive="true"></ins>\n<script>\n     (adsbygoogle = window.adsbygoogle || []).push({});\n</script>`;
+      const template = `<!-- Google AdSense Unit -->\n<ins class="adsbygoogle"\n     style="display:block"\n     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"\n     data-ad-slot="1234567890"\n     data-ad-format="auto"\n     data-full-width-responsive="true"></ins>\n<script>\n     (adsbygoogle = window.adsbygoogle || []).push({});\n<\/script>`;
       const target = document.getElementById(`ad-${slot}-code`);
       if (target) {
         target.value = template;

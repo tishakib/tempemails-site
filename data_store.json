@@ -8,6 +8,7 @@
     "turnstile_enabled": true,
     "turnstile_site_key": "1x00000000000000000000AA",
     "turnstile_secret_key": "",
+    "admin_username": "admin",
     "admin_password": "shakib2026",
     "supabase_url": "",
     "supabase_key": "",

@@ -61,7 +61,7 @@
   <link rel="stylesheet" href="./assets/css/styles.css">
 
   <!-- Cloudflare Turnstile Anti-Bot Protection -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 
   <!-- Structured Data (JSON-LD) for Google SEO -->
   <script type="application/ld+json">
@@ -318,17 +318,17 @@
         <!-- CLOUDFLARE TURNSTILE (BOT PROTECTION) & SECURITY BADGE -->
         <div id="turnstile-wrapper" class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm shrink-0">
+            <div id="turnstile-status-icon" class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm shrink-0">
               ✓
             </div>
             <div>
               <span class="text-xs font-bold text-slate-800 block">Cloudflare Bot Protection Active</span>
-              <span class="text-[11px] text-slate-400">Verifying human visitor to prevent automated script abuse.</span>
+              <span id="turnstile-status-desc" class="text-[11px] text-slate-400">Verifying human visitor to prevent automated script abuse.</span>
             </div>
           </div>
           <!-- Turnstile Widget (Compact) -->
-          <div id="turnstile-widget-container" class="shrink-0">
-            <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="light" data-size="compact"></div>
+          <div id="turnstile-widget-container" class="shrink-0 min-h-[42px] flex items-center justify-center">
+            <div id="cf-turnstile-box"></div>
           </div>
         </div>
 

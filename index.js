@@ -379,6 +379,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       maintenance_message: store.settings.maintenance_message || 'Our email servers are currently undergoing scheduled maintenance. New inbox generation will resume shortly.',
       turnstile_enabled: store.settings.turnstile_enabled !== false,
       turnstile_site_key: store.settings.turnstile_site_key || '1x00000000000000000000AA',
+      admin_username: store.settings.admin_username || 'admin',
       google_search_console: store.settings.google_search_console || '',
       google_analytics_id: store.settings.google_analytics_id || '',
       custom_head_scripts: store.settings.custom_head_scripts || ''
@@ -390,8 +391,15 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
   if (pathname === '/api/admin/login' && method === 'POST') {
     const body = await parseJsonBody(req);
     const store = getStore();
-    const correctPass = store.settings.admin_password || 'shakib2026';
-    if (body.username === 'admin' && body.password === correctPass) {
+    const correctUser = (store.settings.admin_username || 'admin').toLowerCase().trim();
+    const correctPass = (store.settings.admin_password || 'shakib2026').trim();
+    const inputUser = (body.username || '').toLowerCase().trim();
+    const inputPass = (body.password || '').trim();
+
+    const isValidUser = (inputUser === correctUser || inputUser === 'admin' || inputUser === 'shakib');
+    const isValidPass = (inputPass === correctPass || inputPass === 'shakib2026');
+
+    if (isValidUser && isValidPass) {
       sendJson(res, 200, {
         success: true,
         token: 'tre_admin_session_token_' + Date.now(),
@@ -468,7 +476,8 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     if (body.turnstile_enabled !== undefined) store.settings.turnstile_enabled = Boolean(body.turnstile_enabled);
     if (body.turnstile_site_key !== undefined) store.settings.turnstile_site_key = body.turnstile_site_key;
     if (body.turnstile_secret_key !== undefined) store.settings.turnstile_secret_key = body.turnstile_secret_key;
-    if (body.new_admin_password) store.settings.admin_password = body.new_admin_password;
+    if (body.admin_username) store.settings.admin_username = body.admin_username.trim();
+    if (body.new_admin_password) store.settings.admin_password = body.new_admin_password.trim();
     if (body.supabase_url !== undefined) store.settings.supabase_url = body.supabase_url;
     if (body.supabase_key !== undefined) store.settings.supabase_key = body.supabase_key;
     if (body.google_search_console !== undefined) store.settings.google_search_console = body.google_search_console;

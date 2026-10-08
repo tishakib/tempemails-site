@@ -77,10 +77,13 @@ async function initApp() {
       if (policyMaxInboxes) policyMaxInboxes.textContent = data.max_inboxes_per_user || 7;
       if (policyMaxChanges) policyMaxChanges.textContent = data.max_email_changes_per_inbox || 3;
 
-      // Handle Turnstile Visibility
+      // Handle Cloudflare Turnstile Anti-Bot
+      const turnstileWrap = document.getElementById('turnstile-wrapper');
       if (data.turnstile_enabled === false) {
-        const turnstileWrap = document.getElementById('turnstile-wrapper');
         if (turnstileWrap) turnstileWrap.classList.add('hidden');
+      } else {
+        if (turnstileWrap) turnstileWrap.classList.remove('hidden');
+        renderCloudflareTurnstile(data.turnstile_site_key);
       }
 
       // Inject Google Search Console if provided
@@ -1073,6 +1076,56 @@ async function loadAndRenderAds() {
   }
 }
 
+// Render Cloudflare Turnstile explicitly and safely
+function renderCloudflareTurnstile(siteKey) {
+  const box = document.getElementById('cf-turnstile-box');
+  if (!box) return;
+  const key = (siteKey && siteKey.trim()) ? siteKey.trim() : '1x00000000000000000000AA';
+
+  function tryMount() {
+    if (window.turnstile && document.getElementById('cf-turnstile-box')) {
+      try {
+        box.innerHTML = '';
+        window.turnstile.render('#cf-turnstile-box', {
+          sitekey: key,
+          theme: 'light',
+          size: 'compact',
+          callback: function(token) {
+            window.turnstileToken = token;
+            const desc = document.getElementById('turnstile-status-desc');
+            if (desc) {
+              desc.textContent = 'Human visitor verified successfully.';
+              desc.className = 'text-[11px] font-semibold text-emerald-600';
+            }
+          },
+          'error-callback': function() {
+            console.log('Turnstile challenge error for site key:', key);
+            const desc = document.getElementById('turnstile-status-desc');
+            if (desc) {
+              desc.textContent = 'Cloudflare anti-bot security active.';
+            }
+          }
+        });
+        return true;
+      } catch (err) {
+        console.log('Turnstile render exception:', err);
+      }
+    }
+    return false;
+  }
+
+  if (!tryMount()) {
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      if (tryMount() || attempts > 25) {
+        clearInterval(interval);
+      }
+    }, 200);
+  }
+}
+
 // On DOM Ready
 document.addEventListener('DOMContentLoaded', initApp);
+
 
