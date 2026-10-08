@@ -1,0 +1,200 @@
+:root {
+  --brand-primary: #F4413D;
+  --brand-primary-hover: #D7302C;
+  --brand-primary-light: #FEE2E2;
+  --brand-primary-subtle: #FFF5F5;
+  --brand-navy: #0F172A;
+  --brand-slate: #1E293B;
+  --brand-border: #E2E8F0;
+  --brand-bg: #F8FAFC;
+}
+
+/* Custom Base & Smooth Fonts */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--brand-bg);
+  color: #1E293B;
+  overflow-x: hidden;
+}
+
+/* Gmail Style Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244, 65, 61, 0.3); }
+  50% { box-shadow: 0 0 0 10px rgba(244, 65, 61, 0); }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2.5s infinite;
+}
+
+/* Gmail-like Inbox Rows */
+.gmail-row {
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.gmail-row:hover {
+  background-color: #F8FAFC;
+  box-shadow: inset 1px 0 0 #DADCE0, inset -1px 0 0 #DADCE0, 0 1px 2px 0 rgba(60,64,67,0.15);
+  z-index: 2;
+}
+
+.gmail-row.unread {
+  background-color: #FFFFFF;
+  font-weight: 600;
+}
+
+.gmail-row.unread::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--brand-primary);
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.gmail-row.read {
+  background-color: #F8FAFC;
+  color: #475569;
+}
+
+.gmail-row .hover-actions {
+  display: none;
+}
+
+.gmail-row:hover .hover-actions {
+  display: flex;
+}
+
+.gmail-row:hover .row-date {
+  display: none;
+}
+
+/* Ad Placement Placeholders (Google AdSense Ready) */
+.ad-slot-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #CBD5E1;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.ad-slot-container:hover {
+  border-color: #94A3B8;
+}
+
+.ad-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: #94A3B8;
+  padding: 2px 8px;
+  background: #FFFFFF;
+  border-radius: 4px;
+  border: 1px solid #E2E8F0;
+  margin-bottom: 4px;
+}
+
+/* Skyscraper Ads on Desktop */
+.ad-skyscraper {
+  min-width: 160px;
+  max-width: 160px;
+  min-height: 600px;
+  position: sticky;
+  top: 90px;
+}
+
+@media (min-width: 1400px) {
+  .ad-skyscraper {
+    min-width: 300px;
+    max-width: 300px;
+    min-height: 600px;
+  }
+}
+
+/* Leaderboard Banner Ads */
+.ad-leaderboard {
+  width: 100%;
+  max-width: 970px;
+  min-height: 90px;
+  margin: 0 auto;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Toast Notification */
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background: #0F172A;
+  color: #FFFFFF;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.toast.success {
+  border-left: 4px solid #10B981;
+}
+
+.toast.info {
+  border-left: 4px solid var(--brand-primary);
+}
+
+.toast.warning {
+  border-left: 4px solid #F59E0B;
+}

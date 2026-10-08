@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary SEO Meta Tags -->
+  <title>tempemails.site - Free Disposable Temporary Email Service | 100% Anonymous</title>
+  <meta name="title" content="tempemails.site - Free Disposable Temporary Email Service | 100% Anonymous">
+  <meta name="description" content="Generate instant, disposable temporary email addresses with tempemails.site. Manage up to 5 concurrent inboxes, copy verification OTPs in 1 click, and protect your privacy from spam.">
+  <meta name="keywords" content="temp mail, temporary email, disposable email, 10 minute mail, fake email, throwaway email, anonymous email, spam protection, tempemails.site">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://tempemails.site/">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tempemails.site/">
+  <meta property="og:title" content="tempemails.site - Fast & Secure Disposable Temp Mail">
+  <meta property="og:description" content="Keep your real email clean. Create up to 5 temporary emails, receive OTP codes instantly, and block junk mail.">
+  <meta property="og:image" content="https://tempemails.site/assets/img/og-preview.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://tempemails.site/">
+  <meta property="twitter:title" content="tempemails.site - Free Disposable Temporary Email Service">
+  <meta property="twitter:description" content="Protect your identity with temporary inboxes. Fast, free, and secure.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#F4413D',
+              hover: '#D7302C',
+              light: '#FEE2E2',
+              subtle: '#FFF5F5',
+              navy: '#0F172A',
+              slate: '#1E293B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="./assets/css/styles.css">
+
+  <!-- Cloudflare Turnstile Anti-Bot Protection -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+  <!-- Structured Data (JSON-LD) for Google SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "tempemails.site",
+    "url": "https://tempemails.site/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "description": "Free, anonymous disposable temporary email service allowing users to manage up to 5 concurrent inboxes with automatic OTP extraction.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo (TRE emblem + tempemails.site) -->
+      <a href="./index.html" class="flex items-center gap-3 group">
+        <!-- Stylized Logo Icon (Easily replaceable) -->
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#F4413D] to-red-500 text-white flex items-center justify-center font-black tracking-tight text-sm shadow-md shadow-red-500/20 group-hover:scale-105 transition-transform">
+          TRE
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            tempemails<span class="text-[#F4413D]">.site</span>
+          </span>
+          <span class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">Disposable Mail Service</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+        <a href="./index.html" class="text-[#F4413D] font-bold">Home</a>
+        <a href="./about.html" class="hover:text-slate-900 transition-colors">About Us</a>
+        <a href="./faq.html" class="hover:text-slate-900 transition-colors">FAQ</a>
+        <a href="./blog.html" class="hover:text-slate-900 transition-colors">Blog / Guides</a>
+        <a href="./privacy.html" class="hover:text-slate-900 transition-colors">Privacy</a>
+        <a href="./terms.html" class="hover:text-slate-900 transition-colors">Terms</a>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          System Live
+        </div>
+        <!-- Mobile Menu Toggle Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-4 space-y-2 text-sm font-medium">
+      <a href="./index.html" class="block py-2 text-[#F4413D] font-bold">Home</a>
+      <a href="./about.html" class="block py-2 text-slate-700 hover:text-slate-900">About Us</a>
+      <a href="./faq.html" class="block py-2 text-slate-700 hover:text-slate-900">FAQ</a>
+      <a href="./blog.html" class="block py-2 text-slate-700 hover:text-slate-900">Blog / Guides</a>
+      <a href="./privacy.html" class="block py-2 text-slate-700 hover:text-slate-900">Privacy Policy</a>
+      <a href="./terms.html" class="block py-2 text-slate-700 hover:text-slate-900">Terms of Service</a>
+    </div>
+  </header>
+
+  <!-- TOP AD BANNER (Leaderboard 728x90) -->
+  <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+    <div class="ad-slot-container ad-leaderboard py-4 px-2">
+      <span class="ad-badge">Sponsored Advertisement</span>
+      <div class="text-xs text-slate-400 font-mono">Google AdSense / Top Leaderboard Slot (728x90)</div>
+      <!-- Future Google AdSense Code Tag:
+      <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-XXXXX" data-ad-slot="XXXXX"></ins>
+      -->
+    </div>
+  </section>
+
+  <!-- MAIN 3-COLUMN CONTENT AREA -->
+  <main class="flex-1 max-w-[1600px] mx-auto w-full px-2 sm:px-4 lg:px-6 py-4">
+    <div class="flex flex-col lg:flex-row gap-4 items-start justify-center">
+
+      <!-- LEFT SIDEBAR AD (Skyscraper 160x600 or 300x600) -->
+      <aside class="hidden xl:block shrink-0">
+        <div class="ad-slot-container ad-skyscraper p-3 flex flex-col justify-between">
+          <span class="ad-badge">Advertisement</span>
+          <div class="text-xs text-slate-400 font-mono">
+            Left Sticky Ad<br>(160x600 / 300x600)
+          </div>
+          <div class="text-[10px] text-slate-400">tempemails.site Ads</div>
+        </div>
+      </aside>
+
+      <!-- CENTER APPLICATION COLUMN (Email Box & Gmail Inbox) -->
+      <div class="w-full max-w-4xl shrink mx-auto flex flex-col gap-5">
+
+        <!-- INTERACTIVE EMAIL APP CONTAINER (Can be blurred during maintenance) -->
+        <div id="email-app-wrapper" class="relative flex flex-col gap-5">
+
+          <!-- Maintenance Blur Overlay (Triggered by Admin Master Switch) -->
+          <div id="maintenance-overlay" class="hidden absolute inset-0 z-30 backdrop-blur-md bg-white/75 rounded-2xl flex flex-col items-center justify-center p-6 text-center animate-fade-in border border-amber-200/80 shadow-2xl">
+            <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-3xl mb-4 shadow-sm">
+              🛠️
+            </div>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 mb-2">Service Under Maintenance</h3>
+            <p id="maintenance-overlay-text" class="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed mb-4">
+              Our email servers are currently undergoing scheduled maintenance. New inbox generation will resume shortly. Thank you for your patience!
+            </p>
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded-full border border-amber-200">
+              <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+              Existing inboxes remain accessible
+            </div>
+          </div>
+
+          <!-- 1. ACTIVE INBOXES TABS (5-Email Slot Selector) -->
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div id="slot-tabs-container">
+              <!-- Dynamically populated by app.js with up to 5 inboxes -->
+            </div>
+          </div>
+
+        <!-- 2. CURRENT ACTIVE EMAIL DISPLAY & ACTION BAR -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-6 relative overflow-hidden">
+          
+          <!-- Subtle Gradient Accent Top Line -->
+          <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#F4413D] via-red-400 to-rose-500"></div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            
+            <!-- Email Address Box -->
+            <div class="flex-1 min-w-0">
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                Your Temporary Email Address
+              </label>
+              <div class="flex items-center gap-2">
+                <span id="current-email-text" class="text-lg sm:text-2xl font-mono font-bold text-slate-900 truncate tracking-tight select-all">
+                  loading@tempemails.site
+                </span>
+              </div>
+            </div>
+
+            <!-- Action Buttons Group -->
+            <div class="flex items-center flex-wrap gap-2 shrink-0">
+              
+              <!-- 1-Click Copy Button -->
+              <button 
+                id="btn-copy-email"
+                onclick="copyCurrentEmail()" 
+                class="flex items-center gap-1.5 px-4 py-2.5 bg-[#F4413D] hover:bg-red-600 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-red-500/25 active:scale-95 transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span>Copy</span>
+              </button>
+
+              <!-- QR Code Button -->
+              <button 
+                onclick="openQrModal()"
+                title="Scan QR Code on Mobile"
+                class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                </svg>
+              </button>
+
+              <!-- Random / Change Button -->
+              <button 
+                id="btn-change-email"
+                onclick="randomizeCurrentEmail()"
+                title="Generate New Address"
+                class="flex items-center gap-1.5 px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition-colors">
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span id="btn-change-text">Change</span>
+              </button>
+
+              <!-- Delete Current Button -->
+              <button 
+                onclick="deleteInboxSlot(state.activeIndex)"
+                title="Delete this inbox"
+                class="p-2.5 bg-slate-100 hover:bg-red-50 text-slate-500 hover:text-red-600 text-xs sm:text-sm rounded-xl transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+
+            </div>
+
+          </div>
+
+          <!-- Bottom Status & Auto Refresh Bar -->
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span>Autorefreshing every 15s</span>
+              <span id="refresh-timer-count" class="font-mono font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">15s</span>
+            </div>
+            <button 
+              onclick="triggerInboxRefresh(true)"
+              class="flex items-center gap-1 font-semibold text-slate-600 hover:text-[#F4413D] transition-colors">
+              <svg id="refresh-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Refresh Now
+            </button>
+          </div>
+
+        </div>
+
+        <!-- 3. GMAIL-STYLE INBOX CONTAINER -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col min-h-[460px]">
+          
+          <!-- Gmail-like Top Header & Action Toolbar -->
+          <div class="bg-slate-50/80 px-4 py-3 border-b border-slate-200 flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+              <span class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#F4413D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+                Inbox
+              </span>
+              <span id="inbox-count-badge" class="px-2 py-0.5 text-xs font-semibold bg-red-100 text-[#F4413D] rounded-full">
+                0 unread
+              </span>
+            </div>
+
+            <!-- Toolbar Action Icons -->
+            <div class="flex items-center gap-1.5">
+              <button 
+                onclick="triggerInboxRefresh(true)"
+                title="Refresh Inbox" 
+                class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 rounded-lg transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+              <button 
+                onclick="clearCurrentInbox()"
+                title="Clear all messages" 
+                class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Inbox Message List View -->
+          <div id="inbox-messages-container" class="flex-1 overflow-y-auto">
+            <!-- Rendered by app.js -->
+          </div>
+
+          <!-- Message Reading Pane (Gmail Viewer) -->
+          <div id="message-reader-container" class="hidden flex-1 p-6 overflow-y-auto">
+            <!-- Rendered by app.js when an email is clicked -->
+          </div>
+
+        </div>
+
+        </div> <!-- /#email-app-wrapper -->
+
+        <!-- CLOUDFLARE TURNSTILE (BOT PROTECTION) & SECURITY BADGE -->
+        <div id="turnstile-wrapper" class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm shrink-0">
+              ✓
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-800 block">Cloudflare Bot Protection Active</span>
+              <span class="text-[11px] text-slate-400">Verifying human visitor to prevent automated script abuse.</span>
+            </div>
+          </div>
+          <!-- Turnstile Widget (Compact) -->
+          <div id="turnstile-widget-container" class="shrink-0">
+            <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="light" data-size="compact"></div>
+          </div>
+        </div>
+
+        <!-- LIVE DYNAMIC RETENTION & SERVICE POLICY CARD -->
+        <div class="bg-gradient-to-r from-red-50/60 via-white to-slate-50 border border-red-100 p-5 rounded-2xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-xl bg-[#F4413D] text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
+              ⏳
+            </div>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-[#F4413D]">Active Service Policy</h4>
+              <p class="text-xs sm:text-sm text-slate-700 font-medium mt-0.5">
+                Inboxes safely backed up for <strong id="policy-retention-days" class="text-slate-900 font-extrabold font-mono">7 Days</strong> unless manually deleted.
+              </p>
+              <p class="text-[11px] text-slate-400 mt-0.5">All messages automatically purged permanently upon expiration.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-semibold shrink-0">
+            <span class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-700 shadow-xs">
+              Limit: <span id="policy-max-inboxes" class="font-bold text-[#F4413D]">7</span> Inboxes
+            </span>
+            <span class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-700 shadow-xs">
+              Changes: <span id="policy-max-changes" class="font-bold text-slate-900">3</span> Allowed
+            </span>
+          </div>
+        </div>
+
+        <!-- 4. IN-FEED AD BANNER (Below Inbox) -->
+        <div class="ad-slot-container ad-leaderboard py-4 px-2 my-1">
+          <span class="ad-badge">Advertisement</span>
+          <div class="text-xs text-slate-400 font-mono">In-Feed Responsive Ad Banner (728x90)</div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT SIDEBAR AD (Skyscraper 160x600 or 300x600) -->
+      <aside class="hidden xl:block shrink-0">
+        <div class="ad-slot-container ad-skyscraper p-3 flex flex-col justify-between">
+          <span class="ad-badge">Advertisement</span>
+          <div class="text-xs text-slate-400 font-mono">
+            Right Sticky Ad<br>(160x600 / 300x600)
+          </div>
+          <div class="text-[10px] text-slate-400">tempemails.site Ads</div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- SEO CONTENT & INFORMATIVE SECTIONS (Crucial for Google AdSense & SEO Ranking) -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+    
+    <!-- 1. How It Works (3 Steps) -->
+    <div>
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+          How <span class="text-[#F4413D]">tempemails.site</span> Works
+        </h2>
+        <p class="text-slate-600 mt-2 text-sm sm:text-base">
+          Receive verification emails, OTP codes, and activations without revealing your real identity in 3 simple steps.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm relative">
+          <div class="w-10 h-10 rounded-xl bg-red-100 text-[#F4413D] flex items-center justify-center font-bold text-lg mb-4">
+            1
+          </div>
+          <h3 class="font-bold text-slate-900 text-lg mb-2">Get Your Temp Email</h3>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            As soon as you visit our homepage, a clean disposable email is auto-generated. You can also create up to 5 inboxes simultaneously.
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm relative">
+          <div class="w-10 h-10 rounded-xl bg-red-100 text-[#F4413D] flex items-center justify-center font-bold text-lg mb-4">
+            2
+          </div>
+          <h3 class="font-bold text-slate-900 text-lg mb-2">Use It Anywhere</h3>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Copy the email and paste it during sign-ups on forums, Wi-Fi portals, social networks, or websites requiring email verification.
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm relative">
+          <div class="w-10 h-10 rounded-xl bg-red-100 text-[#F4413D] flex items-center justify-center font-bold text-lg mb-4">
+            3
+          </div>
+          <h3 class="font-bold text-slate-900 text-lg mb-2">Read & Auto-Expire</h3>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Emails appear in your live Gmail-style inbox within seconds. OTP codes are extracted in 1 click, and all messages safely expire automatically.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Why Use Disposable Email (SEO Authority Text) -->
+    <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm">
+      <h2 class="text-2xl font-bold text-slate-900 mb-4">
+        Why Should You Use a Temporary Disposable Email?
+      </h2>
+      <div class="prose prose-slate text-sm sm:text-base text-slate-600 leading-relaxed space-y-4">
+        <p>
+          Every day, internet users are required to submit their personal email address to download whitepapers, register for trials, test web services, or access public Wi-Fi hotspots. Unfortunately, this exposes your primary mailbox to spam bots, aggressive marketing newsletters, tracking cookies, and severe data breaches.
+        </p>
+        <p>
+          <strong>tempemails.site</strong> solves this problem by providing completely anonymous, disposable, and secure mailboxes. You don't need any password, registration, or credit card. It acts as an impenetrable shield between unknown internet websites and your primary personal email.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-100">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">✓</div>
+          <span class="text-xs font-semibold text-slate-800">100% Free Forever</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">✓</div>
+          <span class="text-xs font-semibold text-slate-800">No Passwords or Signup</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">✓</div>
+          <span class="text-xs font-semibold text-slate-800">Instant OTP Extraction</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">✓</div>
+          <span class="text-xs font-semibold text-slate-800">Automatic Message Cleanup</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Frequently Asked Questions (FAQ Accordion) -->
+    <div>
+      <h2 class="text-2xl font-bold text-slate-900 mb-6 text-center">Frequently Asked Questions</h2>
+      <div class="space-y-3 max-w-3xl mx-auto">
+        
+        <details class="group bg-white rounded-xl border border-slate-200 p-4 transition-all">
+          <summary class="flex justify-between items-center font-semibold text-slate-900 cursor-pointer text-sm sm:text-base">
+            <span>What is tempemails.site?</span>
+            <span class="transition group-open:rotate-180">
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+            tempemails.site is a free disposable email service that allows you to receive emails at a temporary address without registration. It helps keep your personal email safe from spam, advertising mailings, and malware.
+          </p>
+        </details>
+
+        <details class="group bg-white rounded-xl border border-slate-200 p-4 transition-all">
+          <summary class="flex justify-between items-center font-semibold text-slate-900 cursor-pointer text-sm sm:text-base">
+            <span>How many emails can I create?</span>
+            <span class="transition group-open:rotate-180">
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+            You can have up to 5 concurrent active inboxes at the same time. If you need a new one, you can delete an existing one or click "Change" to regenerate it.
+          </p>
+        </details>
+
+        <details class="group bg-white rounded-xl border border-slate-200 p-4 transition-all">
+          <summary class="flex justify-between items-center font-semibold text-slate-900 cursor-pointer text-sm sm:text-base">
+            <span>How long do my messages remain valid?</span>
+            <span class="transition group-open:rotate-180">
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+            Messages are preserved for your active session and automatically purged from our servers to protect your privacy. Do not use temporary email for long-term critical accounts like banking.
+          </p>
+        </details>
+
+        <details class="group bg-white rounded-xl border border-slate-200 p-4 transition-all">
+          <summary class="flex justify-between items-center font-semibold text-slate-900 cursor-pointer text-sm sm:text-base">
+            <span>Can I send emails from tempemails.site?</span>
+            <span class="transition group-open:rotate-180">
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+            No, tempemails.site is strictly an inbound-only receiving service to eliminate any possibility of spam abuse or outbound harassment.
+          </p>
+        </details>
+
+      </div>
+    </div>
+
+    <!-- 4. Terms & Safety Notice -->
+    <div class="bg-amber-50/60 border border-amber-200 p-5 rounded-xl text-xs sm:text-sm text-amber-900 flex items-start gap-3">
+      <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <div>
+        <strong>Disclaimer & Acceptable Use:</strong> tempemails.site is designed for testing, privacy protection, and one-off registrations. Never use temporary disposable emails for banking, cryptocurrency wallets, tax filings, or sensitive legal communications.
+      </div>
+    </div>
+
+  </section>
+
+  <!-- BOTTOM AD BANNER (Leaderboard 728x90) -->
+  <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+    <div class="ad-slot-container ad-leaderboard py-4 px-2">
+      <span class="ad-badge">Sponsored Advertisement</span>
+      <div class="text-xs text-slate-400 font-mono">Google AdSense / Bottom Leaderboard Slot (728x90)</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        
+        <!-- Brand Info -->
+        <div class="space-y-4 md:col-span-1">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-[#F4413D] text-white flex items-center justify-center font-bold text-xs">
+              TRE
+            </div>
+            <span class="text-lg font-bold text-slate-900">tempemails<span class="text-[#F4413D]">.site</span></span>
+          </div>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            The modern, privacy-focused disposable temporary email service. Shielding inboxes from spam and tracking since 2026.
+          </p>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Navigation</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="./index.html" class="hover:text-[#F4413D] transition-colors">Home</a></li>
+            <li><a href="./about.html" class="hover:text-[#F4413D] transition-colors">About Us</a></li>
+            <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">FAQ</a></li>
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Articles & News</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal & Compliance (AdSense Required) -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Legal & Privacy</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="./privacy.html" class="hover:text-[#F4413D] transition-colors">Privacy Policy</a></li>
+            <li><a href="./terms.html" class="hover:text-[#F4413D] transition-colors">Terms of Service</a></li>
+            <li><a href="./privacy.html#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
+            <li><a href="./about.html#contact" class="hover:text-[#F4413D] transition-colors">Contact Support</a></li>
+          </ul>
+        </div>
+
+        <!-- AdSense & Partner Info -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Features</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><span>⚡ 5 Active Inboxes</span></li>
+            <li><span>🔑 Instant OTP Copier</span></li>
+            <li><span>🛡️ 100% Zero Logging</span></li>
+            <li><span>📱 Mobile QR Scanner</span></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Copyright -->
+      <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+        <p>&copy; 2026 tempemails.site. All rights reserved.</p>
+        <p>Built with privacy in mind.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- QR CODE MODAL -->
+  <div id="qr-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl relative animate-fade-in">
+      <button onclick="closeQrModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="w-12 h-12 bg-red-50 text-[#F4413D] rounded-xl mx-auto flex items-center justify-center mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+        </svg>
+      </div>
+
+      <h3 class="font-bold text-slate-900 text-lg mb-1">Scan QR Code</h3>
+      <p class="text-xs text-slate-500 mb-4">Open this temporary inbox directly on your mobile device</p>
+
+      <div class="bg-slate-50 p-3 rounded-xl inline-block border border-slate-200 mb-3">
+        <img id="qr-modal-image" src="" alt="QR Code" class="w-48 h-48 mx-auto rounded-lg">
+      </div>
+
+      <p id="qr-modal-email" class="font-mono text-xs text-slate-700 font-bold truncate max-w-xs mx-auto mb-4"></p>
+
+      <button onclick="copyCurrentEmail(); closeQrModal();" class="w-full py-2.5 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-xs transition-colors">
+        Copy Email & Close
+      </button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- Mobile Menu Toggle Script -->
+  <script>
+    document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+  </script>
+
+  <!-- Utilities (Audio Chime & Device Detection) -->
+  <script src="./assets/js/utils.js"></script>
+  <!-- Client Application Script -->
+  <script src="./assets/js/app.js"></script>
+
+</body>
+</html>

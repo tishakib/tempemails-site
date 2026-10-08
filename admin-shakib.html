@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal - tempemails.site</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#F4413D',
+              navy: '#0F172A',
+              slate: '#1E293B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+<body class="bg-[#0B0F19] text-slate-100 font-sans antialiased min-h-screen">
+
+  <!-- 1. AUTH LOGIN OVERLAY (Shows when not logged in) -->
+  <div id="login-modal" class="fixed inset-0 z-50 bg-[#0B0F19]/95 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-xl bg-[#F4413D] text-white flex items-center justify-center font-black text-base mx-auto mb-3 shadow-lg shadow-red-500/30">
+          TRE
+        </div>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Admin Portal</h2>
+        <p class="text-xs text-slate-400 mt-1">tempemails.site Master Control Panel</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Username</label>
+          <input type="text" id="admin-username" value="admin" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]" required>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Password</label>
+          <input type="password" id="admin-password" placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]" required>
+          <p class="text-[11px] text-slate-500 mt-1">Default Password: <code class="text-red-400">shakib2026</code></p>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-red-500/25">
+          Sign In to Portal &rarr;
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. MAIN ADMIN DASHBOARD (Visible upon login) -->
+  <div id="admin-app" class="hidden min-h-screen flex flex-col">
+    
+    <!-- Top Navbar -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-[#F4413D] text-white flex items-center justify-center font-black text-sm">
+            TRE
+          </div>
+          <div>
+            <span class="font-extrabold text-white text-base tracking-tight">tempemails<span class="text-[#F4413D]">.site</span></span>
+            <span class="ml-2 px-2 py-0.5 text-[10px] bg-red-500/20 text-red-400 font-bold rounded-full border border-red-500/30">ADMIN PORTAL</span>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="hidden md:flex items-center gap-2">
+          <button onclick="switchTab('tab-overview')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors bg-[#F4413D] text-white" data-tab="tab-overview">Overview</button>
+          <button onclick="switchTab('tab-inboxes')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-inboxes">Live Inboxes</button>
+          <button onclick="switchTab('tab-settings')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-settings">System Limits</button>
+          <button onclick="switchTab('tab-seo')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-seo">Google SEO</button>
+          <button onclick="switchTab('tab-blogs')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-blogs">Blog CMS</button>
+          <button onclick="switchTab('tab-supabase')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-supabase">Supabase</button>
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <a href="./index.html" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg transition-colors flex items-center gap-1">
+            <span>View Website</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+          </a>
+          <button onclick="logoutAdmin()" class="px-3 py-1.5 text-xs text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1">
+      
+      <!-- TAB 1: OVERVIEW & STATS -->
+      <section id="tab-overview" class="tab-content space-y-8">
+        
+        <!-- Metrics Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Inboxes Created</span>
+            <div id="stat-total-inboxes" class="text-3xl font-extrabold text-white mt-2">--</div>
+            <div class="text-[11px] text-emerald-400 mt-2 flex items-center gap-1">
+              <span>Lifetime generated</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Inboxes Right Now</span>
+            <div id="stat-active-inboxes" class="text-3xl font-extrabold text-[#F4413D] mt-2">--</div>
+            <div class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
+              <span>Currently in 7-day retention cycle</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Created Last 24 Hours</span>
+            <div id="stat-today-inboxes" class="text-3xl font-extrabold text-amber-400 mt-2">--</div>
+            <div class="text-[11px] text-slate-400 mt-2">Today's new visitors</div>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Messages Processed</span>
+            <div id="stat-total-messages" class="text-3xl font-extrabold text-sky-400 mt-2">--</div>
+            <div class="text-[11px] text-slate-400 mt-2">Emails & OTPs received</div>
+          </div>
+
+        </div>
+
+        <!-- 7-Day Purge & System Status Card -->
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold text-xl">
+              ⏳
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-base">7-Day Retention & Auto-Purge Active</h3>
+              <p class="text-xs text-slate-400 mt-0.5">
+                Inboxes remain active for 7 days. Background cron automatically deletes expired inboxes permanently.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="px-3 py-1 bg-slate-800 text-xs font-mono text-slate-300 rounded-lg">Purge Interval: 15 mins</span>
+            <button onclick="loadAdminStats()" class="px-4 py-2 bg-[#F4413D] hover:bg-red-600 text-white text-xs font-bold rounded-lg transition-colors">
+              Refresh Stats
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 2: LIVE INBOXES & AUDIT INSPECTOR -->
+      <section id="tab-inboxes" class="tab-content hidden space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-white">Live Inboxes Monitor</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Audit active temporary addresses and read incoming messages</p>
+          </div>
+          <button onclick="loadAdminInboxes()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs text-white rounded-lg transition-colors">
+            ↻ Reload Inboxes
+          </button>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+                <tr>
+                  <th class="py-3 px-4">Temporary Address</th>
+                  <th class="py-3 px-4">Device Identifier</th>
+                  <th class="py-3 px-4">Messages</th>
+                  <th class="py-3 px-4">Created Date</th>
+                  <th class="py-3 px-4">Auto-Purge Date</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inboxes-table-body" class="divide-y divide-slate-800 text-slate-300">
+                <tr><td colspan="6" class="py-8 text-center text-slate-500">Loading inboxes...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: SYSTEM LIMITS & SETTINGS -->
+      <section id="tab-settings" class="tab-content hidden max-w-2xl space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-white">System Limits & Controls</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Control concurrent inboxes per device and master kill switch</p>
+        </div>
+
+        <form id="settings-form" class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-6">
+          
+          <!-- Max Inboxes Per User -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              Max Active Inboxes Per Device / User
+            </label>
+            <input type="number" id="setting-max-inboxes" min="1" max="25" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]">
+            <p class="text-[11px] text-slate-500 mt-1">Users can hold this many inboxes at once (e.g. 5, 7, 10). If they delete one, they can create another.</p>
+          </div>
+
+          <!-- Max Changes Per Inbox -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              Max Address Changes Allowed Per Inbox (Change Limit)
+            </label>
+            <input type="number" id="setting-max-changes" min="1" max="15" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]">
+            <p class="text-[11px] text-slate-500 mt-1">Limits how many times a user can click the "Change" button on a temporary address (e.g. 2, 3, or 5 times).</p>
+          </div>
+
+          <!-- Retention Days -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              Inbox Retention Period (Days)
+            </label>
+            <input type="number" id="setting-retention-days" min="1" max="30" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]">
+            <p class="text-[11px] text-slate-500 mt-1">Default is 7 days. After this time, inbox and all emails are permanently deleted.</p>
+          </div>
+
+          <!-- Master Kill Switch -->
+          <div class="pt-4 border-t border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="block text-sm font-bold text-white">Service Master Switch (Pause Email Creation)</span>
+                <span class="text-xs text-slate-400">Toggle off to pause email creation during maintenance.</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="setting-service-enabled" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#F4413D]"></div>
+              </label>
+            </div>
+
+            <!-- Custom Maintenance Notice Message -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                Maintenance Notice Message (Displays over blurred email box when paused)
+              </label>
+              <textarea id="setting-maintenance-msg" rows="2" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-[#F4413D]"></textarea>
+              <p class="text-[11px] text-slate-500 mt-1">When paused, the frontend email box will blur and float this message gracefully.</p>
+            </div>
+          </div>
+
+          <!-- Cloudflare Turnstile Bot Protection -->
+          <div class="pt-4 border-t border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="block text-sm font-bold text-white">Cloudflare Turnstile (Anti-Bot CAPTCHA)</span>
+                <span class="text-xs text-slate-400">Prevents scripts and automated bots from creating unlimited addresses.</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="setting-turnstile-enabled" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#F4413D]"></div>
+              </label>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-400 uppercase mb-1">Turnstile Site Key</label>
+                <input type="text" id="setting-turnstile-sitekey" placeholder="1x00000000000000000000AA" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-[#F4413D]">
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-400 uppercase mb-1">Turnstile Secret Key</label>
+                <input type="password" id="setting-turnstile-secretkey" placeholder="1x0000000000000000000000000000000AA" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-[#F4413D]">
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500">Official Cloudflare Turnstile testing keys are active by default.</p>
+          </div>
+
+          <!-- Change Admin Password -->
+          <div class="pt-4 border-t border-slate-800">
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              Change Admin Password
+            </label>
+            <input type="password" id="setting-new-password" placeholder="Leave blank to keep current password" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#F4413D]">
+          </div>
+
+          <button type="submit" class="w-full py-3 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-colors shadow-lg shadow-red-500/25">
+            Save System Settings
+          </button>
+        </form>
+      </section>
+
+      <!-- TAB 4: GOOGLE SEO & CODE INJECTION -->
+      <section id="tab-seo" class="tab-content hidden max-w-2xl space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-white">Google SEO & Code Injection</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Inject Google Search Console meta tags, Google Analytics, and AdSense codes</p>
+        </div>
+
+        <form id="seo-form" class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-5">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              Google Search Console Verification Tag
+            </label>
+            <input type="text" id="setting-gsc" placeholder="google-site-verification=XXXXXXXXXXXXXXXXXXXX" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#F4413D]">
+            <p class="text-[11px] text-slate-500 mt-1">Paste your Google Search Console verification code here.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              Google Analytics Measurement ID (GA4)
+            </label>
+            <input type="text" id="setting-ga4" placeholder="G-XXXXXXXXXX" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#F4413D]">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              Custom Header Script (Google AdSense Auto-Ads / Meta)
+            </label>
+            <textarea id="setting-head-scripts" rows="4" placeholder="<script ...></script>" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-[#F4413D]"></textarea>
+          </div>
+
+          <button type="submit" class="w-full py-3 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-colors">
+            Update SEO & Scripts
+          </button>
+        </form>
+      </section>
+
+      <!-- TAB 5: BLOG CMS -->
+      <section id="tab-blogs" class="tab-content hidden space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-white">Blog & Articles CMS</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Publish articles to boost Google ranking and AdSense approval</p>
+          </div>
+          <button onclick="document.getElementById('new-blog-modal').classList.remove('hidden')" class="px-4 py-2 bg-[#F4413D] hover:bg-red-600 text-white font-bold text-xs rounded-xl transition-colors">
+            + Add New Article
+          </button>
+        </div>
+
+        <div id="blog-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Rendered by admin JS -->
+        </div>
+      </section>
+
+      <!-- TAB 6: SUPABASE DATABASE CONFIGURATION -->
+      <section id="tab-supabase" class="tab-content hidden max-w-2xl space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-white">Supabase Cloud Database</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Connect your free Supabase PostgreSQL database</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-5">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Supabase Project URL</label>
+            <input type="text" id="setting-supabase-url" placeholder="https://xyzcompany.supabase.co" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#F4413D]">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Supabase Anon Key</label>
+            <input type="password" id="setting-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#F4413D]">
+          </div>
+
+          <button onclick="saveSupabaseSettings()" class="w-full py-3 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-colors">
+            Save Supabase Credentials
+          </button>
+
+          <!-- Supabase Schema Copy Card -->
+          <div class="mt-6 pt-6 border-t border-slate-800">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Supabase SQL Schema (1-Click Setup)</h4>
+            <p class="text-xs text-slate-400 mb-3">Copy and run this SQL query inside your Supabase SQL Editor:</p>
+            <pre class="bg-slate-950 p-4 rounded-xl text-[11px] font-mono text-emerald-400 overflow-x-auto border border-slate-800">
+-- Create Inboxes Table
+CREATE TABLE IF NOT EXISTS inboxes (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  address TEXT UNIQUE NOT NULL,
+  device_id TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL,
+  is_active BOOLEAN DEFAULT true
+);
+
+-- Create Messages Table
+CREATE TABLE IF NOT EXISTS messages (
+  id TEXT PRIMARY KEY,
+  inbox_address TEXT REFERENCES inboxes(address) ON DELETE CASCADE,
+  from_address TEXT NOT NULL,
+  from_name TEXT,
+  subject TEXT,
+  body_html TEXT,
+  snippet TEXT,
+  otp TEXT,
+  partner_link TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  is_unread BOOLEAN DEFAULT true
+);
+            </pre>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL: INSPECT INBOX MESSAGES -->
+  <div id="inspect-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div>
+          <h3 class="font-bold text-white text-base">Inbox Inspector</h3>
+          <p id="inspect-modal-address" class="text-xs text-red-400 font-mono"></p>
+        </div>
+        <button onclick="closeInspectModal()" class="text-slate-400 hover:text-white p-1">✕</button>
+      </div>
+
+      <div id="inspect-messages-list" class="flex-1 overflow-y-auto py-4 space-y-3">
+        <!-- Rendered messages -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD NEW BLOG POST -->
+  <div id="new-blog-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+        <h3 class="font-bold text-white text-base">Add New Blog Article</h3>
+        <button onclick="document.getElementById('new-blog-modal').classList.add('hidden')" class="text-slate-400 hover:text-white p-1">✕</button>
+      </div>
+
+      <form id="new-blog-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Article Title</label>
+          <input type="text" id="blog-title" placeholder="How to use disposable emails..." class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white" required>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Category</label>
+          <input type="text" id="blog-category" placeholder="Privacy / Security / Tutorial" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white" required>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Cover Image URL</label>
+          <input type="url" id="blog-image" placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white" required>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Summary (1-2 sentences)</label>
+          <textarea id="blog-summary" rows="3" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white" required></textarea>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-xs transition-colors">
+          Publish Article
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN CLIENT SCRIPT -->
+  <script>
+    let authToken = localStorage.getItem('tre_admin_token');
+
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId)?.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabId) {
+          btn.className = 'nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors bg-[#F4413D] text-white';
+        } else {
+          btn.className = 'nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white';
+        }
+      });
+
+      if (tabId === 'tab-overview') loadAdminStats();
+      if (tabId === 'tab-inboxes') loadAdminInboxes();
+      if (tabId === 'tab-settings') loadAdminSettings();
+      if (tabId === 'tab-blogs') loadAdminBlogs();
+    }
+
+    // Login Form Handler
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('admin-username').value;
+      const password = document.getElementById('admin-password').value;
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          authToken = data.token;
+          localStorage.setItem('tre_admin_token', authToken);
+          showAdminDashboard();
+        } else {
+          alert(data.message || 'Login failed.');
+        }
+      } catch (err) {
+        alert('Could not connect to server.');
+      }
+    });
+
+    function showAdminDashboard() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('admin-app').classList.remove('hidden');
+      loadAdminStats();
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem('tre_admin_token');
+      location.reload();
+    }
+
+    // Load Live Stats
+    async function loadAdminStats() {
+      try {
+        const res = await fetch('/api/admin/stats');
+        const stats = await res.json();
+        document.getElementById('stat-total-inboxes').textContent = stats.lifetime_created;
+        document.getElementById('stat-active-inboxes').textContent = stats.active_now;
+        document.getElementById('stat-today-inboxes').textContent = stats.created_today;
+        document.getElementById('stat-total-messages').textContent = stats.total_messages;
+      } catch (err) {
+        console.error('Stats error:', err);
+      }
+    }
+
+    // Load Inboxes
+    async function loadAdminInboxes() {
+      const tbody = document.getElementById('inboxes-table-body');
+      tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-slate-500">Loading active inboxes...</td></tr>';
+
+      try {
+        const res = await fetch('/api/admin/inboxes');
+        const inboxes = await res.json();
+
+        if (inboxes.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-slate-500">No active inboxes currently.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = inboxes.map(i => `
+          <tr class="hover:bg-slate-800/40 transition-colors">
+            <td class="py-3 px-4 font-mono font-bold text-white">${i.address}</td>
+            <td class="py-3 px-4 text-slate-400 font-mono text-[11px]">${i.device_id || 'Unknown'}</td>
+            <td class="py-3 px-4">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${i.message_count > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-500'}">
+                ${i.message_count} msgs
+              </span>
+            </td>
+            <td class="py-3 px-4 text-slate-400">${new Date(i.created_at).toLocaleDateString()}</td>
+            <td class="py-3 px-4 text-amber-400/80">${new Date(i.expires_at).toLocaleDateString()}</td>
+            <td class="py-3 px-4 text-right space-x-2">
+              <button onclick="inspectInbox('${i.address}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs text-white rounded">Inspect</button>
+              <button onclick="deleteInboxPermanently('${i.address}')" class="px-2.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-xs text-red-400 rounded">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-red-400">Failed to load inboxes.</td></tr>';
+      }
+    }
+
+    // Inspect Messages for an Inbox
+    async function inspectInbox(address) {
+      document.getElementById('inspect-modal-address').textContent = address;
+      const listEl = document.getElementById('inspect-messages-list');
+      listEl.innerHTML = '<p class="text-center text-slate-500 text-xs py-4">Loading messages...</p>';
+      document.getElementById('inspect-modal').classList.remove('hidden');
+      document.getElementById('inspect-modal').classList.add('flex');
+
+      try {
+        const res = await fetch(`/api/admin/inbox-messages?address=${encodeURIComponent(address)}`);
+        const messages = await res.json();
+
+        if (messages.length === 0) {
+          listEl.innerHTML = '<p class="text-center text-slate-500 text-xs py-4">No emails received for this address yet.</p>';
+          return;
+        }
+
+        listEl.innerHTML = messages.map(m => `
+          <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-white text-xs">${m.from}</span>
+              <span class="text-[10px] text-slate-400">${new Date(m.created_at).toLocaleString()}</span>
+            </div>
+            <div class="font-semibold text-slate-200 text-xs">${m.subject}</div>
+            ${m.otp ? `<div class="px-2 py-1 bg-red-500/20 text-red-400 font-mono text-xs font-bold rounded inline-block">OTP Code: ${m.otp}</div>` : ''}
+            <div class="text-xs text-slate-300 bg-slate-900 p-3 rounded-lg overflow-x-auto">${m.body_html || m.snippet}</div>
+          </div>
+        `).join('');
+      } catch (err) {
+        listEl.innerHTML = '<p class="text-red-400 text-xs">Error loading messages.</p>';
+      }
+    }
+
+    function closeInspectModal() {
+      document.getElementById('inspect-modal').classList.add('hidden');
+      document.getElementById('inspect-modal').classList.remove('flex');
+    }
+
+    // Delete Inbox Permanently
+    async function deleteInboxPermanently(address) {
+      if (confirm(`Permanently delete ${address} and all its messages?`)) {
+        await fetch(`/api/admin/inbox?address=${encodeURIComponent(address)}`, { method: 'DELETE' });
+        loadAdminInboxes();
+        loadAdminStats();
+      }
+    }
+
+    // Load Settings
+    async function loadAdminSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        const s = await res.json();
+        document.getElementById('setting-max-inboxes').value = s.max_inboxes_per_user || 7;
+        document.getElementById('setting-max-changes').value = s.max_email_changes_per_inbox || 3;
+        document.getElementById('setting-retention-days').value = s.retention_days || 7;
+        document.getElementById('setting-service-enabled').checked = s.service_enabled !== false;
+        document.getElementById('setting-maintenance-msg').value = s.maintenance_message || '';
+        document.getElementById('setting-turnstile-enabled').checked = s.turnstile_enabled !== false;
+        document.getElementById('setting-turnstile-sitekey').value = s.turnstile_site_key || '';
+        document.getElementById('setting-turnstile-secretkey').value = s.turnstile_secret_key || '';
+        document.getElementById('setting-gsc').value = s.google_search_console || '';
+        document.getElementById('setting-ga4').value = s.google_analytics_id || '';
+        document.getElementById('setting-head-scripts').value = s.custom_head_scripts || '';
+      } catch (err) {
+        console.error('Settings load error:', err);
+      }
+    }
+
+    // Save Settings
+    document.getElementById('settings-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        max_inboxes_per_user: document.getElementById('setting-max-inboxes').value,
+        max_email_changes_per_inbox: document.getElementById('setting-max-changes').value,
+        retention_days: document.getElementById('setting-retention-days').value,
+        service_enabled: document.getElementById('setting-service-enabled').checked,
+        maintenance_message: document.getElementById('setting-maintenance-msg').value,
+        turnstile_enabled: document.getElementById('setting-turnstile-enabled').checked,
+        turnstile_site_key: document.getElementById('setting-turnstile-sitekey').value,
+        turnstile_secret_key: document.getElementById('setting-turnstile-secretkey').value,
+        new_admin_password: document.getElementById('setting-new-password').value || undefined
+      };
+
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      alert(data.message || 'Settings saved!');
+    });
+
+    // Save SEO
+    document.getElementById('seo-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        google_search_console: document.getElementById('setting-gsc').value,
+        google_analytics_id: document.getElementById('setting-ga4').value,
+        custom_head_scripts: document.getElementById('setting-head-scripts').value
+      };
+
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      alert('SEO & Scripts updated successfully!');
+    });
+
+    // Save Supabase Credentials
+    async function saveSupabaseSettings() {
+      const payload = {
+        supabase_url: document.getElementById('setting-supabase-url').value,
+        supabase_key: document.getElementById('setting-supabase-key').value
+      };
+      await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      alert('Supabase credentials saved!');
+    }
+
+    // Load Blogs
+    async function loadAdminBlogs() {
+      const container = document.getElementById('blog-list-container');
+      try {
+        const res = await fetch('/api/blogs');
+        const blogs = await res.json();
+        container.innerHTML = blogs.map(b => `
+          <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex gap-4">
+            <img src="${b.cover_image}" class="w-20 h-20 object-cover rounded-lg shrink-0">
+            <div class="flex-1 min-w-0">
+              <span class="text-[10px] uppercase font-bold text-[#F4413D]">${b.category}</span>
+              <h4 class="font-bold text-white text-sm truncate">${b.title}</h4>
+              <p class="text-xs text-slate-400 line-clamp-2 mt-1">${b.summary}</p>
+            </div>
+            <button onclick="deleteBlog('${b.id}')" class="text-slate-500 hover:text-red-400 p-1 self-start">✕</button>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Error loading blogs:', err);
+      }
+    }
+
+    // Add Blog
+    document.getElementById('new-blog-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        title: document.getElementById('blog-title').value,
+        category: document.getElementById('blog-category').value,
+        cover_image: document.getElementById('blog-image').value,
+        summary: document.getElementById('blog-summary').value
+      };
+
+      await fetch('/api/admin/blogs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      document.getElementById('new-blog-modal').classList.add('hidden');
+      loadAdminBlogs();
+    });
+
+    async function deleteBlog(id) {
+      if (confirm('Delete this blog article?')) {
+        await fetch(`/api/admin/blogs?id=${id}`, { method: 'DELETE' });
+        loadAdminBlogs();
+      }
+    }
+
+    // Auto check if token exists
+    if (authToken) {
+      showAdminDashboard();
+    }
+  </script>
+
+</body>
+</html>
