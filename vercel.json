@@ -1,14 +1,13 @@
 {
-  "version": 2,
+  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/admin-shakib",
       "destination": "/admin-shakib.html"
     },
     {
-      "source": "/api/:match*",
-      "destination": "/server.js"
+      "source": "/api/(.*)",
+      "destination": "/api"
     }
-  ],
-  "cleanUrls": true
+  ]
 }
