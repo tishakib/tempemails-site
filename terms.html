@@ -7,6 +7,10 @@
   <meta name="description" content="Terms of Service and conditions of use for tempemails.site disposable temporary email platform.">
   <link rel="canonical" href="https://tempemails.site/terms.html">
 
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/img/apple-touch-icon.png">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,9 +23,7 @@
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <a href="./index.html" class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#F4413D] to-red-500 text-white flex items-center justify-center font-black tracking-tight text-sm shadow-md shadow-red-500/20">
-          TRE
-        </div>
+        <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-10 h-10 rounded-xl shadow-xs object-cover border border-slate-200">
         <div class="flex flex-col">
           <span class="text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
             tempemails<span class="text-[#F4413D]">.site</span>
@@ -30,13 +32,12 @@
         </div>
       </a>
 
+      <!-- Strictly 4 Navigation Links -->
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
         <a href="./index.html" class="hover:text-slate-900 transition-colors">Home</a>
         <a href="./about.html" class="hover:text-slate-900 transition-colors">About Us</a>
         <a href="./faq.html" class="hover:text-slate-900 transition-colors">FAQ</a>
-        <a href="./blog.html" class="hover:text-slate-900 transition-colors">Blog / Guides</a>
-        <a href="./privacy.html" class="hover:text-slate-900 transition-colors">Privacy</a>
-        <a href="./terms.html" class="text-[#F4413D] font-bold">Terms</a>
+        <a href="./about.html#contact" class="hover:text-slate-900 transition-colors">Contact Us</a>
       </nav>
 
       <a href="./index.html" class="px-4 py-2 bg-[#F4413D] hover:bg-red-600 text-white text-xs font-bold rounded-xl transition-colors">
@@ -60,39 +61,39 @@
           Welcome to <strong>tempemails.site</strong>. By accessing or utilizing our website, APIs, and temporary email routing services, you agree to be legally bound by these Terms of Service.
         </p>
 
-        <h2 class="text-lg font-bold text-slate-900 mt-6">1. Permitted and Acceptable Use</h2>
+        <h2 class="text-xl font-bold text-slate-900">1. Acceptable Use Policy</h2>
         <p>
-          tempemails.site is designed for lawful purposes, such as protecting personal identity against unsolicited marketing, software developer QA testing, and short-term online registrations. You agree NOT to use the service for:
+          tempemails.site is designed strictly for testing, software validation, privacy defense, and one-time registrations. You agree NOT to use the service for:
         </p>
-        <ul class="list-disc pl-5 space-y-1 text-slate-600">
-          <li>Any illegal activities, extortion, or fraudulent account generation.</li>
-          <li>Circumventing account bans or security enforcement of other platforms in bad faith.</li>
-          <li>Conducting distributed denial-of-service (DDoS) attacks or automated abuse against our infrastructure.</li>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Transmitting or receiving illegal, fraudulent, or harassing content.</li>
+          <li>Circumventing security bans, automated botting, or malicious denial-of-service attempts.</li>
+          <li>Any activity that violates applicable local or international laws.</li>
         </ul>
 
-        <h2 class="text-lg font-bold text-slate-900 mt-6">2. Public and Ephemeral Nature of Disposable Addresses</h2>
+        <h2 class="text-xl font-bold text-slate-900">2. Inbound-Only Mail Processing</h2>
         <p>
-          All email addresses provided by tempemails.site are temporary, public-facing, and ephemeral. You acknowledge and accept that:
-        </p>
-        <ul class="list-disc pl-5 space-y-1 text-slate-600">
-          <li>Addresses and messages automatically expire and are purged without warranty of backup.</li>
-          <li>Temporary addresses must never be linked to sensitive accounts (e.g., bank accounts, government benefits, crypto exchanges, investment platforms).</li>
-          <li>tempemails.site shall bear no liability for any loss of access resulting from discarded temporary credentials.</li>
-        </ul>
-
-        <h2 class="text-lg font-bold text-slate-900 mt-6">3. Inbound Only Policy</h2>
-        <p>
-          To maintain zero spam footprint across global mail networks, tempemails.site operates strictly as an inbound receiving system. Outbound sending capabilities are strictly disabled.
+          Our platform does not support sending emails. Any attempt to exploit or misuse server sockets for outbound email transmission is strictly prohibited and automatically dropped at edge firewall boundaries.
         </p>
 
-        <h2 class="text-lg font-bold text-slate-900 mt-6">4. Disclaimer of Warranties & Limitation of Liability</h2>
+        <h2 class="text-xl font-bold text-slate-900">3. Retention & Ephemeral Nature</h2>
         <p>
-          The service is provided strictly on an "AS IS" and "AS AVAILABLE" basis without any express or implied guarantees regarding uptime, message delivery speed, or uninterrupted access. Under no circumstances will tempemails.site or its operators be held liable for incidental or consequential damages.
+          You acknowledge that all temporary email addresses, incoming messages, and verification OTPs are temporary. Messages are automatically purged after the retention window (default 7 days). We accept no liability for data loss resulting from message expiration.
         </p>
 
-        <h2 class="text-lg font-bold text-slate-900 mt-6">5. Contact Information</h2>
+        <h2 id="disclaimer" class="text-xl font-bold text-slate-900">4. Disclaimer of Warranties & Limitation of Liability</h2>
         <p>
-          For legal inquiries or abuse reporting, please email <a href="mailto:abuse@tempemails.site" class="text-red-600 font-semibold underline">abuse@tempemails.site</a>.
+          tempemails.site is provided on an "AS IS" and "AS AVAILABLE" basis. We do not guarantee uninterrupted delivery of emails, as third-party services may block disposable domains. Under no circumstances shall tempemails.site or its operators be held liable for any indirect, incidental, or punitive damages.
+        </p>
+
+        <h2 class="text-xl font-bold text-slate-900">5. Prohibited Financial & Legal Usage</h2>
+        <p>
+          <strong>WARNING:</strong> Never use tempemails.site for banking, digital currency wallets, mortgage applications, court communications, or primary identity recovery. Any such usage is entirely at your own risk.
+        </p>
+
+        <h2 class="text-xl font-bold text-slate-900">6. Amendments</h2>
+        <p>
+          We reserve the right to revise these Terms of Service at any time. Continued use of the website signifies your acceptance of any revisions.
         </p>
       </div>
     </article>
@@ -107,46 +108,48 @@
         <!-- Brand Info -->
         <div class="space-y-4 md:col-span-1">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-[#F4413D] text-white flex items-center justify-center font-bold text-xs">
-              TRE
-            </div>
-            <span class="text-lg font-bold text-slate-900">tempemails<span class="text-[#F4413D]">.site</span></span>
+            <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-9 h-9 rounded-xl shadow-xs object-cover border border-slate-200">
+            <span class="text-lg font-bold text-slate-900 tracking-tight">tempemails<span class="text-[#F4413D]">.site</span></span>
           </div>
           <p class="text-xs text-slate-500 leading-relaxed">
-            The modern, privacy-focused disposable temporary email service. Shielding inboxes from spam and tracking since 2026.
+            The modern, privacy-focused disposable temporary email service. Shielding personal inboxes from spam, tracking, and data breaches worldwide.
           </p>
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>All systems 100% operational</span>
+          </div>
         </div>
 
-        <!-- Quick Links -->
+        <!-- Navigation -->
         <div>
           <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Navigation</h4>
           <ul class="space-y-2 text-xs text-slate-600">
             <li><a href="./index.html" class="hover:text-[#F4413D] transition-colors">Home</a></li>
             <li><a href="./about.html" class="hover:text-[#F4413D] transition-colors">About Us</a></li>
             <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">FAQ</a></li>
-            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Articles & News</a></li>
+            <li><a href="./about.html#contact" class="hover:text-[#F4413D] transition-colors">Contact Us</a></li>
           </ul>
         </div>
 
-        <!-- Legal & Compliance (AdSense Required) -->
+        <!-- Resources & Articles -->
         <div>
-          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Legal & Privacy</h4>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Resources & Guides</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Blog & Tech Articles</a></li>
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">How OTP Extraction Works</a></li>
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Email Privacy Protection</a></li>
+            <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">Disposable Email Safety</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal & Policies -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Legal & Policies</h4>
           <ul class="space-y-2 text-xs text-slate-600">
             <li><a href="./privacy.html" class="hover:text-[#F4413D] transition-colors">Privacy Policy</a></li>
             <li><a href="./terms.html" class="hover:text-[#F4413D] transition-colors">Terms of Service</a></li>
             <li><a href="./privacy.html#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
-            <li><a href="./about.html#contact" class="hover:text-[#F4413D] transition-colors">Contact Support</a></li>
-          </ul>
-        </div>
-
-        <!-- AdSense & Partner Info -->
-        <div>
-          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Features</h4>
-          <ul class="space-y-2 text-xs text-slate-600">
-            <li><span>⚡ Multi-Inbox Support</span></li>
-            <li><span>🔑 Instant OTP Copier</span></li>
-            <li><span>🛡️ 100% Zero Logging</span></li>
-            <li><span>📱 Mobile QR Scanner</span></li>
+            <li><a href="./terms.html#disclaimer" class="hover:text-[#F4413D] transition-colors">Disclaimer & DMCA</a></li>
           </ul>
         </div>
 
@@ -155,7 +158,9 @@
       <!-- Copyright -->
       <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
         <p>&copy; 2026 tempemails.site. All rights reserved.</p>
-        <p>Built with privacy in mind.</p>
+        <p class="flex items-center gap-1.5">
+          <span>Protected with hardware fingerprinting & zero logging</span>
+        </p>
       </div>
     </div>
   </footer>

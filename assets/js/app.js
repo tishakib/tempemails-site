@@ -95,10 +95,15 @@ async function initApp() {
     console.log('Running in offline/local mode');
   }
   
-  // Cross-Browser Device Synchronization:
-  // Fetch device session bound to this computer across all browsers (Chrome, Safari, Firefox, Edge, etc.)
+  // Cross-Browser & Incognito Device Synchronization:
+  // Fetch device session bound to this physical machine across all browsers & private modes
+  const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
   try {
-    const sessionRes = await fetch('/api/inbox/device-session');
+    const sessionRes = await fetch(`/api/inbox/device-session?device_id=${encodeURIComponent(hwId)}`, {
+      headers: {
+        'x-device-fingerprint': hwId
+      }
+    });
     if (sessionRes.ok) {
       const sessionData = await sessionRes.json();
       if (sessionData.inboxes && sessionData.inboxes.length > 0) {
@@ -142,6 +147,8 @@ async function initApp() {
   triggerInboxRefresh(false);
   // Start continuous silent background auto-sync
   startContinuousAutoSync();
+  // Load and render dynamic ads (or hide placeholders if disabled)
+  loadAndRenderAds();
 }
 
 // LocalStorage Persistence
@@ -322,11 +329,16 @@ window.addNewInboxSlot = async function() {
     return;
   }
 
+  const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
+
   try {
     const res = await fetch('/api/inbox/create', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({})
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-device-fingerprint': hwId
+      },
+      body: JSON.stringify({ device_id: hwId })
     });
     const data = await res.json();
     if (!res.ok || data.error) {
@@ -343,9 +355,8 @@ window.addNewInboxSlot = async function() {
       state.activeIndex = state.inboxes.indexOf(data.inbox.address);
     }
   } catch (e) {
-    const newEmail = `${generateRandomUsername()}@${CONFIG.DOMAIN}`;
-    state.inboxes.push(newEmail);
-    state.activeIndex = state.inboxes.length - 1;
+    showToast('Network error while creating inbox slot.', 'warning');
+    return;
   }
 
   const activeEmail = getActiveEmail();
@@ -366,6 +377,7 @@ window.deleteInboxSlot = async function(index, e) {
     return;
   }
 
+  const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
   const removedEmail = state.inboxes[index];
   state.inboxes.splice(index, 1);
   delete state.messages[removedEmail];
@@ -383,8 +395,11 @@ window.deleteInboxSlot = async function(index, e) {
   try {
     await fetch('/api/inbox/delete-slot', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ address: removedEmail })
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-device-fingerprint': hwId
+      },
+      body: JSON.stringify({ address: removedEmail, device_id: hwId })
     });
   } catch (err) {}
 };
@@ -400,14 +415,18 @@ window.randomizeCurrentEmail = async function() {
     return;
   }
 
+  const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
   const changeBtn = document.getElementById('btn-change-email');
   if (changeBtn) changeBtn.classList.add('opacity-50', 'pointer-events-none');
 
   try {
     const res = await fetch('/api/inbox/change', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ oldAddress: current })
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-device-fingerprint': hwId
+      },
+      body: JSON.stringify({ oldAddress: current, device_id: hwId })
     });
     const data = await res.json();
     if (!res.ok || data.error) {
@@ -879,7 +898,10 @@ window.triggerInboxRefresh = async function(isManual = false) {
 
   // Cross-browser session sync: occasionally check if another browser on this device created or changed an inbox
   if (!isManual && Math.random() < 0.25) {
-    fetch('/api/inbox/device-session')
+    const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
+    fetch(`/api/inbox/device-session?device_id=${encodeURIComponent(hwId)}`, {
+      headers: { 'x-device-fingerprint': hwId }
+    })
       .then(r => r.ok ? r.json() : null)
       .then(sessionData => {
         if (sessionData && sessionData.inboxes && sessionData.inboxes.length > 0) {
@@ -999,5 +1021,58 @@ function showToast(message, type = 'info') {
   }, 2800);
 }
 
+// Load and Render Dynamic Ads (or completely hide placeholders if disabled)
+async function loadAndRenderAds() {
+  try {
+    const res = await fetch('/api/ads');
+    if (!res.ok) return;
+    const ads = await res.json();
+
+    const slots = [
+      { id: 'ad-slot-top', config: ads.top_banner },
+      { id: 'ad-slot-middle', config: ads.middle_banner },
+      { id: 'ad-slot-sidebar', config: ads.sidebar_banner },
+      { id: 'ad-slot-sidebar-right', config: ads.sidebar_banner },
+      { id: 'ad-slot-bottom', config: ads.bottom_banner }
+    ];
+
+    slots.forEach(slot => {
+      const el = document.getElementById(slot.id);
+      if (!el) return;
+
+      const isEnabled = ads.master_enabled && slot.config && slot.config.enabled && slot.config.code && slot.config.code.trim();
+      if (!isEnabled) {
+        // Completely hide the container - zero placeholder clutter
+        el.classList.add('hidden');
+        el.innerHTML = '';
+      } else {
+        // Render custom ad script or HTML banner cleanly
+        el.classList.remove('hidden');
+        el.innerHTML = `
+          <div class="w-full flex flex-col items-center justify-center overflow-hidden">
+            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Advertisement</span>
+            <div class="ad-rendered-content w-full flex items-center justify-center">
+              ${slot.config.code}
+            </div>
+          </div>
+        `;
+        // Execute any script tags dynamically
+        el.querySelectorAll('script').forEach(oldScript => {
+          const newScript = document.createElement('script');
+          Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+          newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+          oldScript.parentNode.replaceChild(newScript, oldScript);
+        });
+      }
+    });
+  } catch (e) {
+    ['ad-slot-top', 'ad-slot-middle', 'ad-slot-sidebar', 'ad-slot-sidebar-right', 'ad-slot-bottom'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    });
+  }
+}
+
 // On DOM Ready
 document.addEventListener('DOMContentLoaded', initApp);
+

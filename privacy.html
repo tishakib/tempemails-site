@@ -7,6 +7,10 @@
   <meta name="description" content="Privacy Policy for tempemails.site. Learn how we handle temporary data, cookies, and comply with Google AdSense and international privacy standards.">
   <link rel="canonical" href="https://tempemails.site/privacy.html">
 
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/img/apple-touch-icon.png">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,9 +23,7 @@
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <a href="./index.html" class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#F4413D] to-red-500 text-white flex items-center justify-center font-black tracking-tight text-sm shadow-md shadow-red-500/20">
-          TRE
-        </div>
+        <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-10 h-10 rounded-xl shadow-xs object-cover border border-slate-200">
         <div class="flex flex-col">
           <span class="text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
             tempemails<span class="text-[#F4413D]">.site</span>
@@ -30,13 +32,12 @@
         </div>
       </a>
 
+      <!-- Strictly 4 Navigation Links -->
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
         <a href="./index.html" class="hover:text-slate-900 transition-colors">Home</a>
         <a href="./about.html" class="hover:text-slate-900 transition-colors">About Us</a>
         <a href="./faq.html" class="hover:text-slate-900 transition-colors">FAQ</a>
-        <a href="./blog.html" class="hover:text-slate-900 transition-colors">Blog / Guides</a>
-        <a href="./privacy.html" class="text-[#F4413D] font-bold">Privacy</a>
-        <a href="./terms.html" class="hover:text-slate-900 transition-colors">Terms</a>
+        <a href="./about.html#contact" class="hover:text-slate-900 transition-colors">Contact Us</a>
       </nav>
 
       <a href="./index.html" class="px-4 py-2 bg-[#F4413D] hover:bg-red-600 text-white text-xs font-bold rounded-xl transition-colors">
@@ -60,42 +61,45 @@
           At <strong>tempemails.site</strong>, the privacy of our visitors is of paramount importance to us. This Privacy Policy document outlines the types of information that is collected and recorded by tempemails.site and how we utilize it.
         </p>
 
-        <h2 class="text-lg font-bold text-slate-900 mt-6">1. What Information We Do NOT Collect</h2>
+        <h2 class="text-xl font-bold text-slate-900">1. Information We Do NOT Collect</h2>
         <p>
-          Unlike traditional mail services, <strong>tempemails.site</strong> does not require personal registration, passwords, phone numbers, or credit card information. We do not maintain user accounts or personal profiles.
+          We operate under a strict <strong>Zero-Logging Architecture</strong>:
+        </p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>We do NOT require real names, phone numbers, or passwords.</li>
+          <li>We do NOT track personal identities or link disposable email addresses to your real identity.</li>
+          <li>We do NOT sell, rent, or monetize your personal communications.</li>
+        </ul>
+
+        <h2 class="text-xl font-bold text-slate-900">2. Inboxes and Message Retention Policy</h2>
+        <p>
+          Temporary mailboxes generated on tempemails.site are ephemeral. Incoming emails are retained on our secured edge nodes for up to 7 days to give you ample time to access your verification codes or activation links. Once expired, messages are permanently purged from all memory and disk storage and cannot be restored.
         </p>
 
-        <h2 class="text-lg font-bold text-slate-900 mt-6">2. Inbound Email Data Retention</h2>
+        <h2 id="cookies" class="text-xl font-bold text-slate-900">3. Cookies and Browser Fingerprinting</h2>
         <p>
-          Incoming messages sent to temporary addresses are held temporarily in volatile memory/cache solely to enable users to view their verification codes and messages. Messages are scheduled for automatic permanent deletion after expiration. Once deleted, emails cannot be recovered by anyone, including our system administrators.
+          tempemails.site utilizes standard local storage and client-side device hashes solely for session synchronization—ensuring that you can switch between active inbox slots and prevent robotic service abuse. We do not use persistent cross-site tracking cookies.
         </p>
 
-        <h2 id="cookies" class="text-lg font-bold text-slate-900 mt-6">3. Cookies and Web Beacons</h2>
+        <h2 class="text-xl font-bold text-slate-900">4. Google AdSense & Third-Party Advertising</h2>
         <p>
-          Like any other website, tempemails.site uses standard cookies and local storage (such as HTML5 LocalStorage) solely to remember your active 5-inbox slots on your current browser so you don't lose your addresses when refreshing the page.
+          Google is a third-party vendor on our site. It uses cookies, known as DART cookies, to serve ads to our site visitors based on their visit to tempemails.site and other websites on the internet. Visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy.
+        </p>
+        <p>
+          Our third-party advertising partners include:
+        </p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Google AdSense (Privacy Policy: https://policies.google.com/technologies/ads)</li>
+        </ul>
+
+        <h2 class="text-xl font-bold text-slate-900">5. GDPR & CCPA Compliance</h2>
+        <p>
+          In accordance with the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act (CCPA), users have the right to request deletion of any temporary session data at any time by clicking "Delete" on any active inbox tab.
         </p>
 
-        <h2 class="text-lg font-bold text-slate-900 mt-6">4. Google DoubleClick DART Cookie & Third-Party Advertising</h2>
+        <h2 class="text-xl font-bold text-slate-900">6. Contact Us</h2>
         <p>
-          Google is one of the third-party vendors on our site. It also uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to tempemails.site and other sites on the internet. However, visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy at the following URL: <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" class="text-red-600 underline">https://policies.google.com/technologies/ads</a>.
-        </p>
-        <p>
-          Third-party ad servers or ad networks use technologies like cookies, JavaScript, or Web Beacons that are used in their respective advertisements and links that appear on tempemails.site, which are sent directly to users' browsers. They automatically receive your IP address when this occurs.
-        </p>
-
-        <h2 class="text-lg font-bold text-slate-900 mt-6">5. GDPR & CCPA Compliance</h2>
-        <p>
-          Under the General Data Protection Regulation (GDPR) and California Consumer Privacy Act (CCPA), users have the right to access, rectify, or request deletion of personal information. Because tempemails.site collects zero identifying personal records, no identifying user dossiers exist on our servers.
-        </p>
-
-        <h2 class="text-lg font-bold text-slate-900 mt-6">6. Changes to This Privacy Policy</h2>
-        <p>
-          We may update our Privacy Policy from time to time. We advise you to review this page periodically for any changes. Changes to this Privacy Policy are effective immediately upon being posted on this page.
-        </p>
-
-        <h2 class="text-lg font-bold text-slate-900 mt-6">7. Contact Information</h2>
-        <p>
-          If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at <a href="mailto:privacy@tempemails.site" class="text-red-600 font-semibold underline">privacy@tempemails.site</a>.
+          If you have additional questions or require more information about our Privacy Policy, please contact us at: <a href="mailto:support@tempemails.site" class="text-[#F4413D] font-bold">support@tempemails.site</a>.
         </p>
       </div>
     </article>
@@ -110,46 +114,48 @@
         <!-- Brand Info -->
         <div class="space-y-4 md:col-span-1">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-[#F4413D] text-white flex items-center justify-center font-bold text-xs">
-              TRE
-            </div>
-            <span class="text-lg font-bold text-slate-900">tempemails<span class="text-[#F4413D]">.site</span></span>
+            <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-9 h-9 rounded-xl shadow-xs object-cover border border-slate-200">
+            <span class="text-lg font-bold text-slate-900 tracking-tight">tempemails<span class="text-[#F4413D]">.site</span></span>
           </div>
           <p class="text-xs text-slate-500 leading-relaxed">
-            The modern, privacy-focused disposable temporary email service. Shielding inboxes from spam and tracking since 2026.
+            The modern, privacy-focused disposable temporary email service. Shielding personal inboxes from spam, tracking, and data breaches worldwide.
           </p>
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>All systems 100% operational</span>
+          </div>
         </div>
 
-        <!-- Quick Links -->
+        <!-- Navigation -->
         <div>
           <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Navigation</h4>
           <ul class="space-y-2 text-xs text-slate-600">
             <li><a href="./index.html" class="hover:text-[#F4413D] transition-colors">Home</a></li>
             <li><a href="./about.html" class="hover:text-[#F4413D] transition-colors">About Us</a></li>
             <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">FAQ</a></li>
-            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Articles & News</a></li>
+            <li><a href="./about.html#contact" class="hover:text-[#F4413D] transition-colors">Contact Us</a></li>
           </ul>
         </div>
 
-        <!-- Legal & Compliance (AdSense Required) -->
+        <!-- Resources & Articles -->
         <div>
-          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Legal & Privacy</h4>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Resources & Guides</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Blog & Tech Articles</a></li>
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">How OTP Extraction Works</a></li>
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Email Privacy Protection</a></li>
+            <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">Disposable Email Safety</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal & Policies -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Legal & Policies</h4>
           <ul class="space-y-2 text-xs text-slate-600">
             <li><a href="./privacy.html" class="hover:text-[#F4413D] transition-colors">Privacy Policy</a></li>
             <li><a href="./terms.html" class="hover:text-[#F4413D] transition-colors">Terms of Service</a></li>
             <li><a href="./privacy.html#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
-            <li><a href="./about.html#contact" class="hover:text-[#F4413D] transition-colors">Contact Support</a></li>
-          </ul>
-        </div>
-
-        <!-- AdSense & Partner Info -->
-        <div>
-          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Features</h4>
-          <ul class="space-y-2 text-xs text-slate-600">
-            <li><span>⚡ Multi-Inbox Support</span></li>
-            <li><span>🔑 Instant OTP Copier</span></li>
-            <li><span>🛡️ 100% Zero Logging</span></li>
-            <li><span>📱 Mobile QR Scanner</span></li>
+            <li><a href="./terms.html#disclaimer" class="hover:text-[#F4413D] transition-colors">Disclaimer & DMCA</a></li>
           </ul>
         </div>
 
@@ -158,7 +164,9 @@
       <!-- Copyright -->
       <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
         <p>&copy; 2026 tempemails.site. All rights reserved.</p>
-        <p>Built with privacy in mind.</p>
+        <p class="flex items-center gap-1.5">
+          <span>Protected with hardware fingerprinting & zero logging</span>
+        </p>
       </div>
     </div>
   </footer>

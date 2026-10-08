@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Protecting Your Primary Email from Data Breaches - tempemails.site Blog</title>
-  <meta name="description" content="Learn proven strategies to protect your personal inbox from spam lists, marketing trackers, and third-party data breaches using disposable temporary emails.">
-  <link rel="canonical" href="https://tempemails.site/blog-article.html">
+  <title id="page-title">Protecting Your Primary Email from Data Breaches - tempemails.site Blog</title>
+  <meta name="description" id="meta-description" content="Learn proven strategies to protect your personal inbox from spam lists, marketing trackers, and third-party data breaches using disposable temporary emails.">
+  <link rel="canonical" id="canonical-url" href="https://tempemails.site/blog-article.html">
+
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/img/apple-touch-icon.png">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,9 +23,7 @@
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <a href="./index.html" class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#F4413D] to-red-500 text-white flex items-center justify-center font-black tracking-tight text-sm shadow-md shadow-red-500/20">
-          TRE
-        </div>
+        <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-10 h-10 rounded-xl shadow-xs object-cover border border-slate-200">
         <div class="flex flex-col">
           <span class="text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
             tempemails<span class="text-[#F4413D]">.site</span>
@@ -30,13 +32,12 @@
         </div>
       </a>
 
+      <!-- Strictly 4 Navigation Links -->
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
         <a href="./index.html" class="hover:text-slate-900 transition-colors">Home</a>
         <a href="./about.html" class="hover:text-slate-900 transition-colors">About Us</a>
         <a href="./faq.html" class="hover:text-slate-900 transition-colors">FAQ</a>
-        <a href="./blog.html" class="text-[#F4413D] font-bold">Blog / Guides</a>
-        <a href="./privacy.html" class="hover:text-slate-900 transition-colors">Privacy</a>
-        <a href="./terms.html" class="hover:text-slate-900 transition-colors">Terms</a>
+        <a href="./about.html#contact" class="hover:text-slate-900 transition-colors">Contact Us</a>
       </nav>
 
       <a href="./index.html" class="px-4 py-2 bg-[#F4413D] hover:bg-red-600 text-white text-xs font-bold rounded-xl transition-colors">
@@ -48,11 +49,8 @@
   <!-- CONTENT -->
   <main class="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
     
-    <!-- Top Ad Placement -->
-    <div class="ad-slot-container ad-leaderboard py-3 px-2 mb-8">
-      <span class="ad-badge">Advertisement</span>
-      <div class="text-xs text-slate-400 font-mono">Google AdSense Top Banner (728x90)</div>
-    </div>
+    <!-- Top Ad Placement (Dynamically Controlled) -->
+    <div id="ad-slot-top" class="hidden w-full my-4"></div>
 
     <!-- Article Wrapper -->
     <article class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-10 space-y-8">
@@ -60,22 +58,32 @@
       <!-- Article Header -->
       <header class="border-b border-slate-100 pb-6">
         <div class="flex items-center gap-2 mb-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-[#F4413D]">Cybersecurity Guide</span>
+          <span id="article-category" class="text-xs font-bold uppercase tracking-wider text-[#F4413D]">Cybersecurity Guide</span>
           <span class="text-slate-300">&bull;</span>
-          <span class="text-xs text-slate-400">October 2026</span>
+          <span id="article-date" class="text-xs text-slate-400">October 2026</span>
           <span class="text-slate-300">&bull;</span>
-          <span class="text-xs text-slate-400">5 min read</span>
+          <span id="article-readtime" class="text-xs text-slate-400">5 min read</span>
+          <span class="text-slate-300">&bull;</span>
+          <span id="article-author" class="text-xs text-slate-400">By Shakib</span>
         </div>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
+        <h1 id="article-title" class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
           Protecting Your Primary Email from Data Breaches in 2026
         </h1>
-        <p class="text-base text-slate-600 mt-3 leading-relaxed">
+        <p id="article-summary" class="text-base text-slate-600 mt-3 leading-relaxed">
           How to keep your personal mailbox off black market spam lists by utilizing disposable temporary mailboxes for non-essential digital services.
         </p>
+
+        <!-- Featured Image Container -->
+        <div id="article-featured-image-box" class="mt-6 rounded-2xl overflow-hidden max-h-96 w-full hidden">
+          <img id="article-featured-image" src="" alt="Featured Image" class="w-full h-full object-cover">
+        </div>
       </header>
 
-      <!-- Article Body -->
-      <div class="prose prose-slate max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-6">
+      <!-- In-Article Ad Banner (Dynamically Controlled) -->
+      <div id="ad-slot-middle" class="hidden w-full my-4"></div>
+
+      <!-- Article Body Content -->
+      <div id="article-content" class="prose prose-slate max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-6">
         <p>
           In the modern digital landscape, your email address is much more than a message inbox—it is your universal digital identity. It functions as the primary recovery mechanism for your social media profiles, bank accounts, cloud documents, and sensitive communications.
         </p>
@@ -94,12 +102,6 @@
           In nearly 80% of these cases, the service sells your email address to advertising brokers or suffers an unintended data leak within 18 months. Once your email is logged in a scraped database, you begin receiving endless unsolicited spam, phishing links, and targeted credential-stuffing attacks.
         </p>
 
-        <!-- In-Article Middle Ad Banner -->
-        <div class="ad-slot-container py-4 px-2 my-8">
-          <span class="ad-badge">Sponsored Advertisement</span>
-          <div class="text-xs text-slate-400 font-mono">In-Article Responsive Ad (728x90 / 300x250)</div>
-        </div>
-
         <h2 class="text-xl font-bold text-slate-900 mt-6">How Disposable Email Creates an Impenetrable Shield</h2>
         <p>
           By utilizing a burner mailbox from <strong>tempemails.site</strong>, you decouple your real identity from the online service. You receive the activation link or OTP verification code, complete your action, and walk away.
@@ -107,27 +109,23 @@
         <p>
           Because the address has zero connection to your personal credentials and expires automatically, any subsequent marketing blasts or data leaks hit a dead end, protecting your actual inbox forever.
         </p>
+      </div>
 
-        <!-- Call to Action Card -->
-        <div class="p-6 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl border border-red-200 mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <h3 class="font-bold text-slate-900 text-base">Ready to protect your email today?</h3>
-            <p class="text-xs text-slate-600 mt-1">Generate up to 5 concurrent temporary inboxes completely free on tempemails.site.</p>
-          </div>
-          <a href="./index.html" class="px-5 py-2.5 bg-[#F4413D] hover:bg-red-600 text-white font-bold text-xs rounded-xl shadow-md transition-all shrink-0">
-            Create Temp Email &rarr;
-          </a>
+      <!-- Call to Action Card -->
+      <div class="p-6 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl border border-red-200 mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <h3 class="font-bold text-slate-900 text-base">Ready to protect your email today?</h3>
+          <p class="text-xs text-slate-600 mt-1">Generate disposable temporary inboxes completely free on tempemails.site.</p>
         </div>
-
+        <a href="./index.html" class="px-5 py-2.5 bg-[#F4413D] hover:bg-red-600 text-white font-bold text-xs rounded-xl shadow-md transition-all shrink-0">
+          Create Temp Email &rarr;
+        </a>
       </div>
 
     </article>
 
-    <!-- Bottom Ad Placement -->
-    <div class="ad-slot-container ad-leaderboard py-3 px-2 mt-8">
-      <span class="ad-badge">Advertisement</span>
-      <div class="text-xs text-slate-400 font-mono">Google AdSense Bottom Banner (728x90)</div>
-    </div>
+    <!-- Bottom Ad Placement (Dynamically Controlled) -->
+    <div id="ad-slot-bottom" class="hidden w-full my-8"></div>
 
   </main>
 
@@ -139,46 +137,48 @@
         <!-- Brand Info -->
         <div class="space-y-4 md:col-span-1">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-[#F4413D] text-white flex items-center justify-center font-bold text-xs">
-              TRE
-            </div>
-            <span class="text-lg font-bold text-slate-900">tempemails<span class="text-[#F4413D]">.site</span></span>
+            <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-9 h-9 rounded-xl shadow-xs object-cover border border-slate-200">
+            <span class="text-lg font-bold text-slate-900 tracking-tight">tempemails<span class="text-[#F4413D]">.site</span></span>
           </div>
           <p class="text-xs text-slate-500 leading-relaxed">
-            The modern, privacy-focused disposable temporary email service. Shielding inboxes from spam and tracking since 2026.
+            The modern, privacy-focused disposable temporary email service. Shielding personal inboxes from spam, tracking, and data breaches worldwide.
           </p>
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>All systems 100% operational</span>
+          </div>
         </div>
 
-        <!-- Quick Links -->
+        <!-- Navigation -->
         <div>
           <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Navigation</h4>
           <ul class="space-y-2 text-xs text-slate-600">
             <li><a href="./index.html" class="hover:text-[#F4413D] transition-colors">Home</a></li>
             <li><a href="./about.html" class="hover:text-[#F4413D] transition-colors">About Us</a></li>
             <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">FAQ</a></li>
-            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Articles & News</a></li>
+            <li><a href="./about.html#contact" class="hover:text-[#F4413D] transition-colors">Contact Us</a></li>
           </ul>
         </div>
 
-        <!-- Legal & Compliance (AdSense Required) -->
+        <!-- Resources & Articles -->
         <div>
-          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Legal & Privacy</h4>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Resources & Guides</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Blog & Tech Articles</a></li>
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">How OTP Extraction Works</a></li>
+            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Email Privacy Protection</a></li>
+            <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">Disposable Email Safety</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal & Policies -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Legal & Policies</h4>
           <ul class="space-y-2 text-xs text-slate-600">
             <li><a href="./privacy.html" class="hover:text-[#F4413D] transition-colors">Privacy Policy</a></li>
             <li><a href="./terms.html" class="hover:text-[#F4413D] transition-colors">Terms of Service</a></li>
             <li><a href="./privacy.html#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
-            <li><a href="./about.html#contact" class="hover:text-[#F4413D] transition-colors">Contact Support</a></li>
-          </ul>
-        </div>
-
-        <!-- AdSense & Partner Info -->
-        <div>
-          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Features</h4>
-          <ul class="space-y-2 text-xs text-slate-600">
-            <li><span>⚡ Multi-Inbox Support</span></li>
-            <li><span>🔑 Instant OTP Copier</span></li>
-            <li><span>🛡️ 100% Zero Logging</span></li>
-            <li><span>📱 Mobile QR Scanner</span></li>
+            <li><a href="./terms.html#disclaimer" class="hover:text-[#F4413D] transition-colors">Disclaimer & DMCA</a></li>
           </ul>
         </div>
 
@@ -187,10 +187,90 @@
       <!-- Copyright -->
       <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
         <p>&copy; 2026 tempemails.site. All rights reserved.</p>
-        <p>Built with privacy in mind.</p>
+        <p class="flex items-center gap-1.5">
+          <span>Protected with hardware fingerprinting & zero logging</span>
+        </p>
       </div>
     </div>
   </footer>
+
+  <!-- Dynamic Article & Ads Loader Script -->
+  <script>
+    async function loadArticleData() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const slug = urlParams.get('slug');
+      const id = urlParams.get('id');
+
+      if (slug || id) {
+        try {
+          const endpoint = slug ? `/api/blog?slug=${encodeURIComponent(slug)}` : `/api/blog?id=${encodeURIComponent(id)}`;
+          const res = await fetch(endpoint);
+          if (res.ok) {
+            const blog = await res.json();
+            
+            document.title = `${blog.title} - tempemails.site Blog`;
+            document.getElementById('meta-description').content = blog.summary || blog.title;
+            document.getElementById('canonical-url').href = `https://tempemails.site/blog-article.html?slug=${blog.slug}`;
+
+            document.getElementById('article-title').textContent = blog.title;
+            document.getElementById('article-summary').textContent = blog.summary;
+            document.getElementById('article-category').textContent = blog.category || 'Guide';
+            document.getElementById('article-date').textContent = new Date(blog.created_at || Date.now()).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            document.getElementById('article-readtime').textContent = blog.read_time || '3 min read';
+            document.getElementById('article-author').textContent = `By ${blog.author || 'Shakib'}`;
+
+            if (blog.cover_image) {
+              const imgBox = document.getElementById('article-featured-image-box');
+              const imgEl = document.getElementById('article-featured-image');
+              imgEl.src = blog.cover_image;
+              imgBox.classList.remove('hidden');
+            }
+
+            if (blog.content_html) {
+              document.getElementById('article-content').innerHTML = blog.content_html;
+            }
+          }
+        } catch (err) {
+          console.log('Error loading dynamic article, displaying standard article:', err);
+        }
+      }
+
+      // Load Dynamic Ads
+      try {
+        const adsRes = await fetch('/api/ads');
+        if (adsRes.ok) {
+          const ads = await adsRes.json();
+          const renderSlot = (slotId, cfg) => {
+            const el = document.getElementById(slotId);
+            if (!el) return;
+            if (ads.master_enabled && cfg && cfg.enabled && cfg.code && cfg.code.trim()) {
+              el.classList.remove('hidden');
+              el.innerHTML = `
+                <div class="w-full flex flex-col items-center justify-center overflow-hidden my-4">
+                  <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Advertisement</span>
+                  <div class="ad-rendered-content w-full flex items-center justify-center">${cfg.code}</div>
+                </div>
+              `;
+              el.querySelectorAll('script').forEach(oldScript => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+              });
+            } else {
+              el.classList.add('hidden');
+              el.innerHTML = '';
+            }
+          };
+          renderSlot('ad-slot-top', ads.top_banner);
+          renderSlot('ad-slot-middle', ads.middle_banner);
+          renderSlot('ad-slot-bottom', ads.bottom_banner);
+        }
+      } catch (e) {}
+    }
+
+    document.addEventListener('DOMContentLoaded', loadArticleData);
+  </script>
 
 </body>
 </html>

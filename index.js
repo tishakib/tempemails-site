@@ -44,6 +44,13 @@ const initialData = {
     lifetime_inboxes_created: 0,
     lifetime_messages_received: 0
   },
+  ads: {
+    master_enabled: false,
+    top_banner: { enabled: false, code: '', label: 'Top Leaderboard (728x90 Desktop / 320x50 Mobile)' },
+    middle_banner: { enabled: false, code: '', label: 'Below Generator (728x90 or 300x250)' },
+    sidebar_banner: { enabled: false, code: '', label: 'Sidebar / Content (300x250 or 160x600)' },
+    bottom_banner: { enabled: false, code: '', label: 'Bottom Footer Banner (728x90)' }
+  },
   inboxes: [],
   messages: [],
   device_sessions: {},
@@ -95,6 +102,9 @@ function getStore() {
       }
       if (!storeCache.stats) {
         storeCache.stats = { lifetime_inboxes_created: 0, lifetime_messages_received: 0 };
+      }
+      if (!storeCache.ads) {
+        storeCache.ads = JSON.parse(JSON.stringify(initialData.ads));
       }
       if (process.env.VERCEL && !fs.existsSync(DATA_FILE)) {
         saveStore(storeCache);
@@ -262,6 +272,81 @@ function getClientIp(req) {
   return ip || '127.0.0.1';
 }
 
+function getDeviceFingerprint(req, parsedUrl, body = {}) {
+  return (req.headers['x-device-fingerprint'] || 
+          (parsedUrl && parsedUrl.query && parsedUrl.query.device_id) || 
+          body.device_id || 
+          body.device_fingerprint || 
+          '').trim();
+}
+
+function getOrInitDeviceSession(store, req, parsedUrl, body = {}) {
+  const ip = getClientIp(req);
+  const hw = getDeviceFingerprint(req, parsedUrl, body);
+  const primaryKey = hw ? `DEV_${hw}` : `IP_${ip}`;
+
+  if (!store.device_sessions) store.device_sessions = {};
+
+  // 1. Direct match by hardware ID
+  if (hw && store.device_sessions[`DEV_${hw}`]) {
+    const s = store.device_sessions[`DEV_${hw}`];
+    s.ip = ip;
+    return { key: `DEV_${hw}`, session: s, deviceId: hw };
+  }
+
+  // 2. Direct match by IP
+  if (ip && store.device_sessions[`IP_${ip}`]) {
+    const s = store.device_sessions[`IP_${ip}`];
+    if (hw) s.hw_id = hw;
+    return { key: `IP_${ip}`, session: s, deviceId: hw || ip };
+  }
+
+  // 3. Scan all sessions for matching hw_id
+  if (hw) {
+    for (const [k, s] of Object.entries(store.device_sessions)) {
+      if (s.hw_id === hw || k === `DEV_${hw}` || k.includes(hw)) {
+        s.ip = ip;
+        return { key: k, session: s, deviceId: hw };
+      }
+    }
+  }
+
+  // 4. Scan all sessions for matching IP (if not localhost)
+  if (ip && ip !== '127.0.0.1') {
+    for (const [k, s] of Object.entries(store.device_sessions)) {
+      if (s.ip === ip || k === `IP_${ip}` || k.includes(ip)) {
+        if (hw) s.hw_id = hw;
+        return { key: k, session: s, deviceId: hw || ip };
+      }
+    }
+  }
+
+  // 5. Create new session for this device
+  const initialAddr = generateRandomAddress();
+  const session = {
+    inboxes: [initialAddr],
+    activeIndex: 0,
+    changesCount: { [initialAddr]: 0 },
+    ip: ip,
+    hw_id: hw,
+    created_at: new Date().toISOString()
+  };
+  store.device_sessions[primaryKey] = session;
+
+  const newInboxRecord = {
+    address: initialAddr,
+    device_id: hw || ip,
+    created_at: new Date().toISOString(),
+    expires_at: new Date(Date.now() + (store.settings.retention_days || 7) * 24 * 3600000).toISOString(),
+    is_active: true
+  };
+  store.inboxes.push(newInboxRecord);
+  store.stats.lifetime_inboxes_created++;
+  saveStore(store);
+
+  return { key: primaryKey, session, deviceId: hw || ip };
+}
+
 function generateRandomAddress() {
   const adjectives = ['swift', 'quick', 'hyper', 'apex', 'bold', 'zen', 'prime', 'nova', 'cyber', 'pure', 'cool', 'flash', 'star', 'nexus', 'vivid', 'alpha', 'stellar'];
   const nouns = ['inbox', 'pilot', 'falcon', 'tiger', 'orbit', 'wave', 'storm', 'shield', 'echo', 'guard', 'vortex', 'spark', 'flare', 'pulse', 'beacon', 'atlas'];
@@ -277,7 +362,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-device-fingerprint'
     });
     res.end();
     return true;
@@ -395,35 +480,76 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     return true;
   }
 
-  // 8. Blogs
+  // 8. Blogs API
   if (pathname === '/api/blogs' && method === 'GET') {
     const store = getStore();
     sendJson(res, 200, store.blogs || []);
     return true;
   }
 
+  if (pathname === '/api/blog' && method === 'GET') {
+    const slug = (parsedUrl.query.slug || '').trim();
+    const id = (parsedUrl.query.id || '').trim();
+    const store = getStore();
+    const blog = (store.blogs || []).find(b => (slug && b.slug === slug) || (id && b.id === id));
+    if (blog) {
+      sendJson(res, 200, blog);
+    } else {
+      sendJson(res, 404, { error: 'Article not found' });
+    }
+    return true;
+  }
+
   if (pathname === '/api/admin/blogs' && method === 'POST') {
     const body = await parseJsonBody(req);
     const store = getStore();
-    const newBlog = {
-      id: 'blog-' + Date.now(),
-      title: body.title || 'Untitled Article',
-      slug: (body.title || 'post').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    if (!store.blogs) store.blogs = [];
+
+    const blogId = body.id || ('blog-' + Date.now());
+    const existingIndex = store.blogs.findIndex(b => b.id === blogId);
+
+    const title = body.title || 'Untitled Article';
+    const slug = (body.slug || title)
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || ('post-' + Date.now());
+
+    // Calculate reading time
+    const wordCount = (body.content_html || body.summary || '').replace(/<[^>]*>/g, ' ').trim().split(/\s+/).length;
+    const readTime = Math.max(1, Math.ceil(wordCount / 180)) + ' min read';
+
+    const blogData = {
+      id: blogId,
+      title: title,
+      slug: slug,
       category: body.category || 'General',
       cover_image: body.cover_image || 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=80',
       summary: body.summary || '',
-      created_at: new Date().toISOString()
+      content_html: body.content_html || `<p>${body.summary || ''}</p>`,
+      tags: body.tags || 'Privacy, Security',
+      author: body.author || 'Shakib',
+      read_time: readTime,
+      status: body.status || 'published',
+      updated_at: new Date().toISOString(),
+      created_at: existingIndex !== -1 ? store.blogs[existingIndex].created_at : new Date().toISOString()
     };
-    store.blogs.unshift(newBlog);
+
+    if (existingIndex !== -1) {
+      store.blogs[existingIndex] = blogData;
+    } else {
+      store.blogs.unshift(blogData);
+    }
+
     saveStore(store);
-    sendJson(res, 200, { success: true, blog: newBlog });
+    sendJson(res, 200, { success: true, blog: blogData });
     return true;
   }
 
   if (pathname === '/api/admin/blogs' && method === 'DELETE') {
     const id = parsedUrl.query.id;
     const store = getStore();
-    store.blogs = store.blogs.filter(b => b.id !== id);
+    store.blogs = (store.blogs || []).filter(b => b.id !== id);
     saveStore(store);
     sendJson(res, 200, { success: true });
     return true;
@@ -489,36 +615,13 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     return true;
   }
 
-  // 10. Cross-Browser Device Session (Identifies same physical device across Chrome, Safari, Firefox, etc.)
+  // 10. Multi-Factor Device Session (Locks to physical machine across Chrome, Safari, Firefox & Incognito)
   if (pathname === '/api/inbox/device-session' && method === 'GET') {
     const store = getStore();
-    const clientIp = getClientIp(req);
+    const { session, deviceId } = getOrInitDeviceSession(store, req, parsedUrl, {});
 
-    if (!store.device_sessions[clientIp] || !store.device_sessions[clientIp].inboxes || store.device_sessions[clientIp].inboxes.length === 0) {
-      // First visit on this device: generate a clean initial inbox
-      const initialAddr = generateRandomAddress();
-      store.device_sessions[clientIp] = {
-        inboxes: [initialAddr],
-        activeIndex: 0,
-        changesCount: { [initialAddr]: 0 },
-        created_at: new Date().toISOString()
-      };
-
-      const newInboxRecord = {
-        address: initialAddr,
-        device_id: clientIp,
-        created_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + (store.settings.retention_days || 7) * 24 * 3600000).toISOString(),
-        is_active: true
-      };
-      store.inboxes.push(newInboxRecord);
-      store.stats.lifetime_inboxes_created++;
-      saveStore(store);
-    }
-
-    const session = store.device_sessions[clientIp];
     sendJson(res, 200, {
-      device_id: clientIp,
+      device_id: deviceId,
       inboxes: session.inboxes,
       activeIndex: session.activeIndex || 0,
       changesCount: session.changesCount || {},
@@ -532,7 +635,6 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
   if (pathname === '/api/inbox/create' && method === 'POST') {
     const body = await parseJsonBody(req);
     const store = getStore();
-    const clientIp = getClientIp(req);
 
     if (!store.settings.service_enabled) {
       sendJson(res, 503, { error: 'Service is temporarily paused for maintenance.' });
@@ -540,7 +642,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     }
 
     const maxLimit = store.settings.max_inboxes_per_user || 7;
-    const session = store.device_sessions[clientIp] || { inboxes: [], changesCount: {} };
+    const { session, deviceId } = getOrInitDeviceSession(store, req, parsedUrl, body);
 
     if (session.inboxes && session.inboxes.length >= maxLimit) {
       sendJson(res, 429, { 
@@ -556,11 +658,10 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     session.changesCount = session.changesCount || {};
     session.changesCount[address] = 0;
     session.activeIndex = session.inboxes.length - 1;
-    store.device_sessions[clientIp] = session;
 
     const newInbox = {
       address: address,
-      device_id: clientIp,
+      device_id: deviceId,
       created_at: new Date().toISOString(),
       expires_at: new Date(Date.now() + (store.settings.retention_days || 7) * 24 * 3600000).toISOString(),
       is_active: true
@@ -578,11 +679,10 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
   if (pathname === '/api/inbox/change' && method === 'POST') {
     const body = await parseJsonBody(req);
     const store = getStore();
-    const clientIp = getClientIp(req);
-    const session = store.device_sessions[clientIp];
+    const { session, deviceId } = getOrInitDeviceSession(store, req, parsedUrl, body);
     const maxChanges = store.settings.max_email_changes_per_inbox || 3;
 
-    if (!session || !session.inboxes) {
+    if (!session || !session.inboxes || session.inboxes.length === 0) {
       sendJson(res, 400, { error: 'No active session.' });
       return true;
     }
@@ -605,11 +705,10 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     session.changesCount = session.changesCount || {};
     session.changesCount[newAddress] = used + 1;
     delete session.changesCount[oldAddress];
-    store.device_sessions[clientIp] = session;
 
     const newInbox = {
       address: newAddress,
-      device_id: clientIp,
+      device_id: deviceId,
       created_at: new Date().toISOString(),
       expires_at: new Date(Date.now() + (store.settings.retention_days || 7) * 24 * 3600000).toISOString(),
       is_active: true
@@ -631,8 +730,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
   if (pathname === '/api/inbox/delete-slot' && method === 'POST') {
     const body = await parseJsonBody(req);
     const store = getStore();
-    const clientIp = getClientIp(req);
-    const session = store.device_sessions[clientIp];
+    const { session } = getOrInitDeviceSession(store, req, parsedUrl, body);
 
     if (session && session.inboxes) {
       const target = (body.address || '').toLowerCase().trim();
@@ -641,11 +739,40 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       if (session.activeIndex >= session.inboxes.length) {
         session.activeIndex = Math.max(0, session.inboxes.length - 1);
       }
-      store.device_sessions[clientIp] = session;
       saveStore(store);
     }
 
     sendJson(res, 200, { success: true, inboxes: (session && session.inboxes) || [] });
+    return true;
+  }
+
+  // 14. Public Ads Config API
+  if (pathname === '/api/ads' && method === 'GET') {
+    const store = getStore();
+    sendJson(res, 200, store.ads || { master_enabled: false });
+    return true;
+  }
+
+  // 15. Admin Ads Management API
+  if (pathname === '/api/admin/ads' && method === 'GET') {
+    const store = getStore();
+    sendJson(res, 200, store.ads || { master_enabled: false });
+    return true;
+  }
+
+  if (pathname === '/api/admin/ads' && method === 'POST') {
+    const body = await parseJsonBody(req);
+    const store = getStore();
+    if (!store.ads) store.ads = {};
+
+    if (body.master_enabled !== undefined) store.ads.master_enabled = Boolean(body.master_enabled);
+    if (body.top_banner) store.ads.top_banner = body.top_banner;
+    if (body.middle_banner) store.ads.middle_banner = body.middle_banner;
+    if (body.sidebar_banner) store.ads.sidebar_banner = body.sidebar_banner;
+    if (body.bottom_banner) store.ads.bottom_banner = body.bottom_banner;
+
+    saveStore(store);
+    sendJson(res, 200, { success: true, message: 'Ads configuration successfully updated!', ads: store.ads });
     return true;
   }
 

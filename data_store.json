@@ -16,12 +16,56 @@
     "custom_head_scripts": ""
   },
   "stats": {
-    "lifetime_inboxes_created": 0,
+    "lifetime_inboxes_created": 1,
     "lifetime_messages_received": 0
   },
-  "inboxes": [],
+  "ads": {
+    "master_enabled": false,
+    "top_banner": {
+      "enabled": false,
+      "code": "",
+      "label": "Top Leaderboard (728x90 Desktop / 320x50 Mobile)"
+    },
+    "middle_banner": {
+      "enabled": false,
+      "code": "",
+      "label": "Below Generator (728x90 or 300x250)"
+    },
+    "sidebar_banner": {
+      "enabled": false,
+      "code": "",
+      "label": "Sidebar / Content (300x250 or 160x600)"
+    },
+    "bottom_banner": {
+      "enabled": false,
+      "code": "",
+      "label": "Bottom Footer Banner (728x90)"
+    }
+  },
+  "inboxes": [
+    {
+      "address": "quick.beacon308@tempemails.site",
+      "device_id": "test_device_1",
+      "created_at": "2026-10-08T21:43:49.382Z",
+      "expires_at": "2026-10-15T21:43:49.382Z",
+      "is_active": true
+    }
+  ],
   "messages": [],
-  "device_sessions": {},
+  "device_sessions": {
+    "DEV_test_device_1": {
+      "inboxes": [
+        "quick.beacon308@tempemails.site"
+      ],
+      "activeIndex": 0,
+      "changesCount": {
+        "quick.beacon308@tempemails.site": 0
+      },
+      "ip": "127.0.0.1",
+      "hw_id": "test_device_1",
+      "created_at": "2026-10-08T21:43:49.382Z"
+    }
+  },
   "blogs": [
     {
       "id": "blog-1",
@@ -30,6 +74,11 @@
       "category": "Security",
       "cover_image": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=80",
       "summary": "Discover why entering your real email on public Wi-Fi or one-time trials is dangerous, and how throwaway inboxes protect your core accounts.",
+      "content_html": "<p>In the modern digital landscape, your personal email address is much more than an inbox—it is your universal digital identity. It functions as the primary password recovery route for banking, social media, cloud documents, and communications.</p><h2>The Real Danger of One-Time Signups</h2><p>Every time you download an ebook, register for a public Wi-Fi hotspot, or try a 7-day SaaS trial, your primary email gets added to corporate databases. In nearly 80% of cases, these databases are later breached, scraped, or traded with advertising brokers.</p><p>Using a disposable email address from <strong>tempemails.site</strong> provides an impenetrable barrier between internet services and your personal identity.</p>",
+      "tags": "Security, Privacy, Email Protection",
+      "author": "Shakib",
+      "read_time": "4 min read",
+      "status": "published",
       "created_at": "2026-10-08T17:30:58.323Z"
     },
     {
@@ -39,6 +88,11 @@
       "category": "Tutorial",
       "cover_image": "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=800&auto=format&fit=crop&q=80",
       "summary": "A comprehensive look at edge email routing, regex extraction, and how automated disposable inboxes catch one-time passwords instantly.",
+      "content_html": "<p>One-Time Passwords (OTPs) and magic verification links are the foundation of modern multi-factor authentication. When you sign up for an online account, the service sends a 4 to 8 digit code to verify mailbox ownership.</p><h2>How tempemails.site Catches OTPs Instantly</h2><p>Our Cloudflare Edge Workers analyze incoming RFC 822 email streams in real time. We extract security codes from the subject lines and email body, rendering a 1-click <strong>Copy OTP</strong> button so you never need to search through raw message bodies.</p>",
+      "tags": "OTP, Verification, Tutorial",
+      "author": "Shakib",
+      "read_time": "3 min read",
+      "status": "published",
       "created_at": "2026-10-08T17:30:58.323Z"
     }
   ]

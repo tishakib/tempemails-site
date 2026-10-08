@@ -24,6 +24,10 @@
     }
   </script>
 
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/img/apple-touch-icon.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -35,9 +39,7 @@
   <div id="login-modal" class="fixed inset-0 z-50 bg-[#0B0F19]/95 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
       <div class="text-center mb-6">
-        <div class="w-12 h-12 rounded-xl bg-[#F4413D] text-white flex items-center justify-center font-black text-base mx-auto mb-3 shadow-lg shadow-red-500/30">
-          TRE
-        </div>
+        <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-14 h-14 rounded-2xl object-cover mx-auto mb-3 shadow-lg shadow-red-500/30 border border-slate-700">
         <h2 class="text-2xl font-bold text-white tracking-tight">Admin Portal</h2>
         <p class="text-xs text-slate-400 mt-1">tempemails.site Master Control Panel</p>
       </div>
@@ -67,9 +69,7 @@
     <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-[#F4413D] text-white flex items-center justify-center font-black text-sm">
-            TRE
-          </div>
+          <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-9 h-9 rounded-xl object-cover border border-slate-700 shadow-xs">
           <div>
             <span class="font-extrabold text-white text-base tracking-tight">tempemails<span class="text-[#F4413D]">.site</span></span>
             <span class="ml-2 px-2 py-0.5 text-[10px] bg-red-500/20 text-red-400 font-bold rounded-full border border-red-500/30">ADMIN PORTAL</span>
@@ -82,7 +82,8 @@
           <button onclick="switchTab('tab-inboxes')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-inboxes">Live Inboxes</button>
           <button onclick="switchTab('tab-settings')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-settings">System Limits</button>
           <button onclick="switchTab('tab-seo')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-seo">Google SEO</button>
-          <button onclick="switchTab('tab-blogs')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-blogs">Blog CMS</button>
+          <button onclick="switchTab('tab-ads')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-ads">Ads Manager</button>
+          <button onclick="switchTab('tab-blogs')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-blogs">Blog Studio</button>
           <button onclick="switchTab('tab-supabase')" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors text-slate-400 hover:text-white" data-tab="tab-supabase">Supabase</button>
         </nav>
 
@@ -328,20 +329,168 @@
         </form>
       </section>
 
-      <!-- TAB 5: BLOG CMS -->
-      <section id="tab-blogs" class="tab-content hidden space-y-6">
+      <!-- TAB 5: ADS MANAGER (Dynamic AdSense & Custom Banners) -->
+      <section id="tab-ads" class="tab-content hidden space-y-6">
         <div class="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h2 class="text-xl font-bold text-white">Blog & Articles CMS</h2>
-            <p class="text-xs text-slate-400 mt-0.5">Publish articles to boost Google ranking and AdSense approval</p>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>Google AdSense & Ad Manager</span>
+              <span id="ads-master-badge" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">ADS ACTIVE</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Control live advertising scripts across all pages with zero layout shifting.</p>
           </div>
-          <button onclick="document.getElementById('new-blog-modal').classList.remove('hidden')" class="px-4 py-2 bg-[#F4413D] hover:bg-red-600 text-white font-bold text-xs rounded-xl transition-colors">
-            + Add New Article
+          <button onclick="saveAdminAds()" class="px-5 py-2.5 bg-[#F4413D] hover:bg-red-600 text-white font-bold text-xs rounded-xl transition-all shadow-lg shadow-red-500/25 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>Save Ads Configuration</span>
           </button>
         </div>
 
-        <div id="blog-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Rendered by admin JS -->
+        <!-- Master Switch Card -->
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-white text-sm">Master Advertising Switch</h3>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Turn off all ads with a single click. When disabled, all ad containers on <code class="text-red-400">tempemails.site</code> are completely hidden (<code class="text-slate-300">display: none</code>) with zero blank space or placeholders.
+            </p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="ad-master-enabled" class="sr-only peer" checked onchange="updateAdsMasterBadge()">
+            <div class="w-12 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#F4413D]"></div>
+          </label>
+        </div>
+
+        <!-- 4 Ad Slots Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Slot 1: Top Leaderboard -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-red-400">Slot 1 &bull; Header</span>
+                <h4 class="font-bold text-white text-sm">Top Leaderboard Banner</h4>
+                <p class="text-[11px] text-slate-400">Position: Above the temporary email generator box</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="ad-top-enabled" class="sr-only peer" checked>
+                <div class="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
+              <span class="font-semibold text-slate-300">Recommended Size:</span>
+              <span class="font-mono text-emerald-400">728x90 (Desktop)</span> &bull;
+              <span class="font-mono text-emerald-400">320x50 (Mobile)</span>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-semibold text-slate-400">AdSense / HTML Code:</label>
+                <button type="button" onclick="insertAdSenseTemplate('top')" class="text-[10px] text-red-400 hover:text-red-300">+ Insert AdSense Snippet</button>
+              </div>
+              <textarea id="ad-top-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+            </div>
+          </div>
+
+          <!-- Slot 2: In-Feed Middle -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-red-400">Slot 2 &bull; Content</span>
+                <h4 class="font-bold text-white text-sm">In-Feed Responsive Banner</h4>
+                <p class="text-[11px] text-slate-400">Position: Between active inbox and guide content</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="ad-middle-enabled" class="sr-only peer" checked>
+                <div class="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
+              <span class="font-semibold text-slate-300">Recommended Size:</span>
+              <span class="font-mono text-emerald-400">728x90 (Desktop)</span> &bull;
+              <span class="font-mono text-emerald-400">300x250 (Rectangle)</span>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-semibold text-slate-400">AdSense / HTML Code:</label>
+                <button type="button" onclick="insertAdSenseTemplate('middle')" class="text-[10px] text-red-400 hover:text-red-300">+ Insert AdSense Snippet</button>
+              </div>
+              <textarea id="ad-middle-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+            </div>
+          </div>
+
+          <!-- Slot 3: Sidebar Skyscraper -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-red-400">Slot 3 &bull; Sidebar</span>
+                <h4 class="font-bold text-white text-sm">Sidebar Sticky Skyscraper</h4>
+                <p class="text-[11px] text-slate-400">Position: Sticky Desktop Sidebars (Left / Right)</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="ad-sidebar-enabled" class="sr-only peer" checked>
+                <div class="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
+              <span class="font-semibold text-slate-300">Recommended Size:</span>
+              <span class="font-mono text-emerald-400">160x600 (Desktop)</span> &bull;
+              <span class="font-mono text-emerald-400">300x600 (Wide)</span>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-semibold text-slate-400">AdSense / HTML Code:</label>
+                <button type="button" onclick="insertAdSenseTemplate('sidebar')" class="text-[10px] text-red-400 hover:text-red-300">+ Insert AdSense Snippet</button>
+              </div>
+              <textarea id="ad-sidebar-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+            </div>
+          </div>
+
+          <!-- Slot 4: Bottom Banner -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-red-400">Slot 4 &bull; Footer</span>
+                <h4 class="font-bold text-white text-sm">Bottom Leaderboard Banner</h4>
+                <p class="text-[11px] text-slate-400">Position: Above the Website Footer</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="ad-bottom-enabled" class="sr-only peer" checked>
+                <div class="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
+              <span class="font-semibold text-slate-300">Recommended Size:</span>
+              <span class="font-mono text-emerald-400">728x90 (Desktop)</span> &bull;
+              <span class="font-mono text-emerald-400">320x50 (Mobile)</span>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-semibold text-slate-400">AdSense / HTML Code:</label>
+                <button type="button" onclick="insertAdSenseTemplate('bottom')" class="text-[10px] text-red-400 hover:text-red-300">+ Insert AdSense Snippet</button>
+              </div>
+              <textarea id="ad-bottom-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 6: WORDPRESS-STYLE BLOG STUDIO -->
+      <section id="tab-blogs" class="tab-content hidden space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>WordPress-Style Article Studio</span>
+              <span id="blog-total-badge" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-slate-800 text-slate-300 border border-slate-700">0 Articles</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Author rich, high-authority articles with live Google SERP preview to secure AdSense approval.</p>
+          </div>
+          <button onclick="openBlogEditor()" class="px-5 py-2.5 bg-[#F4413D] hover:bg-red-600 text-white font-bold text-xs rounded-xl transition-all shadow-lg shadow-red-500/25 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Write New Article</span>
+          </button>
+        </div>
+
+        <div id="blog-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Rendered dynamically by loadAdminBlogs() -->
         </div>
       </section>
 
@@ -421,35 +570,184 @@ CREATE TABLE IF NOT EXISTS messages (
     </div>
   </div>
 
-  <!-- MODAL: ADD NEW BLOG POST -->
-  <div id="new-blog-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-        <h3 class="font-bold text-white text-base">Add New Blog Article</h3>
-        <button onclick="document.getElementById('new-blog-modal').classList.add('hidden')" class="text-slate-400 hover:text-white p-1">✕</button>
+  <!-- MODAL: WORDPRESS-STYLE ARTICLE STUDIO -->
+  <div id="blog-studio-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-5xl w-full my-auto shadow-2xl relative flex flex-col max-h-[92vh] overflow-hidden">
+      
+      <!-- Studio Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/80">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-[#F4413D]/20 text-[#F4413D] flex items-center justify-center font-bold text-sm">
+            ✍️
+          </div>
+          <div>
+            <h3 id="studio-modal-heading" class="font-bold text-white text-base">Write Article &bull; WordPress Studio</h3>
+            <p class="text-[11px] text-slate-400">SEO-Optimized Content Publishing Engine</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="saveBlogArticle('draft')" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-xl transition-colors border border-slate-700">
+            Save Draft
+          </button>
+          <button type="button" onclick="saveBlogArticle('published')" class="px-4 py-1.5 bg-[#F4413D] hover:bg-red-600 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-red-500/20 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span id="studio-publish-btn-text">Publish Post</span>
+          </button>
+          <button type="button" onclick="closeBlogEditor()" class="text-slate-400 hover:text-white p-1.5 rounded-lg ml-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
       </div>
 
-      <form id="new-blog-form" class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Article Title</label>
-          <input type="text" id="blog-title" placeholder="How to use disposable emails..." class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white" required>
+      <!-- Studio Body (2 Columns) -->
+      <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left 2 Cols: Main Content & Rich Editor -->
+        <div class="lg:col-span-2 space-y-4">
+          <input type="hidden" id="blog-editor-id" value="">
+
+          <!-- Title Input -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Article Title</label>
+            <input type="text" id="blog-editor-title" placeholder="e.g. How to Protect Your Privacy Using Temporary Emails" oninput="handleBlogTitleInput()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-base font-bold text-white placeholder-slate-600 focus:outline-none focus:border-[#F4413D]" required>
+          </div>
+
+          <!-- Permalink Slug -->
+          <div class="flex items-center gap-2 bg-slate-950 px-3 py-2 rounded-xl border border-slate-800 text-xs">
+            <span class="text-slate-500 font-mono">Permalink: tempemails.site/blog-article.html?slug=</span>
+            <input type="text" id="blog-editor-slug" placeholder="how-to-protect-privacy" oninput="updateGooglePreview()" class="flex-1 bg-transparent text-red-400 font-mono focus:outline-none text-xs">
+          </div>
+
+          <!-- Short Excerpt / Meta Description -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Excerpt / Search Snippet</label>
+              <span class="text-[10px] text-slate-500" id="excerpt-counter">0 / 160 chars</span>
+            </div>
+            <textarea id="blog-editor-summary" rows="2" placeholder="Brief 1-2 sentence overview for Google search snippet and article preview card..." oninput="handleExcerptInput()" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+          </div>
+
+          <!-- Rich Text Editor Container -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5 flex-wrap gap-2">
+              <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Article Content (WYSIWYG)</label>
+              <div class="flex items-center gap-1.5 text-xs">
+                <button type="button" onclick="toggleHtmlMode()" id="html-toggle-btn" class="px-2 py-0.5 rounded text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono">View HTML</button>
+              </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div id="editor-toolbar" class="bg-slate-950 border border-slate-800 border-b-0 rounded-t-xl p-2 flex items-center flex-wrap gap-1 text-slate-300">
+              <button type="button" onclick="formatDoc('formatBlock', 'h2')" title="Heading 2" class="px-2 py-1 bg-slate-800/80 hover:bg-slate-700 rounded text-xs font-bold">H2</button>
+              <button type="button" onclick="formatDoc('formatBlock', 'h3')" title="Heading 3" class="px-2 py-1 bg-slate-800/80 hover:bg-slate-700 rounded text-xs font-bold">H3</button>
+              <button type="button" onclick="formatDoc('formatBlock', 'p')" title="Paragraph" class="px-2 py-1 bg-slate-800/80 hover:bg-slate-700 rounded text-xs">P</button>
+              <div class="w-px h-5 bg-slate-800 mx-1"></div>
+              <button type="button" onclick="formatDoc('bold')" title="Bold" class="w-7 h-7 flex items-center justify-center hover:bg-slate-800 rounded font-bold text-xs">B</button>
+              <button type="button" onclick="formatDoc('italic')" title="Italic" class="w-7 h-7 flex items-center justify-center hover:bg-slate-800 rounded italic text-xs">I</button>
+              <button type="button" onclick="formatDoc('underline')" title="Underline" class="w-7 h-7 flex items-center justify-center hover:bg-slate-800 rounded underline text-xs">U</button>
+              <button type="button" onclick="formatDoc('strikeThrough')" title="Strikethrough" class="w-7 h-7 flex items-center justify-center hover:bg-slate-800 rounded line-through text-xs">S</button>
+              <div class="w-px h-5 bg-slate-800 mx-1"></div>
+              <button type="button" onclick="formatDoc('insertUnorderedList')" title="Bullet List" class="w-7 h-7 flex items-center justify-center hover:bg-slate-800 rounded text-xs">&bull; List</button>
+              <button type="button" onclick="formatDoc('insertOrderedList')" title="Numbered List" class="w-7 h-7 flex items-center justify-center hover:bg-slate-800 rounded text-xs">1. List</button>
+              <button type="button" onclick="formatDoc('formatBlock', 'blockquote')" title="Quote" class="w-7 h-7 flex items-center justify-center hover:bg-slate-800 rounded text-xs">&ldquo; Quote</button>
+              <div class="w-px h-5 bg-slate-800 mx-1"></div>
+              <button type="button" onclick="insertLinkPrompt()" title="Insert Link" class="px-2 py-1 hover:bg-slate-800 rounded text-xs flex items-center gap-1">🔗 Link</button>
+              <button type="button" onclick="insertImagePrompt()" title="Insert Image" class="px-2 py-1 hover:bg-slate-800 rounded text-xs flex items-center gap-1">🖼 Image</button>
+              <button type="button" onclick="formatDoc('insertHorizontalRule')" title="Divider" class="px-2 py-1 hover:bg-slate-800 rounded text-xs">&mdash; Line</button>
+              <button type="button" onclick="formatDoc('removeFormat')" title="Clear Formatting" class="px-2 py-1 hover:bg-slate-800 rounded text-[11px] text-red-400">Clear</button>
+            </div>
+
+            <!-- WYSIWYG Editable Canvas -->
+            <div id="blog-editor-wysiwyg" contenteditable="true" class="w-full min-h-[280px] max-h-[380px] overflow-y-auto px-4 py-3 bg-slate-950 border border-slate-800 rounded-b-xl text-sm text-slate-200 focus:outline-none focus:border-[#F4413D] leading-relaxed">
+              <p>Start writing your high-quality article here...</p>
+            </div>
+
+            <!-- Raw HTML Textarea (toggled) -->
+            <textarea id="blog-editor-html" class="hidden w-full min-h-[280px] max-h-[380px] px-4 py-3 bg-slate-950 border border-slate-800 rounded-b-xl text-xs font-mono text-emerald-400 focus:outline-none"></textarea>
+          </div>
+
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Category</label>
-          <input type="text" id="blog-category" placeholder="Privacy / Security / Tutorial" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white" required>
+
+        <!-- Right 1 Col: Publishing Meta & Featured Image & SEO -->
+        <div class="space-y-5">
+          
+          <!-- Category & Status -->
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Publish Settings</h4>
+            
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Status</label>
+              <select id="blog-editor-status" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white">
+                <option value="published">Published</option>
+                <option value="draft">Draft (Private)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Category</label>
+              <input type="text" id="blog-editor-category" placeholder="Privacy & Security" list="category-suggestions" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white">
+              <datalist id="category-suggestions">
+                <option value="Privacy & Security"></option>
+                <option value="Email Tutorials"></option>
+                <option value="OTP & Verification"></option>
+                <option value="Spam Prevention"></option>
+              </datalist>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Tags (Comma separated)</label>
+              <input type="text" id="blog-editor-tags" placeholder="temp mail, privacy, spam shield" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Author Name</label>
+              <input type="text" id="blog-editor-author" value="Shakib" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white">
+            </div>
+          </div>
+
+          <!-- Featured Image -->
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Featured Image</h4>
+            
+            <div id="blog-image-preview-box" class="w-full h-32 bg-slate-900 rounded-lg border border-slate-800 overflow-hidden flex items-center justify-center relative">
+              <img id="blog-image-preview" src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=80" alt="Preview" class="w-full h-full object-cover">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Image URL</label>
+              <input type="url" id="blog-editor-image-url" placeholder="https://images.unsplash.com/..." oninput="handleImageUrlInput()" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Or Upload Local Image</label>
+              <input type="file" id="blog-editor-file" accept="image/*" onchange="handleImageFileUpload(event)" class="w-full text-xs text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
+            </div>
+          </div>
+
+          <!-- Google SERP Snippet Preview -->
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <span>Google Search Preview</span>
+            </h4>
+            <div class="p-3 bg-white text-slate-900 rounded-lg text-xs space-y-1 shadow-sm">
+              <div class="flex items-center gap-1.5 text-[11px] text-slate-600 truncate">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#F4413D] text-white flex items-center justify-center text-[8px] font-bold">T</span>
+                <span>tempemails.site &rsaquo; blog &rsaquo; <span id="serp-slug-preview" class="text-slate-800">how-to-protect-privacy</span></span>
+              </div>
+              <div id="serp-title-preview" class="text-blue-800 font-medium text-sm leading-snug line-clamp-1 hover:underline cursor-pointer">
+                How to Protect Your Privacy Using Temporary Emails
+              </div>
+              <div id="serp-desc-preview" class="text-slate-600 text-[11px] leading-relaxed line-clamp-2">
+                Discover why disposable temporary email addresses are the best defense against spam, tracking, and data breaches.
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Cover Image URL</label>
-          <input type="url" id="blog-image" placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white" required>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Summary (1-2 sentences)</label>
-          <textarea id="blog-summary" rows="3" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white" required></textarea>
-        </div>
-        <button type="submit" class="w-full py-2.5 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-xs transition-colors">
-          Publish Article
-        </button>
-      </form>
+
+      </div>
+
     </div>
   </div>
 
@@ -473,6 +771,7 @@ CREATE TABLE IF NOT EXISTS messages (
       if (tabId === 'tab-overview') loadAdminStats();
       if (tabId === 'tab-inboxes') loadAdminInboxes();
       if (tabId === 'tab-settings') loadAdminSettings();
+      if (tabId === 'tab-ads') loadAdminAds();
       if (tabId === 'tab-blogs') loadAdminBlogs();
     }
 
@@ -686,50 +985,351 @@ CREATE TABLE IF NOT EXISTS messages (
       alert('Supabase credentials saved!');
     }
 
-    // Load Blogs
+    // ==========================================
+    // ADS MANAGER CONTROLS & DYNAMIC PERSISTENCE
+    // ==========================================
+    function updateAdsMasterBadge() {
+      const isMasterOn = document.getElementById('ad-master-enabled').checked;
+      const badge = document.getElementById('ads-master-badge');
+      if (badge) {
+        if (isMasterOn) {
+          badge.className = 'px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+          badge.textContent = 'ADS ACTIVE';
+        } else {
+          badge.className = 'px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-500/20 text-red-400 border border-red-500/30';
+          badge.textContent = 'ALL ADS DISABLED';
+        }
+      }
+    }
+
+    async function loadAdminAds() {
+      try {
+        const res = await fetch('/api/admin/ads');
+        const ads = await res.json();
+        
+        document.getElementById('ad-master-enabled').checked = ads.master_enabled !== false;
+        updateAdsMasterBadge();
+
+        if (ads.top_banner) {
+          document.getElementById('ad-top-enabled').checked = ads.top_banner.enabled !== false;
+          document.getElementById('ad-top-code').value = ads.top_banner.code || '';
+        }
+        if (ads.middle_banner) {
+          document.getElementById('ad-middle-enabled').checked = ads.middle_banner.enabled !== false;
+          document.getElementById('ad-middle-code').value = ads.middle_banner.code || '';
+        }
+        if (ads.sidebar_banner) {
+          document.getElementById('ad-sidebar-enabled').checked = ads.sidebar_banner.enabled !== false;
+          document.getElementById('ad-sidebar-code').value = ads.sidebar_banner.code || '';
+        }
+        if (ads.bottom_banner) {
+          document.getElementById('ad-bottom-enabled').checked = ads.bottom_banner.enabled !== false;
+          document.getElementById('ad-bottom-code').value = ads.bottom_banner.code || '';
+        }
+      } catch (err) {
+        console.error('Error loading ads configuration:', err);
+      }
+    }
+
+    async function saveAdminAds() {
+      const payload = {
+        master_enabled: document.getElementById('ad-master-enabled').checked,
+        top_banner: {
+          enabled: document.getElementById('ad-top-enabled').checked,
+          code: document.getElementById('ad-top-code').value
+        },
+        middle_banner: {
+          enabled: document.getElementById('ad-middle-enabled').checked,
+          code: document.getElementById('ad-middle-code').value
+        },
+        sidebar_banner: {
+          enabled: document.getElementById('ad-sidebar-enabled').checked,
+          code: document.getElementById('ad-sidebar-code').value
+        },
+        bottom_banner: {
+          enabled: document.getElementById('ad-bottom-enabled').checked,
+          code: document.getElementById('ad-bottom-code').value
+        }
+      };
+
+      try {
+        const res = await fetch('/api/admin/ads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        alert(data.message || 'Ads configuration successfully updated!');
+        updateAdsMasterBadge();
+      } catch (err) {
+        alert('Failed to save ads configuration.');
+      }
+    }
+
+    function insertAdSenseTemplate(slot) {
+      const template = `<!-- Google AdSense Unit -->\n<ins class="adsbygoogle"\n     style="display:block"\n     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"\n     data-ad-slot="1234567890"\n     data-ad-format="auto"\n     data-full-width-responsive="true"></ins>\n<script>\n     (adsbygoogle = window.adsbygoogle || []).push({});\n</script>`;
+      const target = document.getElementById(`ad-${slot}-code`);
+      if (target) {
+        target.value = template;
+      }
+    }
+
+    // ==========================================
+    // WORDPRESS-STYLE BLOG CMS STUDIO CONTROLS
+    // ==========================================
+    let cachedBlogs = [];
+
     async function loadAdminBlogs() {
       const container = document.getElementById('blog-list-container');
+      const badge = document.getElementById('blog-total-badge');
       try {
         const res = await fetch('/api/blogs');
-        const blogs = await res.json();
-        container.innerHTML = blogs.map(b => `
-          <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex gap-4">
-            <img src="${b.cover_image}" class="w-20 h-20 object-cover rounded-lg shrink-0">
-            <div class="flex-1 min-w-0">
-              <span class="text-[10px] uppercase font-bold text-[#F4413D]">${b.category}</span>
-              <h4 class="font-bold text-white text-sm truncate">${b.title}</h4>
-              <p class="text-xs text-slate-400 line-clamp-2 mt-1">${b.summary}</p>
+        cachedBlogs = await res.json();
+        if (badge) badge.textContent = `${cachedBlogs.length} Articles`;
+
+        if (cachedBlogs.length === 0) {
+          container.innerHTML = `
+            <div class="col-span-full py-12 text-center bg-slate-900 border border-slate-800 rounded-2xl p-6">
+              <p class="text-slate-400 text-sm">No articles published yet.</p>
+              <button onclick="openBlogEditor()" class="mt-3 px-4 py-2 bg-[#F4413D] text-white text-xs font-bold rounded-xl">+ Write First Article</button>
             </div>
-            <button onclick="deleteBlog('${b.id}')" class="text-slate-500 hover:text-red-400 p-1 self-start">✕</button>
-          </div>
-        `).join('');
+          `;
+          return;
+        }
+
+        container.innerHTML = cachedBlogs.map(b => {
+          const isPublished = b.status !== 'draft';
+          return `
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col group hover:border-slate-700 transition-all shadow-lg">
+              <div class="relative h-44 bg-slate-950 overflow-hidden">
+                <img src="${b.cover_image}" alt="${b.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                <div class="absolute top-3 left-3 flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-black/60 backdrop-blur-md text-[#F4413D] border border-red-500/30">
+                    ${b.category}
+                  </span>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${isPublished ? 'bg-emerald-500/80 text-white' : 'bg-amber-500/80 text-slate-900'}">
+                    ${isPublished ? 'Published' : 'Draft'}
+                  </span>
+                </div>
+                <div class="absolute bottom-2 right-2 text-[10px] font-mono bg-black/70 backdrop-blur-md text-slate-300 px-2 py-0.5 rounded">
+                  ${b.read_time || '3 min read'}
+                </div>
+              </div>
+
+              <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                <div>
+                  <h4 class="font-bold text-white text-base leading-snug line-clamp-2">${b.title}</h4>
+                  <p class="text-xs text-slate-400 line-clamp-2 mt-2 leading-relaxed">${b.summary}</p>
+                  <p class="text-[11px] font-mono text-red-400/80 mt-2 truncate">slug: /${b.slug}</p>
+                </div>
+
+                <div class="pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+                  <span class="text-slate-500 text-[11px]">${new Date(b.created_at || Date.now()).toLocaleDateString()}</span>
+                  <div class="flex items-center gap-2">
+                    <button onclick="openBlogEditor('${b.id}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg text-xs transition-colors flex items-center gap-1">
+                      <span>Edit</span>
+                    </button>
+                    <a href="./blog-article.html?slug=${encodeURIComponent(b.slug)}" target="_blank" class="px-2.5 py-1.5 bg-slate-800/60 hover:bg-slate-800 text-slate-300 rounded-lg text-xs transition-colors">
+                      View
+                    </a>
+                    <button onclick="deleteBlog('${b.id}')" class="px-2.5 py-1.5 text-red-400 hover:bg-red-500/10 rounded-lg text-xs transition-colors">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
       } catch (err) {
         console.error('Error loading blogs:', err);
       }
     }
 
-    // Add Blog
-    document.getElementById('new-blog-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    function openBlogEditor(id = null) {
+      const modal = document.getElementById('blog-studio-modal');
+      const wysiwyg = document.getElementById('blog-editor-wysiwyg');
+      const htmlTextarea = document.getElementById('blog-editor-html');
+      wysiwyg.classList.remove('hidden');
+      htmlTextarea.classList.add('hidden');
+      document.getElementById('html-toggle-btn').textContent = 'View HTML';
+
+      if (id) {
+        const blog = cachedBlogs.find(b => b.id === id);
+        if (blog) {
+          document.getElementById('blog-editor-id').value = blog.id;
+          document.getElementById('blog-editor-title').value = blog.title;
+          document.getElementById('blog-editor-slug').value = blog.slug;
+          document.getElementById('blog-editor-category').value = blog.category;
+          document.getElementById('blog-editor-tags').value = blog.tags || '';
+          document.getElementById('blog-editor-author').value = blog.author || 'Shakib';
+          document.getElementById('blog-editor-summary').value = blog.summary || '';
+          document.getElementById('blog-editor-status').value = blog.status || 'published';
+          document.getElementById('blog-editor-image-url').value = blog.cover_image || '';
+          document.getElementById('blog-image-preview').src = blog.cover_image || '';
+          wysiwyg.innerHTML = blog.content_html || `<p>${blog.summary || ''}</p>`;
+          document.getElementById('studio-modal-heading').textContent = `Editing: ${blog.title.substring(0, 30)}...`;
+          document.getElementById('studio-publish-btn-text').textContent = 'Update Article';
+        }
+      } else {
+        document.getElementById('blog-editor-id').value = '';
+        document.getElementById('blog-editor-title').value = '';
+        document.getElementById('blog-editor-slug').value = '';
+        document.getElementById('blog-editor-category').value = 'Privacy & Security';
+        document.getElementById('blog-editor-tags').value = 'temp mail, disposable email, privacy, otp';
+        document.getElementById('blog-editor-author').value = 'Shakib';
+        document.getElementById('blog-editor-summary').value = '';
+        document.getElementById('blog-editor-status').value = 'published';
+        const defaultImg = 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=80';
+        document.getElementById('blog-editor-image-url').value = defaultImg;
+        document.getElementById('blog-image-preview').src = defaultImg;
+        wysiwyg.innerHTML = '<p>Write your detailed guide or news update here...</p>';
+        document.getElementById('studio-modal-heading').textContent = 'Write Article • WordPress Studio';
+        document.getElementById('studio-publish-btn-text').textContent = 'Publish Post';
+      }
+
+      handleExcerptInput();
+      updateGooglePreview();
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeBlogEditor() {
+      const modal = document.getElementById('blog-studio-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleBlogTitleInput() {
+      const title = document.getElementById('blog-editor-title').value;
+      const slugInput = document.getElementById('blog-editor-slug');
+      const isExisting = document.getElementById('blog-editor-id').value;
+      if (!isExisting || !slugInput.value) {
+        slugInput.value = title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      }
+      updateGooglePreview();
+    }
+
+    function handleExcerptInput() {
+      const summary = document.getElementById('blog-editor-summary').value;
+      const counter = document.getElementById('excerpt-counter');
+      if (counter) counter.textContent = `${summary.length} / 160 chars`;
+      updateGooglePreview();
+    }
+
+    function updateGooglePreview() {
+      const title = document.getElementById('blog-editor-title').value || 'Article Title Preview';
+      const slug = document.getElementById('blog-editor-slug').value || 'article-slug';
+      const summary = document.getElementById('blog-editor-summary').value || 'Summary of the article will appear here in Google Search results snippet.';
+
+      const titleEl = document.getElementById('serp-title-preview');
+      const slugEl = document.getElementById('serp-slug-preview');
+      const descEl = document.getElementById('serp-desc-preview');
+
+      if (titleEl) titleEl.textContent = title;
+      if (slugEl) slugEl.textContent = slug;
+      if (descEl) descEl.textContent = summary;
+    }
+
+    function handleImageUrlInput() {
+      const url = document.getElementById('blog-editor-image-url').value;
+      if (url) {
+        document.getElementById('blog-image-preview').src = url;
+      }
+    }
+
+    function handleImageFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const dataUrl = evt.target.result;
+        document.getElementById('blog-editor-image-url').value = dataUrl;
+        document.getElementById('blog-image-preview').src = dataUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // WYSIWYG Formatter
+    function formatDoc(cmd, value = null) {
+      document.getElementById('blog-editor-wysiwyg').focus();
+      document.execCommand(cmd, false, value);
+    }
+
+    function insertLinkPrompt() {
+      const url = prompt('Enter URL (e.g. https://example.com):', 'https://');
+      if (url) formatDoc('createLink', url);
+    }
+
+    function insertImagePrompt() {
+      const url = prompt('Enter Image URL:', 'https://');
+      if (url) formatDoc('insertImage', url);
+    }
+
+    function toggleHtmlMode() {
+      const wysiwyg = document.getElementById('blog-editor-wysiwyg');
+      const htmlTextarea = document.getElementById('blog-editor-html');
+      const btn = document.getElementById('html-toggle-btn');
+
+      if (htmlTextarea.classList.contains('hidden')) {
+        htmlTextarea.value = wysiwyg.innerHTML;
+        wysiwyg.classList.add('hidden');
+        htmlTextarea.classList.remove('hidden');
+        btn.textContent = 'View Visual';
+      } else {
+        wysiwyg.innerHTML = htmlTextarea.value;
+        htmlTextarea.classList.add('hidden');
+        wysiwyg.classList.remove('hidden');
+        btn.textContent = 'View HTML';
+      }
+    }
+
+    async function saveBlogArticle(statusOverride = null) {
+      const title = document.getElementById('blog-editor-title').value.trim();
+      if (!title) {
+        alert('Please provide an article title.');
+        document.getElementById('blog-editor-title').focus();
+        return;
+      }
+
+      const htmlTextarea = document.getElementById('blog-editor-html');
+      const wysiwyg = document.getElementById('blog-editor-wysiwyg');
+      const contentHtml = htmlTextarea.classList.contains('hidden') ? wysiwyg.innerHTML : htmlTextarea.value;
+
       const payload = {
-        title: document.getElementById('blog-title').value,
-        category: document.getElementById('blog-category').value,
-        cover_image: document.getElementById('blog-image').value,
-        summary: document.getElementById('blog-summary').value
+        id: document.getElementById('blog-editor-id').value || undefined,
+        title: title,
+        slug: document.getElementById('blog-editor-slug').value.trim(),
+        category: document.getElementById('blog-editor-category').value.trim() || 'General',
+        tags: document.getElementById('blog-editor-tags').value.trim(),
+        author: document.getElementById('blog-editor-author').value.trim() || 'Shakib',
+        summary: document.getElementById('blog-editor-summary').value.trim(),
+        cover_image: document.getElementById('blog-editor-image-url').value.trim(),
+        content_html: contentHtml,
+        status: statusOverride || document.getElementById('blog-editor-status').value
       };
 
-      await fetch('/api/admin/blogs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      document.getElementById('new-blog-modal').classList.add('hidden');
-      loadAdminBlogs();
-    });
+      try {
+        const res = await fetch('/api/admin/blogs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('Article successfully saved!');
+          closeBlogEditor();
+          loadAdminBlogs();
+        } else {
+          alert('Error saving article: ' + (data.error || 'Server error'));
+        }
+      } catch (err) {
+        alert('Failed to connect to server.');
+      }
+    }
 
     async function deleteBlog(id) {
-      if (confirm('Delete this blog article?')) {
+      if (confirm('Permanently delete this blog article?')) {
         await fetch(`/api/admin/blogs?id=${id}`, { method: 'DELETE' });
         loadAdminBlogs();
       }
