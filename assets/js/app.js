@@ -618,6 +618,44 @@ function renderInboxView() {
   listContainer.innerHTML = html;
 }
 
+// Clean and sanitize raw MIME artifacts for clean email view
+function cleanClientMimeBody(rawHtml, rawSnippet) {
+  if (!rawHtml) return `<p class="whitespace-pre-line text-slate-700">${rawSnippet || '(No content)'}</p>`;
+
+  let content = rawHtml;
+
+  // If the body contains raw MIME headers (Received:, ARC-Seal:, boundary=), strip them
+  if (content.includes('Received:') || content.includes('ARC-Seal:') || content.includes('DKIM-Signature:') || content.includes('boundary=')) {
+    const norm = content.replace(/\r\n/g, '\n');
+    const headerEnd = norm.indexOf('\n\n');
+    if (headerEnd !== -1) {
+      const bodyPart = norm.substring(headerEnd + 2);
+      const htmlMatch = bodyPart.match(/Content-Type:\s*text\/html[^\n]*\n(?:[^\n]+\n)*\n([\s\S]*?)(?:--\w+|$)/i);
+      if (htmlMatch && htmlMatch[1]) {
+        content = htmlMatch[1];
+      } else {
+        const textMatch = bodyPart.match(/Content-Type:\s*text\/plain[^\n]*\n(?:[^\n]+\n)*\n([\s\S]*?)(?:--\w+|$)/i);
+        if (textMatch && textMatch[1]) {
+          content = textMatch[1]
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-semibold break-all">$1</a>')
+            .replace(/\n/g, '<br>');
+        } else {
+          content = bodyPart.replace(/--[a-zA-Z0-9_-]+--?/g, '').trim();
+        }
+      }
+    }
+  }
+
+  // Remove Quoted-Printable artifacts
+  content = content.replace(/=\r?\n/g, '').replace(/=3D/gi, '=');
+
+  // Strip boundary markers
+  content = content.replace(/--[0-9a-zA-Z_-]{10,}--?/g, '').trim();
+
+  return content;
+}
+
 // 4. Render Message Detail View (Gmail Message Viewer)
 function renderMessageDetail(msg, container) {
   // Mark message as read
@@ -685,8 +723,8 @@ function renderMessageDetail(msg, container) {
         </div>
       </div>
 
-      <!-- OTP Smart Highlight Box (If OTP found) -->
-      ${msg.otp ? `
+      <!-- OTP Smart Highlight Box (If legitimate OTP found) -->
+      ${(msg.otp && !msg.otp.startsWith('2607')) ? `
         <div class="mb-6 p-4 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-[#F4413D]/30 rounded-xl flex items-center justify-between flex-wrap gap-3">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-lg bg-[#F4413D] text-white flex items-center justify-center">
@@ -713,21 +751,22 @@ function renderMessageDetail(msg, container) {
       <!-- Partner Verification Link Highlight -->
       ${msg.partnerLink ? `
         <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between flex-wrap gap-2">
-          <div class="text-sm font-medium text-blue-900">
-            🔗 <strong>Verification Link Detected:</strong>
+          <div class="text-sm font-medium text-blue-900 flex items-center gap-2">
+            <span>🔗</span>
+            <span><strong>Verification Link Detected:</strong></span>
           </div>
-          <a href="${msg.partnerLink}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors inline-flex items-center gap-1">
+          <a href="${msg.partnerLink}" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-sm transition-colors inline-flex items-center gap-1.5">
             Open Verification Link
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
           </a>
         </div>
       ` : ''}
 
-      <!-- Message Body -->
-      <div class="email-body-content bg-white p-6 rounded-xl border border-slate-200 text-slate-800 leading-relaxed shadow-sm min-h-[160px]">
-        ${msg.bodyHtml || `<p class="whitespace-pre-line">${msg.snippet}</p>`}
+      <!-- Clean Message Body (Strip SMTP headers, wrap long URLs) -->
+      <div class="email-body-content bg-white p-6 rounded-xl border border-slate-200 text-slate-800 leading-relaxed shadow-sm min-h-[160px] break-words overflow-hidden" style="word-break: break-word; overflow-wrap: anywhere;">
+        ${cleanClientMimeBody(msg.bodyHtml, msg.snippet)}
       </div>
 
     </div>

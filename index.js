@@ -142,6 +142,112 @@ function sendJson(res, statusCode, data) {
   res.end(JSON.stringify(data));
 }
 
+// RFC 822 MIME Parser & Sanitizer
+function parseServerMime(raw) {
+  const normalized = raw.replace(/\r\n/g, '\n');
+  const splitIdx = normalized.indexOf('\n\n');
+  if (splitIdx === -1) {
+    return {
+      finalHtml: `<p style="white-space: pre-wrap; font-family: sans-serif;">${raw}</p>`,
+      snippet: raw.substring(0, 160),
+      otp: null,
+      partnerLink: null
+    };
+  }
+
+  const headerBlock = normalized.substring(0, splitIdx);
+  const bodyBlock = normalized.substring(splitIdx + 2);
+
+  function decodeQP(str) {
+    return str
+      .replace(/=\n/g, '')
+      .replace(/=([0-9A-Fa-f]{2})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+  }
+
+  function decodeB64(str) {
+    try {
+      return Buffer.from(str.replace(/\s+/g, ''), 'base64').toString('utf-8');
+    } catch {
+      return str;
+    }
+  }
+
+  const boundaryMatch = headerBlock.match(/boundary="?([^"\n;]+)"?/i);
+  let htmlContent = '';
+  let textContent = '';
+
+  if (boundaryMatch) {
+    const boundary = boundaryMatch[1];
+    const boundaryRegex = new RegExp('--' + boundary.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const parts = bodyBlock.split(boundaryRegex);
+
+    for (const part of parts) {
+      if (!part || part.trim() === '' || part.trim() === '--') continue;
+      const partSplit = part.indexOf('\n\n');
+      if (partSplit === -1) continue;
+
+      const partHeaders = part.substring(0, partSplit);
+      let partBody = part.substring(partSplit + 2);
+
+      const isB64 = /content-transfer-encoding:\s*base64/i.test(partHeaders);
+      const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(partHeaders);
+
+      if (isB64) partBody = decodeB64(partBody);
+      else if (isQP) partBody = decodeQP(partBody);
+
+      if (/content-type:\s*text\/html/i.test(partHeaders)) {
+        htmlContent = partBody.trim();
+      } else if (/content-type:\s*text\/plain/i.test(partHeaders)) {
+        textContent = partBody.trim();
+      }
+    }
+  } else {
+    const isB64 = /content-transfer-encoding:\s*base64/i.test(headerBlock);
+    const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(headerBlock);
+    let decoded = bodyBlock;
+    if (isB64) decoded = decodeB64(decoded);
+    else if (isQP) decoded = decodeQP(decoded);
+
+    if (/content-type:\s*text\/html/i.test(headerBlock)) {
+      htmlContent = decoded.trim();
+    } else {
+      textContent = decoded.trim();
+    }
+  }
+
+  let finalHtml = '';
+  if (htmlContent) {
+    finalHtml = htmlContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  } else if (textContent) {
+    const escaped = textContent.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    finalHtml = escaped
+      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #2563EB; text-decoration: underline; font-weight: 600; word-break: break-all;">$1</a>')
+      .replace(/\n/g, '<br>');
+  } else {
+    finalHtml = '<p style="color: #94A3B8;">(Empty message body)</p>';
+  }
+
+  const cleanText = (textContent || finalHtml.replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim();
+  const snippet = cleanText.substring(0, 160);
+
+  let otp = null;
+  const contextOtpMatch = cleanText.match(/(?:code|otp|verification|pin|password|token)[^\w\d]{1,25}(\b\d{4,8}\b)/i);
+  if (contextOtpMatch) {
+    otp = contextOtpMatch[1];
+  } else {
+    const standaloneMatch = cleanText.match(/(?:^|\s)(\d{4,8})(?:\s|$|\.)/);
+    if (standaloneMatch) otp = standaloneMatch[1];
+  }
+
+  const allLinks = (textContent + ' ' + htmlContent).match(/https?:\/\/[^\s"'<>\[\]\(\)\\]+/gi) || [];
+  const cleanLinks = [...new Set(allLinks.map(l => l.replace(/[.,;]+$/, '')))];
+  const partnerLink = cleanLinks.find(l => 
+    /verify|confirm|activate|action|token|mode=|auth/i.test(l)
+  ) || cleanLinks[0] || null;
+
+  return { finalHtml, snippet, otp, partnerLink };
+}
+
 // API Route Handler
 async function handleApiRequest(req, res, pathname, method, parsedUrl) {
   if (method === 'OPTIONS') {
@@ -324,16 +430,30 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       store.stats.lifetime_inboxes_created++;
     }
 
+    let cleanBodyHtml = body.bodyHtml || body.bodyText || '<p>(Empty Message)</p>';
+    let cleanSnippet = body.snippet || '';
+    let extractedOtp = body.otp || null;
+    let extractedPartnerLink = body.partnerLink || null;
+
+    // Server-Side MIME Cleaner: if raw MIME stream was sent
+    if (typeof cleanBodyHtml === 'string' && (cleanBodyHtml.includes('Received:') || cleanBodyHtml.includes('Content-Type:') || cleanBodyHtml.includes('ARC-Seal:'))) {
+      const parsed = parseServerMime(cleanBodyHtml);
+      cleanBodyHtml = parsed.finalHtml;
+      cleanSnippet = parsed.snippet;
+      extractedOtp = parsed.otp;
+      extractedPartnerLink = parsed.partnerLink || extractedPartnerLink;
+    }
+
     const newMsg = {
       id: 'msg-' + Date.now(),
       inbox_address: toAddress,
       from: body.from || 'unknown@sender.com',
       from_name: body.fromName || body.from || 'Unknown Sender',
       subject: body.subject || '(No Subject)',
-      body_html: body.bodyHtml || body.bodyText || '<p>(Empty Message)</p>',
-      snippet: (body.snippet || body.bodyText || body.subject || '').substring(0, 160),
-      otp: body.otp || null,
-      partner_link: body.partnerLink || null,
+      body_html: cleanBodyHtml,
+      snippet: cleanSnippet || (cleanBodyHtml.replace(/<[^>]*>/g, ' ').trim().substring(0, 160)),
+      otp: extractedOtp,
+      partner_link: extractedPartnerLink,
       created_at: new Date().toISOString(),
       is_unread: true
     };
