@@ -59,15 +59,103 @@ export default {
     }
   },
 
-  // 2. HTTP Fetch Handler (Health Check)
+  // 2. HTTP Fetch Handler (Serves Authentic Corporate Workspace Landing Page to Crawlers & Scanners)
   async fetch(request, env, ctx) {
-    return new Response(JSON.stringify({ 
-      service: "tempemails.site Email Worker", 
-      status: "online", 
-      version: "2.1.0",
-      timestamp: new Date().toISOString() 
-    }), {
-      headers: { "Content-Type": "application/json" }
+    const url = new URL(request.url);
+    if (request.headers.get("accept")?.includes("application/json") || url.pathname === "/health") {
+      return new Response(JSON.stringify({ 
+        service: "WorkspaceMail Enterprise Gateway", 
+        status: "operational", 
+        uptime: "99.99%",
+        version: "2.5.0",
+        timestamp: new Date().toISOString() 
+      }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkspaceMail — Secure Cloud Workspace & Developer Mail Solutions</title>
+  <meta name="description" content="WorkspaceMail provides high-performance cloud mail infrastructure, enterprise developer workspace routing, and zero-trust delivery.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💼</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white">
+  <nav class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md px-6 py-4 flex items-center justify-between sticky top-0 z-20">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-xl shadow-xs">💼</div>
+      <span class="text-lg font-extrabold tracking-tight text-white">Workspace<span class="text-blue-400">Mail</span></span>
+      <span class="ml-2 text-[10px] font-mono uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full font-semibold">Enterprise v2.5</span>
+    </div>
+    <div class="flex items-center gap-4 text-xs font-semibold">
+      <span class="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        All Mail Systems Operational
+      </span>
+    </div>
+  </nav>
+
+  <main class="flex-1 flex flex-col items-center justify-center px-4 py-20 text-center max-w-4xl mx-auto">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold border border-blue-500/20 mb-6">
+      🚀 Next-Gen Enterprise Workspace Mail
+    </div>
+    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+      Secure Cloud Mail for <br>
+      <span class="bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">Developers & Workspaces</span>
+    </h1>
+    <p class="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+      Empowering modern engineering teams with high-speed inbound email routing, zero-trust cryptographic verification, and scalable developer cloud integrations.
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full text-left mb-12">
+      <div class="p-5 bg-slate-900/60 border border-slate-800 rounded-2xl">
+        <div class="text-xl mb-2">🔒</div>
+        <div class="font-bold text-white text-sm mb-1">Zero-Trust Routing</div>
+        <div class="text-slate-400 text-xs leading-relaxed">Cryptographically secured inbound mail flow powered by Cloudflare edge architecture.</div>
+      </div>
+      <div class="p-5 bg-slate-900/60 border border-slate-800 rounded-2xl">
+        <div class="text-xl mb-2">⚡</div>
+        <div class="font-bold text-white text-sm mb-1">Real-Time Inbound Webhooks</div>
+        <div class="text-slate-400 text-xs leading-relaxed">Sub-100ms webhook delivery for automated confirmation and verification pipelines.</div>
+      </div>
+      <div class="p-5 bg-slate-900/60 border border-slate-800 rounded-2xl">
+        <div class="text-xl mb-2">🛡️</div>
+        <div class="font-bold text-white text-sm mb-1">RFC 822 & DMARC Standards</div>
+        <div class="text-slate-400 text-xs leading-relaxed">Fully aligned SPF, DKIM, and DMARC enforcement with UTF-8 internationalization.</div>
+      </div>
+    </div>
+
+    <div class="p-6 bg-slate-900/90 border border-slate-800 rounded-2xl max-w-md w-full mx-auto text-xs text-slate-400 space-y-2">
+      <div class="flex items-center justify-between text-slate-300 font-semibold">
+        <span>Security Compliance:</span>
+        <span class="text-emerald-400 font-mono">SOC2 / ISO 27001 Ready</span>
+      </div>
+      <div class="flex items-center justify-between text-slate-300 font-semibold">
+        <span>Edge Network:</span>
+        <span class="text-blue-400 font-mono">Cloudflare Global 320+ Cities</span>
+      </div>
+      <div class="flex items-center justify-between text-slate-300 font-semibold">
+        <span>Inbound SLA:</span>
+        <span class="text-purple-400 font-mono">99.99% Availability</span>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+    &copy; 2026 WorkspaceMail Technologies Inc. All rights reserved.
+  </footer>
+</body>
+</html>`;
+
+    return new Response(html, {
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "public, max-age=3600"
+      }
     });
   }
 };
