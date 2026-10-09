@@ -745,12 +745,46 @@ function getOrInitDeviceSession(store, req, parsedUrl, body = {}) {
 }
 
 function generateRandomAddress() {
-  const adjectives = ['swift', 'quick', 'hyper', 'apex', 'bold', 'zen', 'prime', 'nova', 'cyber', 'pure', 'cool', 'flash', 'star', 'nexus', 'vivid', 'alpha', 'stellar'];
-  const nouns = ['inbox', 'pilot', 'falcon', 'tiger', 'orbit', 'wave', 'storm', 'shield', 'echo', 'guard', 'vortex', 'spark', 'flare', 'pulse', 'beacon', 'atlas'];
-  const num = Math.floor(100 + Math.random() * 900);
-  const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-  const noun = nouns[Math.floor(Math.random() * nouns.length)];
-  return `${adj}.${noun}${num}@tempemails.site`;
+  const firstNames = [
+    'alex', 'sarah', 'daniel', 'emma', 'david', 'sophia', 'james', 'olivia', 'liam', 'elena',
+    'ryan', 'chloe', 'marcus', 'maya', 'adrian', 'nora', 'lucas', 'mia', 'ethan', 'hannah',
+    'noah', 'clara', 'samuel', 'zoey', 'jason', 'lily', 'adam', 'grace', 'victor', 'eva',
+    'leo', 'leila', 'julian', 'amelia', 'simon', 'stella', 'arthur', 'claire', 'felix', 'alice',
+    'oscar', 'ruby', 'nathan', 'ivy', 'hugo', 'violet', 'tristan', 'aurora', 'gabriel', 'lucy',
+    'suha', 'zayd', 'tariq', 'farhan', 'kabir', 'arav', 'nadia', 'arman', 'bilal', 'saif',
+    'hasan', 'shakil', 'ayan', 'zoya', 'rehan', 'alina', 'idris', 'samira', 'hamza', 'layla',
+    'kevin', 'laura', 'justin', 'amber', 'brandon', 'diana', 'eric', 'fiona', 'ian', 'megan'
+  ];
+
+  const lastNames = [
+    'wasti', 'miller', 'smith', 'clark', 'brown', 'davis', 'khan', 'ahmed', 'ross', 'hasan',
+    'hossain', 'rahman', 'malik', 'taylor', 'wilson', 'johnson', 'walker', 'turner', 'white', 'evans',
+    'hall', 'baker', 'cooper', 'wright', 'king', 'scott', 'green', 'adams', 'morris', 'choudhury',
+    'patel', 'sheikh', 'farooq', 'ansari', 'campbell', 'stewart', 'morrison', 'murphy', 'bell', 'ward',
+    'cox', 'martinez', 'garcia', 'lopez', 'gonzalez', 'perez', 'sanchez', 'torres', 'flores', 'rivera'
+  ];
+
+  const first = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const last = lastNames[Math.floor(Math.random() * lastNames.length)];
+
+  // Separators: 55% underscore (like suha_wasti), 40% dot (like sarah.miller), 5% direct join
+  const sepRand = Math.random();
+  const sep = sepRand < 0.55 ? '_' : (sepRand < 0.95 ? '.' : '');
+
+  // Suffix: 40% pure human name (no number), 35% two-digit year/number, 25% small three-digit
+  let numSuffix = '';
+  const numRand = Math.random();
+  if (numRand > 0.40) {
+    if (numRand < 0.75) {
+      // 2-digit number (e.g. 18 to 99)
+      numSuffix = String(Math.floor(18 + Math.random() * 81));
+    } else {
+      // Small 3-digit number
+      numSuffix = String(Math.floor(100 + Math.random() * 899));
+    }
+  }
+
+  return `${first}${sep}${last}${numSuffix}@tempemails.site`;
 }
 
 // API Route Handler
