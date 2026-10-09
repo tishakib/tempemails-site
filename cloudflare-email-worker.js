@@ -11,16 +11,19 @@ export default {
     try {
       const recipient = message.to.toLowerCase().trim();
       const sender = message.from;
-      const subject = message.headers.get("subject") || "(No Subject)";
+      const rawSubject = message.headers.get("subject") || "(No Subject)";
       const rawEmail = await new Response(message.raw).text();
 
       // MIME Parser & Decoder
       const parsed = parseMimeEmail(rawEmail);
 
-      // Extract sender display name
+      // Extract and decode sender display name & subject
       const fromHeader = message.headers.get("from") || sender;
       const nameMatch = fromHeader.match(/^"?([^"<]+)"?\s*<.*>$/);
-      const fromName = nameMatch ? nameMatch[1].trim() : sender.split("@")[0];
+      const rawFromName = nameMatch ? nameMatch[1].trim() : sender.split("@")[0];
+
+      const subject = decodeMimeHeader(parsed.subject || rawSubject);
+      const fromName = decodeMimeHeader(parsed.fromName || rawFromName);
 
       // Prepare standard clean payload for tempemails.site API
       const payload = {
@@ -61,13 +64,62 @@ export default {
     return new Response(JSON.stringify({ 
       service: "tempemails.site Email Worker", 
       status: "online", 
-      version: "2.0.0",
+      version: "2.1.0",
       timestamp: new Date().toISOString() 
     }), {
       headers: { "Content-Type": "application/json" }
     });
   }
 };
+
+/**
+ * Decode RFC 2047 MIME Header words (Handles UTF-8, Bengali, Hindi, Arabic, Japanese, Chinese, Emoji)
+ */
+function decodeMimeHeader(raw) {
+  if (!raw || typeof raw !== "string") return "";
+  let str = raw.replace(/\r?\n[ \t]+/g, " ");
+  str = str.replace(/(\=\?[^\?]+\?[bBqQ]\?[^\?]*\?\=)\s+(?=\=\?[^\?]+\?[bBqQ]\?[^\?]*\?\=)/g, "$1");
+  return str.replace(/\=\?([^?]+)\?([bBqQ])\?([^?]*)\?\=/gi, (match, charset, enc, text) => {
+    try {
+      const encoding = enc.toUpperCase();
+      let bytes;
+      if (encoding === "B") {
+        const bin = atob(text.replace(/\s+/g, ""));
+        bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      } else if (encoding === "Q") {
+        const qp = text.replace(/_/g, " ");
+        const byteArr = [];
+        for (let i = 0; i < qp.length; i++) {
+          if (qp[i] === "=" && i + 2 < qp.length && /^[0-9A-Fa-f]{2}$/.test(qp.substring(i + 1, i + 3))) {
+            byteArr.push(parseInt(qp.substring(i + 1, i + 3), 16));
+            i += 2;
+          } else {
+            byteArr.push(qp.charCodeAt(i));
+          }
+        }
+        bytes = new Uint8Array(byteArr);
+      }
+      const cs = (charset || "utf-8").toLowerCase().replace(/[^a-z0-9_-]/g, "");
+      return new TextDecoder(cs).decode(bytes);
+    } catch {
+      return match;
+    }
+  });
+}
+
+function decodeTextWithCharset(bytes, charset = "utf-8") {
+  const cs = (charset || "utf-8").toLowerCase().replace(/[^a-z0-9_-]/g, "");
+  try {
+    return new TextDecoder(cs).decode(bytes);
+  } catch {
+    try {
+      return new TextDecoder("utf-8").decode(bytes);
+    } catch {
+      return String.fromCharCode.apply(null, bytes);
+    }
+  }
+}
 
 /**
  * Robust RFC 822 MIME Parser
@@ -80,6 +132,8 @@ function parseMimeEmail(raw) {
 
   if (splitIdx === -1) {
     return {
+      subject: "",
+      fromName: "",
       finalHtml: `<p style="white-space: pre-wrap; font-family: sans-serif;">${escapeHtml(normalized)}</p>`,
       snippet: normalized.substring(0, 160),
       otp: null,
@@ -87,16 +141,32 @@ function parseMimeEmail(raw) {
     };
   }
 
-  const headerBlock = normalized.substring(0, splitIdx);
+  const headerBlock = normalized.substring(0, splitIdx).replace(/\n[ \t]+/g, " ");
   const bodyBlock = normalized.substring(splitIdx + 2);
 
-  function decodeQuotedPrintable(str) {
-    return str
-      .replace(/=\n/g, "")
-      .replace(/=([0-9A-Fa-f]{2})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+  const getHdr = (name) => {
+    const reg = new RegExp("^" + name + ":\\s*(.*)$", "mi");
+    const m = headerBlock.match(reg);
+    return m ? decodeMimeHeader(m[1].trim()) : "";
+  };
+  const subject = getHdr("Subject");
+  const fromName = getHdr("From");
+
+  function decodeQuotedPrintable(str, charset = "utf-8") {
+    const clean = str.replace(/=(?:\r\n|\n|\r)/g, "");
+    const bytes = [];
+    for (let i = 0; i < clean.length; i++) {
+      if (clean[i] === "=" && i + 2 < clean.length && /^[0-9A-Fa-f]{2}$/.test(clean.substring(i + 1, i + 3))) {
+        bytes.push(parseInt(clean.substring(i + 1, i + 3), 16));
+        i += 2;
+      } else {
+        bytes.push(clean.charCodeAt(i));
+      }
+    }
+    return decodeTextWithCharset(new Uint8Array(bytes), charset);
   }
 
-  function decodeBase64(str) {
+  function decodeBase64(str, charset = "utf-8") {
     try {
       const clean = str.replace(/\s+/g, "");
       const binary = atob(clean);
@@ -104,7 +174,7 @@ function parseMimeEmail(raw) {
       for (let i = 0; i < binary.length; i++) {
         bytes[i] = binary.charCodeAt(i);
       }
-      return new TextDecoder("utf-8").decode(bytes);
+      return decodeTextWithCharset(bytes, charset);
     } catch {
       return str;
     }
@@ -114,9 +184,27 @@ function parseMimeEmail(raw) {
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 
-  const boundaryMatch = headerBlock.match(/boundary="?([^"\n;]+)"?/i);
+  const boundaryMatch = headerBlock.match(/boundary\s*=\s*"?([^"\n;]+)"?/i);
   let htmlContent = "";
   let textContent = "";
+
+  function processPart(partHeadersRaw, partBodyRaw) {
+    const partHeaders = partHeadersRaw.replace(/\n[ \t]+/g, " ");
+    const isBase64 = /content-transfer-encoding:\s*base64/i.test(partHeaders);
+    const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(partHeaders);
+    const csMatch = partHeaders.match(/charset\s*=\s*"?([^"\n;]+)"?/i);
+    const charset = csMatch ? csMatch[1].trim().toLowerCase() : "utf-8";
+
+    let decoded = partBodyRaw;
+    if (isBase64) decoded = decodeBase64(decoded, charset);
+    else if (isQP) decoded = decodeQuotedPrintable(decoded, charset);
+
+    if (/content-type:\s*text\/html/i.test(partHeaders)) {
+      htmlContent = decoded.trim();
+    } else if (/content-type:\s*text\/plain/i.test(partHeaders)) {
+      textContent = decoded.trim();
+    }
+  }
 
   if (boundaryMatch) {
     const boundary = boundaryMatch[1];
@@ -125,73 +213,50 @@ function parseMimeEmail(raw) {
 
     for (const part of parts) {
       if (!part || part.trim() === "" || part.trim() === "--") continue;
-
       const partSplit = part.indexOf("\n\n");
       if (partSplit === -1) continue;
 
       const partHeaders = part.substring(0, partSplit);
-      let partBody = part.substring(partSplit + 2);
-
-      const isBase64 = /content-transfer-encoding:\s*base64/i.test(partHeaders);
-      const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(partHeaders);
-
-      if (isBase64) partBody = decodeBase64(partBody);
-      else if (isQP) partBody = decodeQuotedPrintable(partBody);
-
-      if (/content-type:\s*text\/html/i.test(partHeaders)) {
-        htmlContent = partBody.trim();
-      } else if (/content-type:\s*text\/plain/i.test(partHeaders)) {
-        textContent = partBody.trim();
-      }
+      const partBody = part.substring(partSplit + 2);
+      processPart(partHeaders, partBody);
     }
   } else {
-    const isBase64 = /content-transfer-encoding:\s*base64/i.test(headerBlock);
-    const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(headerBlock);
-    let decoded = bodyBlock;
-
-    if (isBase64) decoded = decodeBase64(decoded);
-    else if (isQP) decoded = decodeQuotedPrintable(decoded);
-
-    if (/content-type:\s*text\/html/i.test(headerBlock)) {
-      htmlContent = decoded.trim();
-    } else {
-      textContent = decoded.trim();
-    }
+    processPart(headerBlock, bodyBlock);
   }
 
   // Construct final display HTML
   let finalHtml = "";
   if (htmlContent) {
-    // Sanitize script tags
-    finalHtml = htmlContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+    finalHtml = htmlContent
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+      .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
+      .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+      .replace(/href\s*=\s*(["'])\s*javascript:[^"']*\1/gi, 'href="#"');
   } else if (textContent) {
-    // Format plain text nicely: convert line breaks, auto-link URLs
     const escaped = escapeHtml(textContent);
-    finalHtml = escaped
-      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #2563EB; text-decoration: underline; font-weight: 600; word-break: break-all;">$1</a>')
-      .replace(/\n/g, "<br>");
+    finalHtml = `<div dir="auto" style="white-space: pre-wrap; word-break: normal; line-break: auto; line-height: 1.6; font-family: sans-serif;">${escaped
+      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #2563EB; text-decoration: underline; font-weight: 600; word-break: normal; line-break: auto;">$1</a>')
+    }</div>`;
   } else {
     finalHtml = '<p style="color: #94A3B8;">(Empty message body)</p>';
   }
 
-  // Clean text snippet
   const cleanBodyText = (textContent || finalHtml.replace(/<[^>]*>/g, " ")).replace(/\s+/g, " ").trim();
   const snippet = cleanBodyText.substring(0, 160);
 
   // Extract OTP strictly from body text (prevents false matches from IP/headers)
   let otp = null;
-  const contextOtpMatch = cleanBodyText.match(/(?:code|otp|verification|pin|password|token)[^\w\d]{1,25}(\b\d{4,8}\b)/i);
+  const contextOtpMatch = cleanBodyText.match(/(?:code|otp|verification|pin|password|token|কোর্ড|কোড|ওটিপি|যাচাইকরণ|पिन|सत्यापन|رمز|تحقق|تأكيد|código|bestätigung)[^\w\d\u0980-\u09FF\u0900-\u097F\u0600-\u06FF]{1,30}(\b\d{4,8}\b)/i);
   if (contextOtpMatch) {
     otp = contextOtpMatch[1];
   } else {
-    // Standalone 4-8 digit number
     const standaloneMatch = cleanBodyText.match(/(?:^|\s)(\d{4,8})(?:\s|$|\.)/);
     if (standaloneMatch) {
       otp = standaloneMatch[1];
     }
   }
 
-  // Extract clean verification link from body
   const allLinks = (textContent + " " + htmlContent).match(/https?:\/\/[^\s"'<>\[\]\(\)\\]+/gi) || [];
   const cleanLinks = [...new Set(allLinks.map(l => l.replace(/[.,;]+$/, "")))];
   const partnerLink = cleanLinks.find(l => 
@@ -199,6 +264,8 @@ function parseMimeEmail(raw) {
   ) || cleanLinks[0] || null;
 
   return {
+    subject,
+    fromName,
     finalHtml,
     snippet,
     otp,

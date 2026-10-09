@@ -19,6 +19,33 @@ const CONFIG = {
 // No demo emails - clean authentic inbox
 const DEMO_EMAILS = [];
 
+// Cookie Persistence Helpers (Ensures cross-reload stability in Incognito & Strict Privacy Modes)
+function getStorageCookie(name) {
+  try {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+  } catch (e) {}
+  return null;
+}
+
+function setStorageCookie(name, val, days = 7) {
+  try {
+    const exp = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(val)}; expires=${exp}; path=/; SameSite=Lax`;
+  } catch (e) {}
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // App State
 const state = {
   inboxes: [],
@@ -28,7 +55,9 @@ const state = {
   countdown: CONFIG.REFRESH_INTERVAL,
   timerInterval: null,
   activeMessageId: null,
-  filterStarredOnly: false
+  filterStarredOnly: false,
+  isSyncing: false,
+  activeSyncEmail: null
 };
 
 // Generate Random Clean Username
@@ -41,11 +70,81 @@ function generateRandomUsername() {
   return `${adj}.${noun}${num}`;
 }
 
+// Multi-Tier Storage Persistence (localStorage + sessionStorage + 1st-party Cookies)
+function loadStateFromStorage() {
+  try {
+    let savedInboxes = localStorage.getItem(CONFIG.STORAGE_KEY_INBOXES) || 
+                       sessionStorage.getItem(CONFIG.STORAGE_KEY_INBOXES) || 
+                       getStorageCookie(CONFIG.STORAGE_KEY_INBOXES);
+                       
+    let savedActive = localStorage.getItem(CONFIG.STORAGE_KEY_ACTIVE) || 
+                      sessionStorage.getItem(CONFIG.STORAGE_KEY_ACTIVE) || 
+                      getStorageCookie(CONFIG.STORAGE_KEY_ACTIVE);
+                      
+    let savedMessages = localStorage.getItem(CONFIG.STORAGE_KEY_MESSAGES) || 
+                        sessionStorage.getItem(CONFIG.STORAGE_KEY_MESSAGES);
+                        
+    let savedChanges = localStorage.getItem(CONFIG.STORAGE_KEY_CHANGES) || 
+                       sessionStorage.getItem(CONFIG.STORAGE_KEY_CHANGES);
+
+    if (savedInboxes) {
+      const parsed = JSON.parse(savedInboxes);
+      if (Array.isArray(parsed) && parsed.length > 0) state.inboxes = parsed;
+    }
+    if (savedActive !== null && savedActive !== undefined) {
+      state.activeIndex = parseInt(savedActive, 10) || 0;
+    }
+    if (savedMessages) state.messages = JSON.parse(savedMessages);
+    if (savedChanges) state.changesCount = JSON.parse(savedChanges);
+  } catch (err) {
+    console.error('Storage parse error:', err);
+  }
+}
+
+function saveStateToStorage() {
+  try {
+    const inboxesJson = JSON.stringify(state.inboxes);
+    const activeStr = state.activeIndex.toString();
+    const activeEmail = state.inboxes[state.activeIndex] || '';
+    const msgsJson = JSON.stringify(state.messages);
+    const changesJson = JSON.stringify(state.changesCount);
+
+    // 1. Persistent LocalStorage
+    localStorage.setItem(CONFIG.STORAGE_KEY_INBOXES, inboxesJson);
+    localStorage.setItem(CONFIG.STORAGE_KEY_ACTIVE, activeStr);
+    localStorage.setItem(CONFIG.STORAGE_KEY_MESSAGES, msgsJson);
+    localStorage.setItem(CONFIG.STORAGE_KEY_CHANGES, changesJson);
+
+    // 2. Tab/SessionStorage (Survives reload inside private/incognito mode)
+    sessionStorage.setItem(CONFIG.STORAGE_KEY_INBOXES, inboxesJson);
+    sessionStorage.setItem(CONFIG.STORAGE_KEY_ACTIVE, activeStr);
+    sessionStorage.setItem(CONFIG.STORAGE_KEY_MESSAGES, msgsJson);
+    sessionStorage.setItem(CONFIG.STORAGE_KEY_CHANGES, changesJson);
+
+    // 3. Cookie fallback
+    setStorageCookie(CONFIG.STORAGE_KEY_INBOXES, inboxesJson, 7);
+    setStorageCookie(CONFIG.STORAGE_KEY_ACTIVE, activeStr, 7);
+    if (activeEmail) setStorageCookie('tre_active_inbox_v1', activeEmail, 7);
+  } catch (err) {
+    console.error('Storage save error:', err);
+  }
+}
+
 // Initialize Application
 async function initApp() {
+  // Step 1: Immediately restore from multi-tier storage
   loadStateFromStorage();
 
-  // Fetch dynamic system settings from backend
+  const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
+  const hasExistingInboxes = Array.isArray(state.inboxes) && state.inboxes.length > 0;
+  const activeEmailBefore = hasExistingInboxes ? (state.inboxes[state.activeIndex] || state.inboxes[0]) : '';
+
+  // Step 2: Render immediately if we already have a saved active inbox (Zero wait, zero flash)
+  if (hasExistingInboxes) {
+    renderApp();
+  }
+
+  // Step 3: Fetch dynamic system settings from backend
   try {
     const res = await fetch('/api/settings');
     if (res.ok) {
@@ -105,36 +204,44 @@ async function initApp() {
   } catch (err) {
     console.log('Running in offline/local mode');
   }
-  
-  // Cross-Browser & Incognito Device Synchronization:
-  // Fetch device session bound to this physical machine across all browsers & private modes
-  const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
+
+  // Step 4: Validate and sync session with backend (Never reset active address on reload)
   try {
-    const sessionRes = await fetch(`/api/inbox/device-session?device_id=${encodeURIComponent(hwId)}`, {
+    const sessionUrl = `/api/inbox/device-session?device_id=${encodeURIComponent(hwId)}&current_address=${encodeURIComponent(activeEmailBefore)}&inboxes=${encodeURIComponent(JSON.stringify(state.inboxes))}`;
+    const sessionRes = await fetch(sessionUrl, {
       headers: {
-        'x-device-fingerprint': hwId
+        'x-device-fingerprint': hwId,
+        'x-current-address': activeEmailBefore,
+        'x-inboxes': JSON.stringify(state.inboxes)
       }
     });
+
     if (sessionRes.ok) {
       const sessionData = await sessionRes.json();
-      if (sessionData.inboxes && sessionData.inboxes.length > 0) {
-        state.inboxes = sessionData.inboxes;
-        if (sessionData.changesCount) {
-          state.changesCount = sessionData.changesCount;
+      if (sessionData.max_inboxes) CONFIG.MAX_INBOXES = sessionData.max_inboxes;
+      if (sessionData.max_changes) CONFIG.MAX_CHANGES = sessionData.max_changes;
+      if (sessionData.changesCount) state.changesCount = sessionData.changesCount;
+
+      if (!hasExistingInboxes) {
+        // First visit ever: assign initial session inboxes
+        if (sessionData.inboxes && sessionData.inboxes.length > 0) {
+          state.inboxes = sessionData.inboxes;
+          state.activeIndex = typeof sessionData.activeIndex === 'number' ? sessionData.activeIndex : 0;
+          saveStateToStorage();
         }
-        if (typeof sessionData.activeIndex === 'number' && sessionData.activeIndex < state.inboxes.length) {
-          state.activeIndex = sessionData.activeIndex;
+      } else {
+        // Page reload / returning visitor: ALWAYS PRESERVE user's active address
+        if (activeEmailBefore && state.inboxes.includes(activeEmailBefore)) {
+          state.activeIndex = state.inboxes.indexOf(activeEmailBefore);
         }
-        if (sessionData.max_inboxes) CONFIG.MAX_INBOXES = sessionData.max_inboxes;
-        if (sessionData.max_changes) CONFIG.MAX_CHANGES = sessionData.max_changes;
         saveStateToStorage();
       }
     }
   } catch (err) {
-    console.log('Device session fetch error, using local fallback:', err);
+    console.log('Device session fetch error, preserving local session:', err);
   }
 
-  // If no inboxes exist, create the initial first inbox (zero demo data)
+  // Step 5: Fallback if completely empty (offline first visit)
   if (state.inboxes.length === 0) {
     const firstEmail = `${generateRandomUsername()}@${CONFIG.DOMAIN}`;
     state.inboxes.push(firstEmail);
@@ -158,36 +265,8 @@ async function initApp() {
   triggerInboxRefresh(false);
   // Start continuous silent background auto-sync
   startContinuousAutoSync();
-  // Load and render dynamic ads (or hide placeholders if disabled)
+  // Load and render dynamic ads
   loadAndRenderAds();
-}
-
-// LocalStorage Persistence
-function loadStateFromStorage() {
-  try {
-    const savedInboxes = localStorage.getItem(CONFIG.STORAGE_KEY_INBOXES);
-    const savedActive = localStorage.getItem(CONFIG.STORAGE_KEY_ACTIVE);
-    const savedMessages = localStorage.getItem(CONFIG.STORAGE_KEY_MESSAGES);
-    const savedChanges = localStorage.getItem(CONFIG.STORAGE_KEY_CHANGES);
-
-    if (savedInboxes) state.inboxes = JSON.parse(savedInboxes);
-    if (savedActive) state.activeIndex = parseInt(savedActive, 10) || 0;
-    if (savedMessages) state.messages = JSON.parse(savedMessages);
-    if (savedChanges) state.changesCount = JSON.parse(savedChanges);
-  } catch (err) {
-    console.error('Storage parse error:', err);
-  }
-}
-
-function saveStateToStorage() {
-  try {
-    localStorage.setItem(CONFIG.STORAGE_KEY_INBOXES, JSON.stringify(state.inboxes));
-    localStorage.setItem(CONFIG.STORAGE_KEY_ACTIVE, state.activeIndex.toString());
-    localStorage.setItem(CONFIG.STORAGE_KEY_MESSAGES, JSON.stringify(state.messages));
-    localStorage.setItem(CONFIG.STORAGE_KEY_CHANGES, JSON.stringify(state.changesCount));
-  } catch (err) {
-    console.error('Storage save error:', err);
-  }
 }
 
 // Current Active Email Getter
@@ -326,6 +405,7 @@ window.selectInbox = function(index) {
   if (index >= 0 && index < state.inboxes.length) {
     state.activeIndex = index;
     state.activeMessageId = null; // Close message view if open
+    state.activeSyncEmail = getActiveEmail();
     saveStateToStorage();
     renderApp();
     showToast(`Switched to inbox #${index + 1}`, 'info');
@@ -632,14 +712,14 @@ function renderInboxView() {
   listContainer.innerHTML = html;
 }
 
-// Clean and sanitize raw MIME artifacts for clean email view
+// Clean and sanitize email body for display
 function cleanClientMimeBody(rawHtml, rawSnippet) {
-  if (!rawHtml) return `<p class="whitespace-pre-line text-slate-700">${rawSnippet || '(No content)'}</p>`;
+  if (!rawHtml) return `<p class="whitespace-pre-line text-slate-700" style="word-break: normal; line-break: auto;">${escapeHtml(rawSnippet || '(No content)')}</p>`;
 
   let content = rawHtml;
 
-  // If the body contains raw MIME headers (Received:, ARC-Seal:, boundary=), strip them
-  if (content.includes('Received:') || content.includes('ARC-Seal:') || content.includes('DKIM-Signature:') || content.includes('boundary=')) {
+  // If the body contains raw MIME headers, extract body part cleanly
+  if (content.includes('Received:') || content.includes('ARC-Seal:') || content.includes('boundary=')) {
     const norm = content.replace(/\r\n/g, '\n');
     const headerEnd = norm.indexOf('\n\n');
     if (headerEnd !== -1) {
@@ -650,10 +730,7 @@ function cleanClientMimeBody(rawHtml, rawSnippet) {
       } else {
         const textMatch = bodyPart.match(/Content-Type:\s*text\/plain[^\n]*\n(?:[^\n]+\n)*\n([\s\S]*?)(?:--\w+|$)/i);
         if (textMatch && textMatch[1]) {
-          content = textMatch[1]
-            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-            .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-semibold break-all">$1</a>')
-            .replace(/\n/g, '<br>');
+          content = `<p style="white-space: pre-wrap; word-break: normal; line-break: auto;">${escapeHtml(textMatch[1]).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-semibold">$1</a>')}</p>`;
         } else {
           content = bodyPart.replace(/--[a-zA-Z0-9_-]+--?/g, '').trim();
         }
@@ -661,16 +738,17 @@ function cleanClientMimeBody(rawHtml, rawSnippet) {
     }
   }
 
-  // Remove Quoted-Printable artifacts
-  content = content.replace(/=\r?\n/g, '').replace(/=3D/gi, '=');
-
   // Strip boundary markers
   content = content.replace(/--[0-9a-zA-Z_-]{10,}--?/g, '').trim();
 
-  return content;
+  // Basic client sanitize
+  return content
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
 }
 
-// 4. Render Message Detail View (Gmail Message Viewer)
+// 4. Render Message Detail View (Gmail Message Viewer with Unicode & BiDi / RTL Support)
 function renderMessageDetail(msg, container) {
   // Mark message as read
   msg.isUnread = false;
@@ -713,8 +791,8 @@ function renderMessageDetail(msg, container) {
         </div>
       </div>
 
-      <!-- Subject Header -->
-      <h2 class="text-xl md:text-2xl font-bold text-slate-900 mb-4">${msg.subject}</h2>
+      <!-- Subject Header (Supports Bengali, Indic, Arabic RTL & CJK) -->
+      <h2 dir="auto" class="text-xl md:text-2xl font-bold text-slate-900 mb-4" style="word-break: normal; line-break: auto;">${escapeHtml(msg.subject)}</h2>
 
       <!-- Sender Info Card -->
       <div class="flex items-start justify-between mb-6 pb-4 border-b border-slate-100 flex-wrap gap-2">
@@ -724,11 +802,11 @@ function renderMessageDetail(msg, container) {
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <span class="font-bold text-slate-900 text-sm md:text-base">${msg.fromName || msg.from}</span>
-              <span class="text-xs text-slate-400">&lt;${msg.from}&gt;</span>
+              <span dir="auto" class="font-bold text-slate-900 text-sm md:text-base">${escapeHtml(msg.fromName || msg.from)}</span>
+              <span class="text-xs text-slate-400">&lt;${escapeHtml(msg.from)}&gt;</span>
             </div>
             <div class="text-xs text-slate-500">
-              to: <span class="font-mono text-slate-700">${msg.to || getActiveEmail()}</span>
+              to: <span class="font-mono text-slate-700">${escapeHtml(msg.to || getActiveEmail())}</span>
             </div>
           </div>
         </div>
@@ -778,8 +856,8 @@ function renderMessageDetail(msg, container) {
         </div>
       ` : ''}
 
-      <!-- Clean Message Body (Strip SMTP headers, wrap long URLs) -->
-      <div class="email-body-content bg-white p-6 rounded-xl border border-slate-200 text-slate-800 leading-relaxed shadow-sm min-h-[160px] break-words overflow-hidden" style="word-break: break-word; overflow-wrap: anywhere;">
+      <!-- Clean Message Body (Typography safe for Bengali conjuncts, vowel signs, and RTL) -->
+      <div dir="auto" class="email-body-content bg-white p-6 rounded-xl border border-slate-200 text-slate-800 leading-relaxed shadow-sm min-h-[160px] overflow-hidden" style="overflow-wrap: break-word; word-break: normal; line-break: auto; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans Bengali', 'SolaimanLipi', 'Kalpurush', 'Noto Sans Devanagari', 'Noto Sans Arabic', sans-serif;">
         ${cleanClientMimeBody(msg.bodyHtml, msg.snippet)}
       </div>
 
@@ -849,12 +927,12 @@ window.clearCurrentInbox = function() {
   }
 };
 
-// Continuous silent background auto-sync (polls every 3.5s for instant email arrival)
+// Continuous silent background auto-sync (polls every 6s, 5-10s requirement)
 function startContinuousAutoSync() {
   if (state.timerInterval) clearInterval(state.timerInterval);
   state.timerInterval = setInterval(() => {
     triggerInboxRefresh(false);
-  }, 3500);
+  }, 6000);
 }
 
 // Manual or Automatic Inbox Refresh
@@ -863,77 +941,73 @@ window.triggerInboxRefresh = async function(isManual = false) {
   if (icon && isManual) icon.classList.add('animate-spin');
 
   const currentEmail = getActiveEmail();
-  if (currentEmail) {
-    try {
-      const res = await fetch(`/api/inbox/messages?email=${encodeURIComponent(currentEmail)}`);
-      if (res.ok) {
-        const serverMsgs = await res.json();
-        const existingMsgs = state.messages[currentEmail] || [];
-        const existingIds = new Set(existingMsgs.map(m => m.id));
-        let hasNew = false;
+  if (!currentEmail) {
+    if (icon && isManual) setTimeout(() => icon.classList.remove('animate-spin'), 300);
+    return;
+  }
 
-        for (const sMsg of serverMsgs) {
-          if (!existingIds.has(sMsg.id)) {
-            existingMsgs.unshift({
-              id: sMsg.id,
-              from: sMsg.from,
-              fromName: sMsg.from_name || sMsg.fromName || sMsg.from,
-              to: sMsg.inbox_address || currentEmail,
-              subject: sMsg.subject || '(No Subject)',
-              snippet: sMsg.snippet || '',
-              bodyHtml: sMsg.body_html || sMsg.bodyHtml || `<p>${sMsg.snippet || ''}</p>`,
-              otp: sMsg.otp || null,
-              partnerLink: sMsg.partner_link || sMsg.partnerLink || null,
-              isUnread: sMsg.is_unread !== false,
-              isStarred: false,
-              receivedAt: 'Just now',
-              timestamp: new Date(sMsg.created_at || Date.now()).getTime()
-            });
-            hasNew = true;
-          }
-        }
+  // Prevent overlapping concurrent polling requests
+  if (state.isSyncing) return;
+  state.isSyncing = true;
+  state.activeSyncEmail = currentEmail;
 
-        if (hasNew) {
-          state.messages[currentEmail] = existingMsgs;
-          saveStateToStorage();
-          if (window.AppUtils && window.AppUtils.playNotificationSound) {
-            window.AppUtils.playNotificationSound();
-          }
-          showToast('New email arrived! ✉️', 'success');
+  try {
+    const res = await fetch(`/api/inbox/messages?email=${encodeURIComponent(currentEmail)}`);
+    // Discard response if active inbox changed while fetch was in flight
+    if (state.activeSyncEmail !== getActiveEmail()) {
+      state.isSyncing = false;
+      return;
+    }
+
+    if (res.ok) {
+      const serverMsgs = await res.json();
+      const existingMsgs = state.messages[currentEmail] || [];
+      const existingIds = new Set(existingMsgs.map(m => m.id));
+      let hasNew = false;
+
+      for (const sMsg of serverMsgs) {
+        if (!existingIds.has(sMsg.id)) {
+          existingMsgs.unshift({
+            id: sMsg.id,
+            from: sMsg.from,
+            fromName: sMsg.from_name || sMsg.fromName || sMsg.from,
+            to: sMsg.inbox_address || currentEmail,
+            subject: sMsg.subject || '(No Subject)',
+            snippet: sMsg.snippet || '',
+            bodyHtml: sMsg.body_html || sMsg.bodyHtml || `<p>${sMsg.snippet || ''}</p>`,
+            otp: sMsg.otp || null,
+            partnerLink: sMsg.partner_link || sMsg.partnerLink || null,
+            isUnread: sMsg.is_unread !== false,
+            isStarred: false,
+            receivedAt: 'Just now',
+            timestamp: new Date(sMsg.created_at || Date.now()).getTime()
+          });
+          hasNew = true;
         }
       }
-    } catch (e) {
-      console.warn('Sync error:', e);
-    }
-  }
 
-  // Cross-browser session sync: occasionally check if another browser on this device created or changed an inbox
-  if (!isManual && Math.random() < 0.25) {
-    const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
-    fetch(`/api/inbox/device-session?device_id=${encodeURIComponent(hwId)}`, {
-      headers: { 'x-device-fingerprint': hwId }
-    })
-      .then(r => r.ok ? r.json() : null)
-      .then(sessionData => {
-        if (sessionData && sessionData.inboxes && sessionData.inboxes.length > 0) {
-          if (JSON.stringify(sessionData.inboxes) !== JSON.stringify(state.inboxes)) {
-            state.inboxes = sessionData.inboxes;
-            if (state.activeIndex >= state.inboxes.length) state.activeIndex = 0;
-            saveStateToStorage();
-            renderSlotTabs();
-            renderEmailBox();
-          }
+      if (hasNew) {
+        state.messages[currentEmail] = existingMsgs;
+        saveStateToStorage();
+        if (window.AppUtils && window.AppUtils.playNotificationSound) {
+          window.AppUtils.playNotificationSound();
         }
-      })
-      .catch(() => {});
-  }
-
-  if (icon && isManual) {
-    setTimeout(() => icon.classList.remove('animate-spin'), 400);
-  }
-  renderInboxView();
-  if (isManual) {
-    showToast('Inbox refreshed!', 'info');
+        showToast('New email arrived! ✉️', 'success');
+        // Render only when new messages actually arrived, preserving scroll position
+        renderInboxView();
+      }
+    }
+  } catch (e) {
+    console.warn('Silent sync warning (offline or network glitch):', e);
+  } finally {
+    state.isSyncing = false;
+    if (icon && isManual) {
+      setTimeout(() => icon.classList.remove('animate-spin'), 400);
+    }
+    if (isManual) {
+      showToast('Inbox refreshed!', 'info');
+      renderInboxView();
+    }
   }
 };
 

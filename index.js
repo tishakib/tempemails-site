@@ -173,39 +173,141 @@ function sendJson(res, statusCode, data) {
   res.end(JSON.stringify(data));
 }
 
-// RFC 822 MIME Parser & Sanitizer
+// RFC 2047 MIME Header Decoder (Handles UTF-8, Bengali, Hindi, Arabic, Japanese, Chinese, Emoji, Base64 & QP)
+function decodeMimeHeader(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  // Unfold multi-line headers
+  let str = raw.replace(/\r?\n[ \t]+/g, ' ');
+  // RFC 2047: Delete linear whitespace between adjacent encoded words
+  str = str.replace(/(\=\?[^\?]+\?[bBqQ]\?[^\?]*\?\=)\s+(?=\=\?[^\?]+\?[bBqQ]\?[^\?]*\?\=)/g, '$1');
+  return str.replace(/\=\?([^?]+)\?([bBqQ])\?([^?]*)\?\=/gi, (match, charset, enc, text) => {
+    try {
+      const encoding = enc.toUpperCase();
+      let buf;
+      if (encoding === 'B') {
+        buf = Buffer.from(text.replace(/\s+/g, ''), 'base64');
+      } else if (encoding === 'Q') {
+        const qp = text.replace(/_/g, ' ');
+        const bytes = [];
+        for (let i = 0; i < qp.length; i++) {
+          if (qp[i] === '=' && i + 2 < qp.length && /^[0-9A-Fa-f]{2}$/.test(qp.substring(i + 1, i + 3))) {
+            bytes.push(parseInt(qp.substring(i + 1, i + 3), 16));
+            i += 2;
+          } else {
+            bytes.push(qp.charCodeAt(i));
+          }
+        }
+        buf = Buffer.from(bytes);
+      }
+      const cs = (charset || 'utf-8').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      return new TextDecoder(cs).decode(buf);
+    } catch (e) {
+      try {
+        return new TextDecoder('utf-8').decode(buf);
+      } catch (e2) {
+        return match;
+      }
+    }
+  });
+}
+
+function decodeBufferWithCharset(buf, charset = 'utf-8') {
+  if (!buf) return '';
+  const cs = (charset || 'utf-8').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  try {
+    return new TextDecoder(cs).decode(buf);
+  } catch (e) {
+    try {
+      return new TextDecoder('utf-8').decode(buf);
+    } catch (e2) {
+      return buf.toString('latin1');
+    }
+  }
+}
+
+// RFC 2045 Quoted-Printable Decoder (Preserves multibyte UTF-8 sequences for Bengali, Indic, Arabic, CJK & Emojis)
+function decodeQuotedPrintable(rawStr, charset = 'utf-8') {
+  if (!rawStr) return '';
+  const clean = rawStr.replace(/=(?:\r\n|\n|\r)/g, '');
+  const bytes = [];
+  for (let i = 0; i < clean.length; i++) {
+    if (clean[i] === '=' && i + 2 < clean.length && /^[0-9A-Fa-f]{2}$/.test(clean.substring(i + 1, i + 3))) {
+      bytes.push(parseInt(clean.substring(i + 1, i + 3), 16));
+      i += 2;
+    } else {
+      bytes.push(clean.charCodeAt(i));
+    }
+  }
+  return decodeBufferWithCharset(Buffer.from(bytes), charset);
+}
+
+// Base64 Decoder with Charset Awareness
+function decodeBase64(rawStr, charset = 'utf-8') {
+  if (!rawStr) return '';
+  try {
+    const clean = rawStr.replace(/[^A-Za-z0-9+/=]/g, '');
+    return decodeBufferWithCharset(Buffer.from(clean, 'base64'), charset);
+  } catch (e) {
+    return rawStr;
+  }
+}
+
+// Safe HTML Sanitizer (Strips XSS vectors while preserving styling, tables, fonts, layout & links)
+function sanitizeHtml(html) {
+  if (!html) return '';
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
+    .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/href\s*=\s*(["'])\s*javascript:[^"']*\1/gi, 'href="#"')
+    .replace(/src\s*=\s*(["'])\s*javascript:[^"']*\1/gi, 'src=""')
+    .replace(/<a\b([^>]*)/gi, (match, attrs) => {
+      let updated = attrs;
+      if (!/target\s*=/i.test(updated)) updated += ' target="_blank"';
+      if (!/rel\s*=/i.test(updated)) updated += ' rel="noopener noreferrer"';
+      return '<a ' + updated.trim();
+    });
+}
+
+// RFC 822 / MIME Multipart Parser & Sanitizer
 function parseServerMime(raw) {
   const normalized = raw.replace(/\r\n/g, '\n');
   const splitIdx = normalized.indexOf('\n\n');
   if (splitIdx === -1) {
     return {
-      finalHtml: `<p style="white-space: pre-wrap; font-family: sans-serif;">${raw}</p>`,
+      finalHtml: `<p style="white-space: pre-wrap; word-break: normal; line-break: auto; font-family: sans-serif;">${raw}</p>`,
       snippet: raw.substring(0, 160),
       otp: null,
       partnerLink: null
     };
   }
 
-  const headerBlock = normalized.substring(0, splitIdx);
+  const rawHeaders = normalized.substring(0, splitIdx).replace(/\n[ \t]+/g, ' ');
   const bodyBlock = normalized.substring(splitIdx + 2);
 
-  function decodeQP(str) {
-    return str
-      .replace(/=\n/g, '')
-      .replace(/=([0-9A-Fa-f]{2})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
-  }
-
-  function decodeB64(str) {
-    try {
-      return Buffer.from(str.replace(/\s+/g, ''), 'base64').toString('utf-8');
-    } catch {
-      return str;
-    }
-  }
-
-  const boundaryMatch = headerBlock.match(/boundary="?([^"\n;]+)"?/i);
+  const boundaryMatch = rawHeaders.match(/boundary\s*=\s*"?([^"\n;]+)"?/i);
   let htmlContent = '';
   let textContent = '';
+
+  function processMimePart(partHeadersRaw, partBodyRaw) {
+    const partHeaders = partHeadersRaw.replace(/\n[ \t]+/g, ' ');
+    const isB64 = /content-transfer-encoding:\s*base64/i.test(partHeaders);
+    const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(partHeaders);
+    const csMatch = partHeaders.match(/charset\s*=\s*"?([^"\n;]+)"?/i);
+    const charset = csMatch ? csMatch[1].trim().toLowerCase() : 'utf-8';
+
+    let decoded = partBodyRaw;
+    if (isB64) decoded = decodeBase64(decoded, charset);
+    else if (isQP) decoded = decodeQuotedPrintable(decoded, charset);
+
+    if (/content-type:\s*text\/html/i.test(partHeaders)) {
+      htmlContent = decoded.trim();
+    } else if (/content-type:\s*text\/plain/i.test(partHeaders)) {
+      textContent = decoded.trim();
+    }
+  }
 
   if (boundaryMatch) {
     const boundary = boundaryMatch[1];
@@ -218,42 +320,21 @@ function parseServerMime(raw) {
       if (partSplit === -1) continue;
 
       const partHeaders = part.substring(0, partSplit);
-      let partBody = part.substring(partSplit + 2);
-
-      const isB64 = /content-transfer-encoding:\s*base64/i.test(partHeaders);
-      const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(partHeaders);
-
-      if (isB64) partBody = decodeB64(partBody);
-      else if (isQP) partBody = decodeQP(partBody);
-
-      if (/content-type:\s*text\/html/i.test(partHeaders)) {
-        htmlContent = partBody.trim();
-      } else if (/content-type:\s*text\/plain/i.test(partHeaders)) {
-        textContent = partBody.trim();
-      }
+      const partBody = part.substring(partSplit + 2);
+      processMimePart(partHeaders, partBody);
     }
   } else {
-    const isB64 = /content-transfer-encoding:\s*base64/i.test(headerBlock);
-    const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(headerBlock);
-    let decoded = bodyBlock;
-    if (isB64) decoded = decodeB64(decoded);
-    else if (isQP) decoded = decodeQP(decoded);
-
-    if (/content-type:\s*text\/html/i.test(headerBlock)) {
-      htmlContent = decoded.trim();
-    } else {
-      textContent = decoded.trim();
-    }
+    processMimePart(rawHeaders, bodyBlock);
   }
 
   let finalHtml = '';
   if (htmlContent) {
-    finalHtml = htmlContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    finalHtml = sanitizeHtml(htmlContent);
   } else if (textContent) {
     const escaped = textContent.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    finalHtml = escaped
-      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #2563EB; text-decoration: underline; font-weight: 600; word-break: break-all;">$1</a>')
-      .replace(/\n/g, '<br>');
+    finalHtml = `<div dir="auto" style="white-space: pre-wrap; word-break: normal; line-break: auto; line-height: 1.6; font-family: sans-serif;">${escaped
+      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #2563EB; text-decoration: underline; font-weight: 600; word-break: normal; line-break: auto;">$1</a>')
+    }</div>`;
   } else {
     finalHtml = '<p style="color: #94A3B8;">(Empty message body)</p>';
   }
@@ -261,8 +342,9 @@ function parseServerMime(raw) {
   const cleanText = (textContent || finalHtml.replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim();
   const snippet = cleanText.substring(0, 160);
 
+  // Multilingual OTP Extraction (English, Bengali, Hindi, Arabic, European keywords)
   let otp = null;
-  const contextOtpMatch = cleanText.match(/(?:code|otp|verification|pin|password|token)[^\w\d]{1,25}(\b\d{4,8}\b)/i);
+  const contextOtpMatch = cleanText.match(/(?:code|otp|verification|pin|password|token|কোর্ড|কোড|ওটিপি|যাচাইকরণ|पिन|सत्यापन|رمز|تحقق|تأكيد|código|bestätigung)[^\w\d\u0980-\u09FF\u0900-\u097F\u0600-\u06FF]{1,30}(\b\d{4,8}\b)/i);
   if (contextOtpMatch) {
     otp = contextOtpMatch[1];
   } else {
@@ -270,13 +352,29 @@ function parseServerMime(raw) {
     if (standaloneMatch) otp = standaloneMatch[1];
   }
 
+  // Verification Link Extraction
   const allLinks = (textContent + ' ' + htmlContent).match(/https?:\/\/[^\s"'<>\[\]\(\)\\]+/gi) || [];
   const cleanLinks = [...new Set(allLinks.map(l => l.replace(/[.,;]+$/, '')))];
   const partnerLink = cleanLinks.find(l => 
     /verify|confirm|activate|action|token|mode=|auth/i.test(l)
   ) || cleanLinks[0] || null;
 
-  return { finalHtml, snippet, otp, partnerLink };
+  const getHdr = (name) => {
+    const reg = new RegExp('^' + name + ':\\s*(.*)$', 'mi');
+    const m = rawHeaders.match(reg);
+    return m ? decodeMimeHeader(m[1].trim()) : '';
+  };
+  const subject = getHdr('Subject');
+  const fromRaw = getHdr('From');
+  let fromName = fromRaw;
+  let fromEmail = fromRaw;
+  const nameMatch = fromRaw.match(/^(?:"?([^"<]+)"?\s*)?<?([^>]+@[^>]+)>?$/);
+  if (nameMatch) {
+    fromName = (nameMatch[1] || nameMatch[2].split('@')[0]).trim();
+    fromEmail = nameMatch[2].trim();
+  }
+
+  return { finalHtml, snippet, otp, partnerLink, subject, fromName, fromEmail };
 }
 
 function getClientIp(req) {
@@ -299,50 +397,142 @@ function getDeviceFingerprint(req, parsedUrl, body = {}) {
           '').trim();
 }
 
+// Multi-Factor Device Session Manager with Stable Restoration Across Page Reloads
 function getOrInitDeviceSession(store, req, parsedUrl, body = {}) {
   const ip = getClientIp(req);
   const hw = getDeviceFingerprint(req, parsedUrl, body);
   const primaryKey = hw ? `DEV_${hw}` : `IP_${ip}`;
+  const maxLimit = store.settings.max_inboxes_per_user !== undefined ? store.settings.max_inboxes_per_user : 3;
 
   if (!store.device_sessions) store.device_sessions = {};
 
+  // Extract any client-requested active address or inboxes for restoration across reloads
+  const clientActiveAddr = (
+    req.headers['x-current-address'] ||
+    (parsedUrl && parsedUrl.query && (parsedUrl.query.current_address || parsedUrl.query.active_address)) ||
+    body.current_address ||
+    body.active_address ||
+    ''
+  ).toLowerCase().trim();
+
+  let clientInboxes = [];
+  const rawInboxes = req.headers['x-inboxes'] || 
+                     (parsedUrl && parsedUrl.query && parsedUrl.query.inboxes) || 
+                     body.inboxes;
+  if (Array.isArray(rawInboxes)) {
+    clientInboxes = rawInboxes;
+  } else if (typeof rawInboxes === 'string' && rawInboxes.trim()) {
+    try {
+      const parsed = JSON.parse(rawInboxes);
+      if (Array.isArray(parsed)) clientInboxes = parsed;
+    } catch (e) {
+      clientInboxes = rawInboxes.split(',').map(s => s.trim());
+    }
+  }
+  if (clientActiveAddr && !clientInboxes.includes(clientActiveAddr)) {
+    clientInboxes.unshift(clientActiveAddr);
+  }
+  // Sanitize valid addresses for tempemails.site
+  clientInboxes = clientInboxes
+    .map(a => String(a).toLowerCase().trim())
+    .filter(a => a.endsWith('@tempemails.site') && a.length > '@tempemails.site'.length);
+
   // 1. Direct match by hardware ID
+  let session = null;
+  let sessionKey = null;
+
   if (hw && store.device_sessions[`DEV_${hw}`]) {
-    const s = store.device_sessions[`DEV_${hw}`];
-    s.ip = ip;
-    return { key: `DEV_${hw}`, session: s, deviceId: hw };
-  }
-
-  // 2. Direct match by IP
-  if (ip && store.device_sessions[`IP_${ip}`]) {
-    const s = store.device_sessions[`IP_${ip}`];
-    if (hw) s.hw_id = hw;
-    return { key: `IP_${ip}`, session: s, deviceId: hw || ip };
-  }
-
-  // 3. Scan all sessions for matching hw_id
-  if (hw) {
+    session = store.device_sessions[`DEV_${hw}`];
+    sessionKey = `DEV_${hw}`;
+    session.ip = ip;
+  } else if (ip && store.device_sessions[`IP_${ip}`]) {
+    session = store.device_sessions[`IP_${ip}`];
+    sessionKey = `IP_${ip}`;
+    if (hw) session.hw_id = hw;
+  } else if (hw) {
     for (const [k, s] of Object.entries(store.device_sessions)) {
       if (s.hw_id === hw || k === `DEV_${hw}` || k.includes(hw)) {
-        s.ip = ip;
-        return { key: k, session: s, deviceId: hw };
+        session = s;
+        sessionKey = k;
+        session.ip = ip;
+        break;
       }
     }
-  }
-
-  // 4. Scan all sessions for matching IP (if not localhost)
-  if (ip && ip !== '127.0.0.1') {
+  } else if (ip && ip !== '127.0.0.1') {
     for (const [k, s] of Object.entries(store.device_sessions)) {
       if (s.ip === ip || k === `IP_${ip}` || k.includes(ip)) {
-        if (hw) s.hw_id = hw;
-        return { key: k, session: s, deviceId: hw || ip };
+        session = s;
+        sessionKey = k;
+        if (hw) session.hw_id = hw;
+        break;
       }
     }
   }
 
-  // 5. Create new session for this device
+  // CASE 1: Existing session found
+  if (session && session.inboxes && session.inboxes.length > 0) {
+    // If client supplied existing valid inboxes that aren't recorded yet, merge up to maxLimit
+    for (const addr of clientInboxes) {
+      if (!session.inboxes.includes(addr) && session.inboxes.length < maxLimit) {
+        session.inboxes.push(addr);
+      }
+    }
+    // Respect client active inbox selection if it exists in the session
+    if (clientActiveAddr && session.inboxes.includes(clientActiveAddr)) {
+      session.activeIndex = session.inboxes.indexOf(clientActiveAddr);
+    } else if (session.activeIndex >= session.inboxes.length) {
+      session.activeIndex = 0;
+    }
+
+    // Ensure all session inboxes are registered in global store.inboxes
+    for (const addr of session.inboxes) {
+      if (!store.inboxes.some(i => i.address === addr)) {
+        store.inboxes.push({
+          address: addr,
+          device_id: hw || ip,
+          created_at: new Date().toISOString(),
+          expires_at: new Date(Date.now() + (store.settings.retention_days || 7) * 24 * 3600000).toISOString(),
+          is_active: true
+        });
+      }
+    }
+    saveStore(store);
+    return { key: sessionKey, session, deviceId: hw || ip };
+  }
+
+  // CASE 2: No existing session found, but client has saved inboxes from page reload (Container recycle / cold start)
+  if (clientInboxes.length > 0) {
+    const restoredInboxes = clientInboxes.slice(0, maxLimit);
+    const restoredActiveIdx = clientActiveAddr ? Math.max(0, restoredInboxes.indexOf(clientActiveAddr)) : 0;
+    
+    session = {
+      inboxes: restoredInboxes,
+      activeIndex: restoredActiveIdx,
+      changesCount: {},
+      ip: ip,
+      hw_id: hw,
+      created_at: new Date().toISOString()
+    };
+    store.device_sessions[primaryKey] = session;
+
+    for (const addr of restoredInboxes) {
+      if (!store.inboxes.some(i => i.address === addr)) {
+        store.inboxes.push({
+          address: addr,
+          device_id: hw || ip,
+          created_at: new Date().toISOString(),
+          expires_at: new Date(Date.now() + (store.settings.retention_days || 7) * 24 * 3600000).toISOString(),
+          is_active: true
+        });
+      }
+    }
+    saveStore(store);
+    return { key: primaryKey, session, deviceId: hw || ip };
+  }
+
+  // CASE 3: True first-time visitor with zero existing inboxes — generate initial inbox
   const initialAddr = generateRandomAddress();
-  const session = {
+  session = {
     inboxes: [initialAddr],
     activeIndex: 0,
     changesCount: { [initialAddr]: 0 },
@@ -665,26 +855,46 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       store.stats.lifetime_inboxes_created++;
     }
 
-    let cleanBodyHtml = body.bodyHtml || body.bodyText || '<p>(Empty Message)</p>';
+    let cleanBodyHtml = body.bodyHtml || body.bodyText || body.raw || '<p>(Empty Message)</p>';
     let cleanSnippet = body.snippet || '';
     let extractedOtp = body.otp || null;
     let extractedPartnerLink = body.partnerLink || null;
+    let extractedSubject = body.subject || '';
+    let extractedFromName = body.fromName || '';
+    let extractedFrom = body.from || '';
 
     // Server-Side MIME Cleaner: if raw MIME stream was sent
-    if (typeof cleanBodyHtml === 'string' && (cleanBodyHtml.includes('Received:') || cleanBodyHtml.includes('Content-Type:') || cleanBodyHtml.includes('ARC-Seal:'))) {
+    if (typeof cleanBodyHtml === 'string' && (cleanBodyHtml.includes('Received:') || cleanBodyHtml.includes('Content-Type:') || cleanBodyHtml.includes('ARC-Seal:') || cleanBodyHtml.includes('boundary=') || cleanBodyHtml.includes('Subject:'))) {
       const parsed = parseServerMime(cleanBodyHtml);
       cleanBodyHtml = parsed.finalHtml;
-      cleanSnippet = parsed.snippet;
-      extractedOtp = parsed.otp;
+      cleanSnippet = parsed.snippet || cleanSnippet;
+      extractedOtp = parsed.otp || extractedOtp;
       extractedPartnerLink = parsed.partnerLink || extractedPartnerLink;
+      if (!extractedSubject && parsed.subject) extractedSubject = parsed.subject;
+      if (!extractedFromName && parsed.fromName) extractedFromName = parsed.fromName;
+      if (!extractedFrom && parsed.fromEmail) extractedFrom = parsed.fromEmail;
+    } else if (typeof cleanBodyHtml === 'string') {
+      cleanBodyHtml = sanitizeHtml(cleanBodyHtml);
+    }
+
+    // Decode RFC 2047 MIME encoded headers for Bengali, Hindi, Arabic, Japanese, Chinese, Emoji
+    const decodedSubject = decodeMimeHeader(extractedSubject || '(No Subject)');
+    const decodedFromName = decodeMimeHeader(extractedFromName || extractedFrom || 'Unknown Sender');
+    const decodedFrom = decodeMimeHeader(extractedFrom || 'unknown@sender.com');
+
+    // Recalculate OTP if not found yet
+    if (!extractedOtp) {
+      const cleanText = (cleanSnippet || cleanBodyHtml.replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim();
+      const otpMatch = cleanText.match(/(?:code|otp|verification|pin|password|token|কোর্ড|কোড|ওটিপি|যাচাইকরণ|पिन|सत्यापन|رمز|تحقق|تأكيد|código|bestätigung)[^\w\d\u0980-\u09FF\u0900-\u097F\u0600-\u06FF]{1,30}(\b\d{4,8}\b)/i);
+      if (otpMatch) extractedOtp = otpMatch[1];
     }
 
     const newMsg = {
-      id: 'msg-' + Date.now(),
+      id: 'msg-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
       inbox_address: toAddress,
-      from: body.from || 'unknown@sender.com',
-      from_name: body.fromName || body.from || 'Unknown Sender',
-      subject: body.subject || '(No Subject)',
+      from: decodedFrom,
+      from_name: decodedFromName,
+      subject: decodedSubject,
       body_html: cleanBodyHtml,
       snippet: cleanSnippet || (cleanBodyHtml.replace(/<[^>]*>/g, ' ').trim().substring(0, 160)),
       otp: extractedOtp,
@@ -702,14 +912,15 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
   }
 
   // 10. Multi-Factor Device Session (Locks to physical machine across Chrome, Safari, Firefox & Incognito)
-  if (pathname === '/api/inbox/device-session' && method === 'GET') {
+  if (pathname === '/api/inbox/device-session' && (method === 'GET' || method === 'POST')) {
+    const body = method === 'POST' ? await parseJsonBody(req) : {};
     const store = getStore();
-    const { session, deviceId } = getOrInitDeviceSession(store, req, parsedUrl, {});
+    const { session, deviceId } = getOrInitDeviceSession(store, req, parsedUrl, body);
 
     sendJson(res, 200, {
       device_id: deviceId,
       inboxes: session.inboxes,
-      activeIndex: session.activeIndex || 0,
+      activeIndex: session.activeIndex !== undefined ? session.activeIndex : 0,
       changesCount: session.changesCount || {},
       max_inboxes: store.settings.max_inboxes_per_user !== undefined ? store.settings.max_inboxes_per_user : 3,
       max_changes: store.settings.max_email_changes_per_inbox || 3

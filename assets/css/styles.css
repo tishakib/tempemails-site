@@ -9,12 +9,32 @@
   --brand-bg: #F8FAFC;
 }
 
-/* Custom Base & Smooth Fonts */
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+/* Custom Base & Smooth Fonts with Bengali, Indic, Arabic & CJK Fallbacks */
+body, input, textarea, select, button {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans Bengali', 'SolaimanLipi', 'Kalpurush', 'Bangla', 'Noto Sans Devanagari', 'Noto Sans Arabic', 'Noto Sans SC', 'Noto Sans JP', 'Segoe UI Emoji', sans-serif;
   background-color: var(--brand-bg);
   color: #1E293B;
   overflow-x: hidden;
+}
+
+/* Unicode & International Email Typography */
+.email-body-content {
+  overflow-wrap: break-word;
+  word-break: normal;
+  line-break: auto;
+  line-height: 1.68;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern", "liga", "clig";
+  -webkit-font-smoothing: antialiased;
+}
+
+[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="auto"] {
+  unicode-bidi: plaintext;
 }
 
 /* Gmail Style Animations */
