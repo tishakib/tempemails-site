@@ -5,7 +5,7 @@
 
 // Configuration
 const CONFIG = {
-  DOMAIN: 'tempemails.site',
+  DOMAIN: 'workspacemail.xyz',
   MAX_INBOXES: 3,
   MAX_CHANGES: 3, // Allowed changes per address
   REFRESH_INTERVAL: 15, // seconds
@@ -62,14 +62,25 @@ const state = {
   activeSyncEmail: null
 };
 
-// Generate Random Clean Username
+// Generate Random Clean Human Username
 function generateRandomUsername() {
-  const adjectives = ['swift', 'quick', 'hyper', 'apex', 'bold', 'zen', 'prime', 'nova', 'cyber', 'pure', 'cool', 'flash', 'star'];
-  const nouns = ['inbox', 'pilot', 'falcon', 'tiger', 'orbit', 'wave', 'storm', 'shield', 'echo', 'guard', 'vortex', 'spark'];
-  const num = Math.floor(100 + Math.random() * 900);
-  const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-  const noun = nouns[Math.floor(Math.random() * nouns.length)];
-  return `${adj}.${noun}${num}`;
+  const firstNames = [
+    'alex', 'sarah', 'daniel', 'emma', 'david', 'sophia', 'james', 'olivia', 'liam', 'elena',
+    'ryan', 'chloe', 'marcus', 'maya', 'adrian', 'nora', 'lucas', 'mia', 'ethan', 'hannah',
+    'noah', 'clara', 'samuel', 'zoey', 'jason', 'lily', 'adam', 'grace', 'victor', 'eva',
+    'suha', 'zayd', 'tariq', 'farhan', 'kabir', 'arav', 'nadia', 'arman', 'bilal', 'saif',
+    'hasan', 'shakil', 'ayan', 'zoya', 'rehan', 'alina', 'idris', 'samira', 'hamza', 'layla'
+  ];
+  const lastNames = [
+    'wasti', 'miller', 'smith', 'clark', 'brown', 'davis', 'khan', 'ahmed', 'ross', 'hasan',
+    'hossain', 'rahman', 'malik', 'taylor', 'wilson', 'johnson', 'walker', 'turner', 'white', 'evans',
+    'hall', 'baker', 'cooper', 'wright', 'king', 'scott', 'green', 'adams', 'morris', 'patel'
+  ];
+  const first = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const last = lastNames[Math.floor(Math.random() * lastNames.length)];
+  const sep = Math.random() < 0.6 ? '_' : '.';
+  const numSuffix = Math.random() > 0.45 ? String(Math.floor(18 + Math.random() * 81)) : '';
+  return `${first}${sep}${last}${numSuffix}`;
 }
 
 // Multi-Tier Storage Persistence (localStorage + sessionStorage + 1st-party Cookies)
@@ -242,6 +253,24 @@ async function initApp() {
         // Page reload / returning visitor: ALWAYS PRESERVE user's active address
         if (activeEmailBefore && state.inboxes.includes(activeEmailBefore)) {
           state.activeIndex = state.inboxes.indexOf(activeEmailBefore);
+        }
+        // Seamlessly upgrade empty legacy @tempemails.site inboxes to clean stealth @workspacemail.xyz
+        let upgradedAny = false;
+        state.inboxes = state.inboxes.map(addr => {
+          if (addr && addr.endsWith('@tempemails.site')) {
+            const msgs = state.messages[addr] || [];
+            if (msgs.length === 0) {
+              const newAddr = `${generateRandomUsername()}@${CONFIG.DOMAIN}`;
+              state.messages[newAddr] = [];
+              delete state.messages[addr];
+              upgradedAny = true;
+              return newAddr;
+            }
+          }
+          return addr;
+        });
+        if (upgradedAny) {
+          showToast('Updated to active @workspacemail.xyz inbox!', 'info');
         }
         saveStateToStorage();
       }
