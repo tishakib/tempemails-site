@@ -604,10 +604,10 @@ function getOrInitDeviceSession(store, req, parsedUrl, body = {}) {
   if (clientActiveAddr && !clientInboxes.includes(clientActiveAddr)) {
     clientInboxes.unshift(clientActiveAddr);
   }
-  // Sanitize valid addresses for tempemails.site
+  // Sanitize valid addresses for tempemails.site & workspacemail.xyz
   clientInboxes = clientInboxes
     .map(a => String(a).toLowerCase().trim())
-    .filter(a => a.endsWith('@tempemails.site') && a.length > '@tempemails.site'.length);
+    .filter(a => (a.endsWith('@tempemails.site') || a.endsWith('@workspacemail.xyz')) && a.includes('@'));
 
   // 1. Direct match by hardware ID
   let session = null;
@@ -784,7 +784,7 @@ function generateRandomAddress() {
     }
   }
 
-  return `${first}${sep}${last}${numSuffix}@tempemails.site`;
+  return `${first}${sep}${last}${numSuffix}@workspacemail.xyz`;
 }
 
 // API Route Handler
