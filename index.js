@@ -36,7 +36,7 @@ const initialData = {
     admin_password: 'shakib2026',
     supabase_url: '',
     supabase_key: '',
-    google_search_console: '',
+    google_search_console: '_L5-YT0C3h80QPkTQncQ_MDu0QFNbBLnH4ZaQna9FPI',
     google_analytics_id: '',
     custom_head_scripts: '',
     developer: {
@@ -523,7 +523,13 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     if (body.new_admin_password) store.settings.admin_password = body.new_admin_password.trim();
     if (body.supabase_url !== undefined) store.settings.supabase_url = body.supabase_url;
     if (body.supabase_key !== undefined) store.settings.supabase_key = body.supabase_key;
-    if (body.google_search_console !== undefined) store.settings.google_search_console = body.google_search_console;
+    if (body.google_search_console !== undefined) {
+      let gsc = String(body.google_search_console).trim();
+      const match = gsc.match(/content=["']([^"']+)["']/i);
+      if (match) gsc = match[1];
+      gsc = gsc.replace(/^google-site-verification=/i, '').trim();
+      store.settings.google_search_console = gsc;
+    }
     if (body.google_analytics_id !== undefined) store.settings.google_analytics_id = body.google_analytics_id;
     if (body.custom_head_scripts !== undefined) store.settings.custom_head_scripts = body.custom_head_scripts;
     if (body.developer && typeof body.developer === 'object') {

@@ -87,11 +87,19 @@ async function initApp() {
       }
 
       // Inject Google Search Console if provided
-      if (data.google_search_console && !document.querySelector('meta[name="google-site-verification"]')) {
-        const meta = document.createElement('meta');
-        meta.name = 'google-site-verification';
-        meta.content = data.google_search_console;
-        document.head.appendChild(meta);
+      if (data.google_search_console) {
+        let gscCode = String(data.google_search_console).trim();
+        const match = gscCode.match(/content=["']([^"']+)["']/i);
+        if (match) gscCode = match[1];
+        gscCode = gscCode.replace(/^google-site-verification=/i, '').trim();
+
+        let meta = document.querySelector('meta[name="google-site-verification"]');
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.name = 'google-site-verification';
+          document.head.appendChild(meta);
+        }
+        meta.content = gscCode;
       }
     }
   } catch (err) {
