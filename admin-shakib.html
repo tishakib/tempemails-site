@@ -1174,8 +1174,8 @@
         service_enabled: document.getElementById('setting-service-enabled').checked,
         maintenance_message: document.getElementById('setting-maintenance-msg').value,
         turnstile_enabled: document.getElementById('setting-turnstile-enabled').checked,
-        turnstile_site_key: document.getElementById('setting-turnstile-sitekey').value,
-        turnstile_secret_key: document.getElementById('setting-turnstile-secretkey').value,
+        turnstile_site_key: document.getElementById('setting-turnstile-sitekey').value.trim(),
+        turnstile_secret_key: document.getElementById('setting-turnstile-secretkey').value.trim() || undefined,
         admin_username: document.getElementById('setting-admin-username').value.trim() || undefined,
         new_admin_password: document.getElementById('setting-new-password').value || undefined
       };
