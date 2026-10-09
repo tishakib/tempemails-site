@@ -160,15 +160,6 @@
               <span>Google SEO</span>
             </div>
           </button>
-
-          <div class="pt-4 px-3 py-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Database</div>
-
-          <button onclick="switchTab('tab-supabase')" class="nav-tab w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/80" data-tab="tab-supabase">
-            <div class="flex items-center gap-3">
-              <span class="text-base">⚡</span>
-              <span>Supabase Cloud</span>
-            </div>
-          </button>
         </div>
 
         <div class="p-4 border-t border-slate-800 text-[11px] text-slate-500 bg-slate-950/40">
@@ -597,62 +588,6 @@
         </div>
       </section>
 
-      <!-- TAB 6: SUPABASE DATABASE CONFIGURATION -->
-      <section id="tab-supabase" class="tab-content hidden max-w-2xl space-y-6">
-        <div>
-          <h2 class="text-xl font-bold text-white">Supabase Cloud Database</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Connect your free Supabase PostgreSQL database</p>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-5">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Supabase Project URL</label>
-            <input type="text" id="setting-supabase-url" placeholder="https://xyzcompany.supabase.co" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#F4413D]">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Supabase Anon Key</label>
-            <input type="password" id="setting-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#F4413D]">
-          </div>
-
-          <button onclick="saveSupabaseSettings()" class="w-full py-3 bg-[#F4413D] hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-colors">
-            Save Supabase Credentials
-          </button>
-
-          <!-- Supabase Schema Copy Card -->
-          <div class="mt-6 pt-6 border-t border-slate-800">
-            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Supabase SQL Schema (1-Click Setup)</h4>
-            <p class="text-xs text-slate-400 mb-3">Copy and run this SQL query inside your Supabase SQL Editor:</p>
-            <pre class="bg-slate-950 p-4 rounded-xl text-[11px] font-mono text-emerald-400 overflow-x-auto border border-slate-800">
--- Create Inboxes Table
-CREATE TABLE IF NOT EXISTS inboxes (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  address TEXT UNIQUE NOT NULL,
-  device_id TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  expires_at TIMESTAMPTZ NOT NULL,
-  is_active BOOLEAN DEFAULT true
-);
-
--- Create Messages Table
-CREATE TABLE IF NOT EXISTS messages (
-  id TEXT PRIMARY KEY,
-  inbox_address TEXT REFERENCES inboxes(address) ON DELETE CASCADE,
-  from_address TEXT NOT NULL,
-  from_name TEXT,
-  subject TEXT,
-  body_html TEXT,
-  snippet TEXT,
-  otp TEXT,
-  partner_link TEXT,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  is_unread BOOLEAN DEFAULT true
-);
-            </pre>
-          </div>
-        </div>
-      </section>
-
       <!-- TAB 7: USER FEEDBACK & CONTACT MESSAGES -->
       <section id="tab-contacts" class="tab-content hidden space-y-6">
         <div class="flex items-center justify-between flex-wrap gap-4">
@@ -688,6 +623,9 @@ CREATE TABLE IF NOT EXISTS messages (
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
       <!-- TAB 8: DEVELOPER PROFILE & BRANDING (Dynamic Developer Section) -->
       <section id="tab-developer" class="tab-content hidden max-w-3xl space-y-6">
         <div class="flex items-center justify-between flex-wrap gap-4">
@@ -974,9 +912,32 @@ CREATE TABLE IF NOT EXISTS messages (
     </div>
   </div>
 
+  <!-- Toast Notification Container (No annoying popups) -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none max-w-sm w-full"></div>
+
   <!-- ADMIN CLIENT SCRIPT -->
   <script>
     let authToken = localStorage.getItem('tre_admin_token');
+
+    // Smooth Toast Notifications (Replaces annoying browser popups)
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      const isErr = type === 'error' || type === 'danger';
+      toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border text-xs font-semibold transform transition-all duration-300 translate-y-3 opacity-0 pointer-events-auto backdrop-blur-md ${
+        isErr ? 'bg-red-950/95 border-red-800 text-red-200 shadow-red-500/20' : 'bg-slate-900/95 border-emerald-500/50 text-emerald-300 shadow-emerald-500/10'
+      }`;
+      toast.innerHTML = `<span class="text-base">${isErr ? '⚠️' : '✅'}</span><span class="flex-1">${escapeHtml(msg)}</span>`;
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-3', 'opacity-0');
+      });
+      setTimeout(() => {
+        toast.classList.add('translate-y-3', 'opacity-0');
+        setTimeout(() => toast.remove(), 350);
+      }, 3500);
+    }
 
     // Tab Switching
     function switchTab(tabId) {
@@ -1030,11 +991,12 @@ CREATE TABLE IF NOT EXISTS messages (
           authToken = data.token;
           localStorage.setItem('tre_admin_token', authToken);
           showAdminDashboard();
+          showToast('Welcome back, Admin!');
         } else {
-          alert(data.message || 'Login failed.');
+          showToast(data.message || 'Login failed.', 'error');
         }
       } catch (err) {
-        alert('Could not connect to server.');
+        showToast('Could not connect to server.', 'error');
       }
     });
 
@@ -1149,27 +1111,54 @@ CREATE TABLE IF NOT EXISTS messages (
       }
     }
 
-    // Load Settings
+    function applySettingsToForm(s) {
+      if (!s) return;
+      if (s.max_inboxes_per_user !== undefined) document.getElementById('setting-max-inboxes').value = s.max_inboxes_per_user;
+      if (s.max_email_changes_per_inbox !== undefined) document.getElementById('setting-max-changes').value = s.max_email_changes_per_inbox;
+      if (s.retention_days !== undefined) document.getElementById('setting-retention-days').value = s.retention_days;
+      if (s.service_enabled !== undefined) document.getElementById('setting-service-enabled').checked = s.service_enabled !== false;
+      if (s.maintenance_message !== undefined) document.getElementById('setting-maintenance-msg').value = s.maintenance_message;
+      if (s.turnstile_enabled !== undefined) document.getElementById('setting-turnstile-enabled').checked = s.turnstile_enabled !== false;
+      if (s.turnstile_site_key !== undefined) document.getElementById('setting-turnstile-sitekey').value = s.turnstile_site_key;
+      if (s.turnstile_secret_key !== undefined) document.getElementById('setting-turnstile-secretkey').value = s.turnstile_secret_key;
+      if (s.admin_username) {
+        document.getElementById('setting-admin-username').value = s.admin_username;
+        const userBadge = document.getElementById('current-admin-user');
+        if (userBadge) userBadge.textContent = s.admin_username;
+        const headerBadge = document.getElementById('header-admin-user');
+        if (headerBadge) headerBadge.textContent = s.admin_username;
+      }
+      if (s.google_search_console !== undefined) document.getElementById('setting-gsc').value = s.google_search_console;
+      if (s.google_analytics_id !== undefined) document.getElementById('setting-ga4').value = s.google_analytics_id;
+      if (s.custom_head_scripts !== undefined) document.getElementById('setting-head-scripts').value = s.custom_head_scripts;
+    }
+
+    // Load Settings with 100% Persistent Local Backup & Server Auto-Sync
     async function loadAdminSettings() {
+      // 1. Immediately populate from local storage so values NEVER revert to defaults upon page reload
+      const local = localStorage.getItem('tre_admin_persisted_settings');
+      let localObj = null;
+      if (local) {
+        try {
+          localObj = JSON.parse(local);
+          applySettingsToForm(localObj);
+        } catch (e) {}
+      }
+
       try {
         const res = await fetch('/api/admin/settings');
         const s = await res.json();
-        document.getElementById('setting-max-inboxes').value = s.max_inboxes_per_user || 7;
-        document.getElementById('setting-max-changes').value = s.max_email_changes_per_inbox || 3;
-        document.getElementById('setting-retention-days').value = s.retention_days || 7;
-        document.getElementById('setting-service-enabled').checked = s.service_enabled !== false;
-        document.getElementById('setting-maintenance-msg').value = s.maintenance_message || '';
-        document.getElementById('setting-turnstile-enabled').checked = s.turnstile_enabled !== false;
-        document.getElementById('setting-turnstile-sitekey').value = s.turnstile_site_key || '';
-        document.getElementById('setting-turnstile-secretkey').value = s.turnstile_secret_key || '';
-        document.getElementById('setting-admin-username').value = s.admin_username || 'admin';
-        const userBadge = document.getElementById('current-admin-user');
-        if (userBadge) userBadge.textContent = s.admin_username || 'admin';
-        const headerBadge = document.getElementById('header-admin-user');
-        if (headerBadge) headerBadge.textContent = s.admin_username || 'admin';
-        document.getElementById('setting-gsc').value = s.google_search_console || '';
-        document.getElementById('setting-ga4').value = s.google_analytics_id || '';
-        document.getElementById('setting-head-scripts').value = s.custom_head_scripts || '';
+        if (!localObj) {
+          localStorage.setItem('tre_admin_persisted_settings', JSON.stringify(s));
+          applySettingsToForm(s);
+        } else {
+          // Keep server memory hot and synced with admin's saved configuration
+          fetch('/api/admin/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(localObj)
+          }).catch(() => {});
+        }
       } catch (err) {
         console.error('Settings load error:', err);
       }
@@ -1179,9 +1168,9 @@ CREATE TABLE IF NOT EXISTS messages (
     document.getElementById('settings-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const payload = {
-        max_inboxes_per_user: document.getElementById('setting-max-inboxes').value,
-        max_email_changes_per_inbox: document.getElementById('setting-max-changes').value,
-        retention_days: document.getElementById('setting-retention-days').value,
+        max_inboxes_per_user: parseInt(document.getElementById('setting-max-inboxes').value, 10) || 3,
+        max_email_changes_per_inbox: parseInt(document.getElementById('setting-max-changes').value, 10) || 3,
+        retention_days: parseInt(document.getElementById('setting-retention-days').value, 10) || 7,
         service_enabled: document.getElementById('setting-service-enabled').checked,
         maintenance_message: document.getElementById('setting-maintenance-msg').value,
         turnstile_enabled: document.getElementById('setting-turnstile-enabled').checked,
@@ -1191,19 +1180,26 @@ CREATE TABLE IF NOT EXISTS messages (
         new_admin_password: document.getElementById('setting-new-password').value || undefined
       };
 
-      const res = await fetch('/api/admin/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (payload.admin_username) {
-        const userBadge = document.getElementById('current-admin-user');
-        if (userBadge) userBadge.textContent = payload.admin_username;
-        const headerBadge = document.getElementById('header-admin-user');
-        if (headerBadge) headerBadge.textContent = payload.admin_username;
+      // 100% Persistent Local Storage Save
+      localStorage.setItem('tre_admin_persisted_settings', JSON.stringify(payload));
+
+      try {
+        const res = await fetch('/api/admin/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (payload.admin_username) {
+          const userBadge = document.getElementById('current-admin-user');
+          if (userBadge) userBadge.textContent = payload.admin_username;
+          const headerBadge = document.getElementById('header-admin-user');
+          if (headerBadge) headerBadge.textContent = payload.admin_username;
+        }
+        showToast(data.message || 'System limits & settings saved successfully!');
+      } catch (err) {
+        showToast('Settings saved locally in browser!', 'success');
       }
-      alert(data.message || 'Settings saved successfully!');
     });
 
     // Save SEO
@@ -1215,45 +1211,61 @@ CREATE TABLE IF NOT EXISTS messages (
         custom_head_scripts: document.getElementById('setting-head-scripts').value
       };
 
-      const res = await fetch('/api/admin/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      alert('SEO & Scripts updated successfully!');
-    });
+      localStorage.setItem('tre_admin_persisted_seo', JSON.stringify(payload));
 
-    // Save Supabase Credentials
-    async function saveSupabaseSettings() {
-      const payload = {
-        supabase_url: document.getElementById('setting-supabase-url').value,
-        supabase_key: document.getElementById('setting-supabase-key').value
-      };
-      await fetch('/api/admin/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      alert('Supabase credentials saved!');
-    }
+      try {
+        const res = await fetch('/api/admin/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        showToast('SEO & Scripts updated successfully!');
+      } catch (err) {
+        showToast('Saved locally, server connection failed.', 'error');
+      }
+    });
 
     // ==========================================
     // DEVELOPER PROFILE CONTROLS & DYNAMIC PERSISTENCE
     // ==========================================
+    function applyDevToForm(d) {
+      if (!d) return;
+      const enabledCheckbox = document.getElementById('dev-setting-enabled');
+      if (enabledCheckbox) enabledCheckbox.checked = d.enabled !== false;
+      if (document.getElementById('dev-setting-name')) document.getElementById('dev-setting-name').value = d.name || 'Shakib Hasan';
+      if (document.getElementById('dev-setting-title')) document.getElementById('dev-setting-title').value = d.title || 'Lead Developer & Creator';
+      if (document.getElementById('dev-setting-bio')) document.getElementById('dev-setting-bio').value = d.bio || '';
+      if (document.getElementById('dev-setting-initials')) document.getElementById('dev-setting-initials').value = d.initials || 'SH';
+      if (document.getElementById('dev-setting-email')) document.getElementById('dev-setting-email').value = d.email || 'support@tempemails.site';
+      if (document.getElementById('dev-setting-coffee-text')) document.getElementById('dev-setting-coffee-text').value = d.coffee_text || 'Buy Me a Coffee (Get a Coffee)';
+      if (document.getElementById('dev-setting-coffee-link')) document.getElementById('dev-setting-coffee-link').value = d.coffee_link || '';
+    }
+
     async function loadDeveloperSettings() {
+      const local = localStorage.getItem('tre_admin_persisted_dev');
+      let localObj = null;
+      if (local) {
+        try {
+          localObj = JSON.parse(local);
+          applyDevToForm(localObj);
+        } catch (e) {}
+      }
+
       try {
         const res = await fetch('/api/admin/settings');
         const s = await res.json();
         const d = s.developer || {};
-        const enabledCheckbox = document.getElementById('dev-setting-enabled');
-        if (enabledCheckbox) enabledCheckbox.checked = d.enabled !== false;
-        if (document.getElementById('dev-setting-name')) document.getElementById('dev-setting-name').value = d.name || 'Shakib Hasan';
-        if (document.getElementById('dev-setting-title')) document.getElementById('dev-setting-title').value = d.title || 'Lead Developer & Creator';
-        if (document.getElementById('dev-setting-bio')) document.getElementById('dev-setting-bio').value = d.bio || '';
-        if (document.getElementById('dev-setting-initials')) document.getElementById('dev-setting-initials').value = d.initials || 'SH';
-        if (document.getElementById('dev-setting-email')) document.getElementById('dev-setting-email').value = d.email || 'support@tempemails.site';
-        if (document.getElementById('dev-setting-coffee-text')) document.getElementById('dev-setting-coffee-text').value = d.coffee_text || 'Buy Me a Coffee (Get a Coffee)';
-        if (document.getElementById('dev-setting-coffee-link')) document.getElementById('dev-setting-coffee-link').value = d.coffee_link || '';
+
+        if (!localObj) {
+          localStorage.setItem('tre_admin_persisted_dev', JSON.stringify(d));
+          applyDevToForm(d);
+        } else {
+          fetch('/api/admin/developer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(localObj)
+          }).catch(() => {});
+        }
       } catch (err) {
         console.error('Failed to load developer settings:', err);
       }
@@ -1274,6 +1286,8 @@ CREATE TABLE IF NOT EXISTS messages (
           coffee_link: document.getElementById('dev-setting-coffee-link').value.trim()
         };
 
+        localStorage.setItem('tre_admin_persisted_dev', JSON.stringify(payload));
+
         try {
           const res = await fetch('/api/admin/developer', {
             method: 'POST',
@@ -1287,8 +1301,9 @@ CREATE TABLE IF NOT EXISTS messages (
             msg.classList.remove('hidden');
             setTimeout(() => msg.classList.add('hidden'), 4000);
           }
+          showToast(data.message || 'Developer profile updated successfully!');
         } catch (err) {
-          alert('Error saving developer profile: ' + err.message);
+          showToast('Error saving developer profile: ' + err.message, 'error');
         }
       });
     }
@@ -1310,29 +1325,52 @@ CREATE TABLE IF NOT EXISTS messages (
       }
     }
 
+    function applyAdsToForm(ads) {
+      if (!ads) return;
+      document.getElementById('ad-master-enabled').checked = ads.master_enabled !== false;
+      updateAdsMasterBadge();
+
+      if (ads.top_banner) {
+        document.getElementById('ad-top-enabled').checked = ads.top_banner.enabled !== false;
+        document.getElementById('ad-top-code').value = ads.top_banner.code || '';
+      }
+      if (ads.middle_banner) {
+        document.getElementById('ad-middle-enabled').checked = ads.middle_banner.enabled !== false;
+        document.getElementById('ad-middle-code').value = ads.middle_banner.code || '';
+      }
+      if (ads.sidebar_banner) {
+        document.getElementById('ad-sidebar-enabled').checked = ads.sidebar_banner.enabled !== false;
+        document.getElementById('ad-sidebar-code').value = ads.sidebar_banner.code || '';
+      }
+      if (ads.bottom_banner) {
+        document.getElementById('ad-bottom-enabled').checked = ads.bottom_banner.enabled !== false;
+        document.getElementById('ad-bottom-code').value = ads.bottom_banner.code || '';
+      }
+    }
+
     async function loadAdminAds() {
+      const local = localStorage.getItem('tre_admin_persisted_ads');
+      let localObj = null;
+      if (local) {
+        try {
+          localObj = JSON.parse(local);
+          applyAdsToForm(localObj);
+        } catch (e) {}
+      }
+
       try {
         const res = await fetch('/api/admin/ads');
         const ads = await res.json();
         
-        document.getElementById('ad-master-enabled').checked = ads.master_enabled !== false;
-        updateAdsMasterBadge();
-
-        if (ads.top_banner) {
-          document.getElementById('ad-top-enabled').checked = ads.top_banner.enabled !== false;
-          document.getElementById('ad-top-code').value = ads.top_banner.code || '';
-        }
-        if (ads.middle_banner) {
-          document.getElementById('ad-middle-enabled').checked = ads.middle_banner.enabled !== false;
-          document.getElementById('ad-middle-code').value = ads.middle_banner.code || '';
-        }
-        if (ads.sidebar_banner) {
-          document.getElementById('ad-sidebar-enabled').checked = ads.sidebar_banner.enabled !== false;
-          document.getElementById('ad-sidebar-code').value = ads.sidebar_banner.code || '';
-        }
-        if (ads.bottom_banner) {
-          document.getElementById('ad-bottom-enabled').checked = ads.bottom_banner.enabled !== false;
-          document.getElementById('ad-bottom-code').value = ads.bottom_banner.code || '';
+        if (!localObj) {
+          localStorage.setItem('tre_admin_persisted_ads', JSON.stringify(ads));
+          applyAdsToForm(ads);
+        } else {
+          fetch('/api/admin/ads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(localObj)
+          }).catch(() => {});
         }
       } catch (err) {
         console.error('Error loading ads configuration:', err);
@@ -1360,6 +1398,8 @@ CREATE TABLE IF NOT EXISTS messages (
         }
       };
 
+      localStorage.setItem('tre_admin_persisted_ads', JSON.stringify(payload));
+
       try {
         const res = await fetch('/api/admin/ads', {
           method: 'POST',
@@ -1367,10 +1407,10 @@ CREATE TABLE IF NOT EXISTS messages (
           body: JSON.stringify(payload)
         });
         const data = await res.json();
-        alert(data.message || 'Ads configuration successfully updated!');
+        showToast(data.message || 'Ads configuration successfully updated!');
         updateAdsMasterBadge();
       } catch (err) {
-        alert('Failed to save ads configuration.');
+        showToast('Failed to save ads configuration.', 'error');
       }
     }
 
@@ -1595,7 +1635,7 @@ CREATE TABLE IF NOT EXISTS messages (
     async function saveBlogArticle(statusOverride = null) {
       const title = document.getElementById('blog-editor-title').value.trim();
       if (!title) {
-        alert('Please provide an article title.');
+        showToast('Please provide an article title.', 'error');
         document.getElementById('blog-editor-title').focus();
         return;
       }
@@ -1625,14 +1665,14 @@ CREATE TABLE IF NOT EXISTS messages (
         });
         const data = await res.json();
         if (data.success) {
-          alert('Article successfully saved!');
+          showToast('Article successfully saved!');
           closeBlogEditor();
           loadAdminBlogs();
         } else {
-          alert('Error saving article: ' + (data.error || 'Server error'));
+          showToast('Error saving article: ' + (data.error || 'Server error'), 'error');
         }
       } catch (err) {
-        alert('Failed to connect to server.');
+        showToast('Failed to connect to server.', 'error');
       }
     }
 
@@ -1725,12 +1765,13 @@ CREATE TABLE IF NOT EXISTS messages (
         const res = await fetch('/api/admin/contacts?id=' + encodeURIComponent(id), { method: 'DELETE' });
         const data = await res.json();
         if (data.success) {
+          showToast('Feedback message deleted successfully!');
           loadAdminContacts();
         } else {
-          alert(data.message || 'Failed to delete');
+          showToast(data.message || 'Failed to delete message.', 'error');
         }
       } catch (err) {
-        alert('Error connecting to server.');
+        showToast('Error connecting to server.', 'error');
       }
     }
 

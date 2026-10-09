@@ -26,7 +26,7 @@ const MIME_TYPES = {
 // Initial Database Structure
 const initialData = {
   settings: {
-    max_inboxes_per_user: 7,
+    max_inboxes_per_user: 3,
     max_email_changes_per_inbox: 3,
     retention_days: 7,
     service_enabled: true,
@@ -35,8 +35,6 @@ const initialData = {
     turnstile_site_key: '1x00000000000000000000AA',
     turnstile_secret_key: '1x0000000000000000000000000000000AA',
     admin_password: 'shakib2026',
-    supabase_url: '',
-    supabase_key: '',
     google_search_console: '_L5-YT0C3h80QPkTQncQ_MDu0QFNbBLnH4ZaQna9FPI',
     google_analytics_id: '',
     custom_head_scripts: '',
@@ -393,7 +391,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
   if (pathname === '/api/settings' && method === 'GET') {
     const store = getStore();
     sendJson(res, 200, {
-      max_inboxes_per_user: store.settings.max_inboxes_per_user || 7,
+      max_inboxes_per_user: store.settings.max_inboxes_per_user !== undefined ? store.settings.max_inboxes_per_user : 3,
       max_email_changes_per_inbox: store.settings.max_email_changes_per_inbox || 3,
       retention_days: store.settings.retention_days || 7,
       service_enabled: store.settings.service_enabled !== false,
@@ -447,7 +445,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       created_today: todayInboxes,
       total_messages: store.stats.lifetime_messages_received + totalMessages,
       retention_days: store.settings.retention_days || 7,
-      max_inboxes_limit: store.settings.max_inboxes_per_user || 7,
+      max_inboxes_limit: store.settings.max_inboxes_per_user !== undefined ? store.settings.max_inboxes_per_user : 3,
       service_enabled: store.settings.service_enabled !== false
     });
     return true;
@@ -488,7 +486,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
   if (pathname === '/api/admin/settings' && method === 'GET') {
     const store = getStore();
     sendJson(res, 200, {
-      max_inboxes_per_user: store.settings.max_inboxes_per_user || 7,
+      max_inboxes_per_user: store.settings.max_inboxes_per_user !== undefined ? store.settings.max_inboxes_per_user : 3,
       max_email_changes_per_inbox: store.settings.max_email_changes_per_inbox || 3,
       retention_days: store.settings.retention_days || 7,
       service_enabled: store.settings.service_enabled !== false,
@@ -497,8 +495,6 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       turnstile_site_key: store.settings.turnstile_site_key || '',
       turnstile_secret_key: store.settings.turnstile_secret_key || '',
       admin_username: store.settings.admin_username || 'admin',
-      supabase_url: store.settings.supabase_url || '',
-      supabase_key: store.settings.supabase_key || '',
       google_search_console: store.settings.google_search_console || '',
       google_analytics_id: store.settings.google_analytics_id || '',
       custom_head_scripts: store.settings.custom_head_scripts || '',
@@ -512,7 +508,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     const body = await parseJsonBody(req);
     const store = getStore();
 
-    if (body.max_inboxes_per_user !== undefined) store.settings.max_inboxes_per_user = parseInt(body.max_inboxes_per_user, 10) || 7;
+    if (body.max_inboxes_per_user !== undefined) store.settings.max_inboxes_per_user = parseInt(body.max_inboxes_per_user, 10) || 3;
     if (body.max_email_changes_per_inbox !== undefined) store.settings.max_email_changes_per_inbox = parseInt(body.max_email_changes_per_inbox, 10) || 3;
     if (body.retention_days !== undefined) store.settings.retention_days = parseInt(body.retention_days, 10) || 7;
     if (body.service_enabled !== undefined) store.settings.service_enabled = Boolean(body.service_enabled);
@@ -522,8 +518,6 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     if (body.turnstile_secret_key !== undefined) store.settings.turnstile_secret_key = body.turnstile_secret_key;
     if (body.admin_username) store.settings.admin_username = body.admin_username.trim();
     if (body.new_admin_password) store.settings.admin_password = body.new_admin_password.trim();
-    if (body.supabase_url !== undefined) store.settings.supabase_url = body.supabase_url;
-    if (body.supabase_key !== undefined) store.settings.supabase_key = body.supabase_key;
     if (body.google_search_console !== undefined) {
       let gsc = String(body.google_search_console).trim();
       const match = gsc.match(/content=["']([^"']+)["']/i);
@@ -717,7 +711,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       inboxes: session.inboxes,
       activeIndex: session.activeIndex || 0,
       changesCount: session.changesCount || {},
-      max_inboxes: store.settings.max_inboxes_per_user || 7,
+      max_inboxes: store.settings.max_inboxes_per_user !== undefined ? store.settings.max_inboxes_per_user : 3,
       max_changes: store.settings.max_email_changes_per_inbox || 3
     });
     return true;
@@ -733,7 +727,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       return true;
     }
 
-    const maxLimit = store.settings.max_inboxes_per_user || 7;
+    const maxLimit = store.settings.max_inboxes_per_user !== undefined ? store.settings.max_inboxes_per_user : 3;
     const { session, deviceId } = getOrInitDeviceSession(store, req, parsedUrl, body);
 
     if (session.inboxes && session.inboxes.length >= maxLimit) {

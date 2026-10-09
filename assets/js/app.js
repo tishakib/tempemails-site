@@ -6,7 +6,7 @@
 // Configuration
 const CONFIG = {
   DOMAIN: 'tempemails.site',
-  MAX_INBOXES: 7,
+  MAX_INBOXES: 3,
   MAX_CHANGES: 3, // Allowed changes per address
   REFRESH_INTERVAL: 15, // seconds
   STORAGE_KEY_INBOXES: 'tempemails_slots_v1',
@@ -74,7 +74,7 @@ async function initApp() {
       const policyMaxInboxes = document.getElementById('policy-max-inboxes');
       const policyMaxChanges = document.getElementById('policy-max-changes');
       if (policyRetention) policyRetention.textContent = `${data.retention_days || 7} Days`;
-      if (policyMaxInboxes) policyMaxInboxes.textContent = data.max_inboxes_per_user || 7;
+      if (policyMaxInboxes) policyMaxInboxes.textContent = data.max_inboxes_per_user !== undefined ? data.max_inboxes_per_user : 3;
       if (policyMaxChanges) policyMaxChanges.textContent = data.max_email_changes_per_inbox || 3;
 
       // Handle Cloudflare Turnstile Anti-Bot

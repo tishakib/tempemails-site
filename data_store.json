@@ -1,6 +1,6 @@
 {
   "settings": {
-    "max_inboxes_per_user": 7,
+    "max_inboxes_per_user": 3,
     "max_email_changes_per_inbox": 3,
     "retention_days": 7,
     "service_enabled": true,
@@ -10,8 +10,6 @@
     "turnstile_secret_key": "",
     "admin_username": "admin",
     "admin_password": "shakib2026",
-    "supabase_url": "",
-    "supabase_key": "",
     "google_search_console": "_L5-YT0C3h80QPkTQncQ_MDu0QFNbBLnH4ZaQna9FPI",
     "google_analytics_id": "",
     "custom_head_scripts": "",
