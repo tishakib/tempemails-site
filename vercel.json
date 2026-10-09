@@ -2,7 +2,7 @@
   "cleanUrls": true,
   "functions": {
     "index.js": {
-      "includeFiles": "{*.html,assets/**,data_store.json}"
+      "includeFiles": "{*.html,*.xml,*.txt,assets/**,data_store.json}"
     }
   },
   "rewrites": [

@@ -1,0 +1,9 @@
+# Robots.txt for tempemails.site
+User-agent: *
+Allow: /
+Disallow: /admin-shakib
+Disallow: /admin-shakib.html
+Disallow: /api/
+
+# Canonical XML Sitemap
+Sitemap: https://www.tempemails.site/sitemap.xml

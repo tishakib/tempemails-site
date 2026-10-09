@@ -19,6 +19,7 @@ const MIME_TYPES = {
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
+  '.xml': 'application/xml; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8'
 };
 
@@ -988,6 +989,59 @@ const requestHandler = async (req, res) => {
   // Handle API routes
   if (reqPath.startsWith('/api')) {
     await handleApiRequest(req, res, reqPath, req.method, parsedUrl);
+    return;
+  }
+
+  // Handle Dynamic XML Sitemap
+  if (reqPath === '/sitemap.xml' || reqPath === '/sitemap') {
+    const store = getStore();
+    const today = new Date().toISOString().split('T')[0];
+    const baseUrl = 'https://www.tempemails.site';
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    const staticPages = [
+      { path: '/', priority: '1.0', changefreq: 'daily' },
+      { path: '/about', priority: '0.8', changefreq: 'weekly' },
+      { path: '/faq', priority: '0.8', changefreq: 'weekly' },
+      { path: '/contact', priority: '0.8', changefreq: 'monthly' },
+      { path: '/blog', priority: '0.9', changefreq: 'daily' },
+      { path: '/privacy', priority: '0.5', changefreq: 'monthly' },
+      { path: '/terms', priority: '0.5', changefreq: 'monthly' }
+    ];
+
+    for (const p of staticPages) {
+      xml += `  <url>\n    <loc>${baseUrl}${p.path}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>\n`;
+    }
+
+    if (Array.isArray(store.blogs)) {
+      for (const b of store.blogs) {
+        if (b.status === 'published' && b.slug) {
+          const mod = b.created_at ? b.created_at.split('T')[0] : today;
+          xml += `  <url>\n    <loc>${baseUrl}/blog-article?slug=${encodeURIComponent(b.slug)}</loc>\n    <lastmod>${mod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+        }
+      }
+    }
+
+    xml += `</urlset>`;
+
+    res.writeHead(200, {
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600'
+    });
+    res.end(xml);
+    return;
+  }
+
+  // Handle robots.txt
+  if (reqPath === '/robots.txt') {
+    const robots = `User-agent: *\nAllow: /\nDisallow: /admin-shakib\nDisallow: /admin-shakib.html\nDisallow: /api/\n\nSitemap: https://www.tempemails.site/sitemap.xml\n`;
+    res.writeHead(200, {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=86400'
+    });
+    res.end(robots);
     return;
   }
 
