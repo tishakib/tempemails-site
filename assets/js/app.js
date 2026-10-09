@@ -13,7 +13,9 @@ const CONFIG = {
   STORAGE_KEY_ACTIVE: 'tempemails_active_index_v1',
   STORAGE_KEY_MESSAGES: 'tempemails_messages_v1',
   STORAGE_KEY_CHANGES: 'tempemails_changes_count_v1',
-  API_ENDPOINT: '/api' // Ready for Cloudflare Worker hookup
+  API_ENDPOINT: '/api',
+  TURNSTILE_ENABLED: true,
+  TURNSTILE_SITE_KEY: '0x4AAAAAAFRu_7JO3yDw1SR7'
 };
 
 // No demo emails - clean authentic inbox
@@ -177,12 +179,19 @@ async function initApp() {
       if (policyMaxChanges) policyMaxChanges.textContent = data.max_email_changes_per_inbox || 3;
 
       // Handle Cloudflare Turnstile Anti-Bot
+      if (data.turnstile_enabled !== undefined) {
+        CONFIG.TURNSTILE_ENABLED = data.turnstile_enabled !== false;
+      }
+      if (data.turnstile_site_key) {
+        CONFIG.TURNSTILE_SITE_KEY = data.turnstile_site_key;
+      }
+
       const turnstileWrap = document.getElementById('turnstile-wrapper');
-      if (data.turnstile_enabled === false) {
+      if (CONFIG.TURNSTILE_ENABLED === false) {
         if (turnstileWrap) turnstileWrap.classList.add('hidden');
       } else {
         if (turnstileWrap) turnstileWrap.classList.remove('hidden');
-        renderCloudflareTurnstile(data.turnstile_site_key);
+        renderCloudflareTurnstile(CONFIG.TURNSTILE_SITE_KEY);
       }
 
       // Inject Google Search Console if provided
@@ -223,7 +232,7 @@ async function initApp() {
       if (sessionData.changesCount) state.changesCount = sessionData.changesCount;
 
       if (!hasExistingInboxes) {
-        // First visit ever: assign initial session inboxes
+        // First visit ever: assign initial session inboxes if server provided any
         if (sessionData.inboxes && sessionData.inboxes.length > 0) {
           state.inboxes = sessionData.inboxes;
           state.activeIndex = typeof sessionData.activeIndex === 'number' ? sessionData.activeIndex : 0;
@@ -241,13 +250,15 @@ async function initApp() {
     console.log('Device session fetch error, preserving local session:', err);
   }
 
-  // Step 5: Fallback if completely empty (offline first visit)
+  // Step 5: Fallback if completely empty (First visit without inboxes)
   if (state.inboxes.length === 0) {
-    const firstEmail = `${generateRandomUsername()}@${CONFIG.DOMAIN}`;
-    state.inboxes.push(firstEmail);
-    state.activeIndex = 0;
-    state.messages[firstEmail] = [];
-    saveStateToStorage();
+    if (!CONFIG.TURNSTILE_ENABLED) {
+      const firstEmail = `${generateRandomUsername()}@${CONFIG.DOMAIN}`;
+      state.inboxes.push(firstEmail);
+      state.activeIndex = 0;
+      state.messages[firstEmail] = [];
+      saveStateToStorage();
+    }
   }
 
   // Ensure active index is within bounds
@@ -413,7 +424,7 @@ window.selectInbox = function(index) {
   }
 };
 
-// Add New Inbox Slot (Up to dynamic max limit, synced across device browsers)
+// Add New Inbox Slot (Up to dynamic max limit, protected by Turnstile)
 window.addNewInboxSlot = async function() {
   if (state.inboxes.length >= CONFIG.MAX_INBOXES) {
     showToast(`Maximum ${CONFIG.MAX_INBOXES} inboxes limit reached!`, 'warning');
@@ -422,18 +433,35 @@ window.addNewInboxSlot = async function() {
 
   const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
 
+  // If Turnstile is active but no token available yet, prompt user
+  if (CONFIG.TURNSTILE_ENABLED && !window.turnstileToken) {
+    showToast('Please complete the security verification challenge below.', 'info');
+    if (window.turnstile && window.turnstileWidgetId !== undefined) {
+      window.turnstile.reset(window.turnstileWidgetId);
+    }
+    const widget = document.getElementById('turnstile-wrapper');
+    if (widget) widget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const token = window.turnstileToken || '';
+
   try {
     const res = await fetch('/api/inbox/create', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'x-device-fingerprint': hwId
+        'x-device-fingerprint': hwId,
+        'cf-turnstile-token': token
       },
-      body: JSON.stringify({ device_id: hwId })
+      body: JSON.stringify({ device_id: hwId, turnstile_token: token })
     });
     const data = await res.json();
     if (!res.ok || data.error) {
       showToast(data.error || 'Failed to create inbox', 'warning');
+      if (window.turnstile && window.turnstileWidgetId !== undefined) {
+        window.turnstile.reset(window.turnstileWidgetId);
+      }
       return;
     }
     if (data.inboxes && Array.isArray(data.inboxes)) {
@@ -444,6 +472,12 @@ window.addNewInboxSlot = async function() {
         state.inboxes.push(data.inbox.address);
       }
       state.activeIndex = state.inboxes.indexOf(data.inbox.address);
+    }
+
+    // Token consumed — reset widget for next action
+    window.turnstileToken = null;
+    if (window.turnstile && window.turnstileWidgetId !== undefined) {
+      window.turnstile.reset(window.turnstileWidgetId);
     }
   } catch (e) {
     showToast('Network error while creating inbox slot.', 'warning');
@@ -495,7 +529,7 @@ window.deleteInboxSlot = async function(index, e) {
   } catch (err) {}
 };
 
-// Randomize / Change Current Active Email (Respects Change Limit & Synced)
+// Randomize / Change Current Active Email (Respects Change Limit & Protected by Turnstile)
 window.randomizeCurrentEmail = async function() {
   const current = getActiveEmail();
   const maxChanges = CONFIG.MAX_CHANGES || 3;
@@ -506,6 +540,17 @@ window.randomizeCurrentEmail = async function() {
     return;
   }
 
+  if (CONFIG.TURNSTILE_ENABLED && !window.turnstileToken) {
+    showToast('Please complete the security challenge below to change address.', 'info');
+    if (window.turnstile && window.turnstileWidgetId !== undefined) {
+      window.turnstile.reset(window.turnstileWidgetId);
+    }
+    const widget = document.getElementById('turnstile-wrapper');
+    if (widget) widget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const token = window.turnstileToken || '';
   const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
   const changeBtn = document.getElementById('btn-change-email');
   if (changeBtn) changeBtn.classList.add('opacity-50', 'pointer-events-none');
@@ -515,13 +560,17 @@ window.randomizeCurrentEmail = async function() {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'x-device-fingerprint': hwId
+        'x-device-fingerprint': hwId,
+        'cf-turnstile-token': token
       },
-      body: JSON.stringify({ oldAddress: current, device_id: hwId })
+      body: JSON.stringify({ oldAddress: current, device_id: hwId, turnstile_token: token })
     });
     const data = await res.json();
     if (!res.ok || data.error) {
       showToast(data.error || 'Failed to change address', 'warning');
+      if (window.turnstile && window.turnstileWidgetId !== undefined) {
+        window.turnstile.reset(window.turnstileWidgetId);
+      }
       if (changeBtn) changeBtn.classList.remove('opacity-50', 'pointer-events-none');
       return;
     }
@@ -533,6 +582,11 @@ window.randomizeCurrentEmail = async function() {
     state.changesCount[newEmail] = used + 1;
     state.messages[newEmail] = [];
     state.activeMessageId = null;
+
+    window.turnstileToken = null;
+    if (window.turnstile && window.turnstileWidgetId !== undefined) {
+      window.turnstile.reset(window.turnstileWidgetId);
+    }
 
     saveStateToStorage();
     renderApp();
@@ -712,43 +766,28 @@ function renderInboxView() {
   listContainer.innerHTML = html;
 }
 
-// Clean and sanitize email body for display
-function cleanClientMimeBody(rawHtml, rawSnippet) {
-  if (!rawHtml) return `<p class="whitespace-pre-line text-slate-700" style="word-break: normal; line-break: auto;">${escapeHtml(rawSnippet || '(No content)')}</p>`;
-
-  let content = rawHtml;
-
-  // If the body contains raw MIME headers, extract body part cleanly
-  if (content.includes('Received:') || content.includes('ARC-Seal:') || content.includes('boundary=')) {
-    const norm = content.replace(/\r\n/g, '\n');
-    const headerEnd = norm.indexOf('\n\n');
-    if (headerEnd !== -1) {
-      const bodyPart = norm.substring(headerEnd + 2);
-      const htmlMatch = bodyPart.match(/Content-Type:\s*text\/html[^\n]*\n(?:[^\n]+\n)*\n([\s\S]*?)(?:--\w+|$)/i);
-      if (htmlMatch && htmlMatch[1]) {
-        content = htmlMatch[1];
-      } else {
-        const textMatch = bodyPart.match(/Content-Type:\s*text\/plain[^\n]*\n(?:[^\n]+\n)*\n([\s\S]*?)(?:--\w+|$)/i);
-        if (textMatch && textMatch[1]) {
-          content = `<p style="white-space: pre-wrap; word-break: normal; line-break: auto;">${escapeHtml(textMatch[1]).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-semibold">$1</a>')}</p>`;
-        } else {
-          content = bodyPart.replace(/--[a-zA-Z0-9_-]+--?/g, '').trim();
-        }
-      }
-    }
+// Clean and sanitize email HTML body using DOMPurify with pure JS fallback
+function sanitizeClientHtml(html) {
+  if (!html || typeof html !== 'string') return '';
+  if (typeof DOMPurify !== 'undefined' && DOMPurify.sanitize) {
+    return DOMPurify.sanitize(html, {
+      FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'applet', 'form', 'meta'],
+      FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur', 'onchange'],
+      ALLOW_DATA_ATTR: false
+    });
   }
-
-  // Strip boundary markers
-  content = content.replace(/--[0-9a-zA-Z_-]{10,}--?/g, '').trim();
-
-  // Basic client sanitize
-  return content
+  return html
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
+    .replace(/<form\b[^<]*(?:(?!<\/form>)<[^<]*)*<\/form>/gi, '')
+    .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/href\s*=\s*(["'])\s*(?:javascript|vbscript|data):[^"']*\1/gi, 'href="#"')
+    .replace(/src\s*=\s*(["'])\s*(?:javascript|vbscript):[^"']*\1/gi, 'src=""');
 }
 
-// 4. Render Message Detail View (Gmail Message Viewer with Unicode & BiDi / RTL Support)
+// 4. Render Message Detail View (Isolated Sandboxed Iframe Viewer with Multi-language Fonts)
 function renderMessageDetail(msg, container) {
   // Mark message as read
   msg.isUnread = false;
@@ -856,14 +895,168 @@ function renderMessageDetail(msg, container) {
         </div>
       ` : ''}
 
-      <!-- Clean Message Body (Typography safe for Bengali conjuncts, vowel signs, and RTL) -->
-      <div dir="auto" class="email-body-content bg-white p-6 rounded-xl border border-slate-200 text-slate-800 leading-relaxed shadow-sm min-h-[160px] overflow-hidden" style="overflow-wrap: break-word; word-break: normal; line-break: auto; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans Bengali', 'SolaimanLipi', 'Kalpurush', 'Noto Sans Devanagari', 'Noto Sans Arabic', sans-serif;">
-        ${cleanClientMimeBody(msg.bodyHtml, msg.snippet)}
+      <!-- View Controls: Formatted HTML vs Plain Text Toggle & Height Control -->
+      <div id="email-view-controls" class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 flex-wrap gap-2 text-xs">
+        <div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/60">
+          <button id="btn-view-html" onclick="setEmailViewMode('html')" class="px-3 py-1 font-semibold rounded-md bg-white text-slate-800 shadow-sm transition-all">
+            Formatted (HTML)
+          </button>
+          <button id="btn-view-text" onclick="setEmailViewMode('text')" class="px-3 py-1 font-semibold rounded-md text-slate-500 hover:text-slate-800 transition-all">
+            Plain Text
+          </button>
+        </div>
+        <button id="btn-toggle-expand" onclick="toggleEmailFrameHeight()" class="px-2.5 py-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-1 font-medium">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+          <span>Expand Height</span>
+        </button>
+      </div>
+
+      <!-- HTML View (Isolated Sandboxed Iframe) -->
+      <div id="email-iframe-container" class="w-full">
+        <iframe
+          id="email-viewer-frame"
+          class="w-full border border-slate-200 rounded-xl bg-white shadow-sm transition-all"
+          sandbox="allow-popups allow-popups-to-escape-sandbox"
+          loading="lazy"
+          style="width: 100%; min-height: 480px; height: 620px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;"
+        ></iframe>
+      </div>
+
+      <!-- Plain Text Fallback View -->
+      <div id="email-text-container" class="hidden w-full bg-white p-6 rounded-xl border border-slate-200 text-slate-800 leading-relaxed shadow-sm font-sans" dir="auto" style="white-space: pre-wrap; word-break: normal; line-break: auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Noto Sans Bengali', 'SolaimanLipi', 'Kalpurush', 'Noto Sans Devanagari', 'Noto Sans Arabic', sans-serif;">
       </div>
 
     </div>
   `;
+
+  // Initialize and inject secure sandboxed content
+  setupEmailViewer(msg);
 }
+
+// Secure Email Viewer Setup (Sandboxed Iframe with Typography & DOM Isolation)
+function setupEmailViewer(msg) {
+  const iframe = document.getElementById('email-viewer-frame');
+  const textContainer = document.getElementById('email-text-container');
+  if (!iframe) return;
+
+  const rawHtml = msg.bodyHtml || '';
+  const snippet = msg.snippet || '';
+  const sanitized = sanitizeClientHtml(rawHtml);
+
+  // Check if content has real HTML tags
+  const hasHtml = /<[a-z][\s\S]*>/i.test(sanitized) && !/^<p>\s*\(Empty message\)\s*<\/p>$/i.test(sanitized);
+
+  // Populate Plain Text container
+  if (textContainer) {
+    const rawText = msg.textContent || snippet || sanitized.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    textContainer.innerHTML = escapeHtml(rawText)
+      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-semibold">$1</a>');
+  }
+
+  // Construct isolated, sandboxed HTML document for the iframe
+  const doc = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base target="_blank">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+Arabic:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: light; }
+    html, body {
+      margin: 0;
+      padding: 18px;
+      background: #ffffff;
+      color: #1e293b;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Noto Sans Bengali', 'SolaimanLipi', 'Kalpurush', 'Noto Sans Devanagari', 'Noto Sans Arabic', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-wrap: break-word;
+      word-break: normal;
+      line-break: auto;
+      font-feature-settings: "kern", "liga", "clig";
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100% !important; height: auto !important; }
+    table { max-width: 100% !important; border-collapse: collapse; }
+    a { color: #2563eb; text-decoration: underline; }
+    blockquote {
+      margin: 0.8em 0;
+      padding-left: 1em;
+      border-left: 3px solid #cbd5e1;
+      color: #64748b;
+    }
+    pre, code {
+      font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+      font-size: 13px;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    pre { padding: 12px; overflow-x: auto; white-space: pre-wrap; }
+  </style>
+</head>
+<body dir="auto">
+  ${sanitized || `<p style="color: #64748b; font-style: italic;">${escapeHtml(snippet || '(No message content)')}</p>`}
+</body>
+</html>`;
+
+  iframe.srcdoc = doc;
+
+  // If message has no HTML tags, automatically show plain text view
+  if (!hasHtml && textContainer) {
+    setEmailViewMode('text');
+  }
+}
+
+window.setEmailViewMode = function(mode) {
+  const iframeContainer = document.getElementById('email-iframe-container');
+  const textContainer = document.getElementById('email-text-container');
+  const btnHtml = document.getElementById('btn-view-html');
+  const btnText = document.getElementById('btn-view-text');
+
+  if (mode === 'html') {
+    if (iframeContainer) iframeContainer.classList.remove('hidden');
+    if (textContainer) textContainer.classList.add('hidden');
+    if (btnHtml) {
+      btnHtml.className = 'px-3 py-1 font-semibold rounded-md bg-white text-slate-800 shadow-sm transition-all';
+    }
+    if (btnText) {
+      btnText.className = 'px-3 py-1 font-semibold rounded-md text-slate-500 hover:text-slate-800 transition-all';
+    }
+  } else {
+    if (iframeContainer) iframeContainer.classList.add('hidden');
+    if (textContainer) textContainer.classList.remove('hidden');
+    if (btnText) {
+      btnText.className = 'px-3 py-1 font-semibold rounded-md bg-white text-slate-800 shadow-sm transition-all';
+    }
+    if (btnHtml) {
+      btnHtml.className = 'px-3 py-1 font-semibold rounded-md text-slate-500 hover:text-slate-800 transition-all';
+    }
+  }
+};
+
+window.toggleEmailFrameHeight = function() {
+  const frame = document.getElementById('email-viewer-frame');
+  const btn = document.getElementById('btn-toggle-expand');
+  if (!frame) return;
+  const isExpanded = frame.style.height === '1200px';
+  if (isExpanded) {
+    frame.style.height = '620px';
+    if (btn) {
+      const span = btn.querySelector('span');
+      if (span) span.textContent = 'Expand Height';
+    }
+  } else {
+    frame.style.height = '1200px';
+    if (btn) {
+      const span = btn.querySelector('span');
+      if (span) span.textContent = 'Collapse Height';
+    }
+  }
+};
 
 // Open Message
 window.openMessage = function(id) {
@@ -1162,22 +1355,38 @@ async function loadAndRenderAds() {
 function renderCloudflareTurnstile(siteKey) {
   const box = document.getElementById('cf-turnstile-box');
   if (!box) return;
-  const key = (siteKey && siteKey.trim()) ? siteKey.trim() : '1x00000000000000000000AA';
+  const key = (siteKey && siteKey.trim()) ? siteKey.trim() : '0x4AAAAAAFRu_7JO3yDw1SR7';
 
   function tryMount() {
     if (window.turnstile && document.getElementById('cf-turnstile-box')) {
       try {
         box.innerHTML = '';
-        window.turnstile.render('#cf-turnstile-box', {
+        window.turnstileWidgetId = window.turnstile.render('#cf-turnstile-box', {
           sitekey: key,
           theme: 'light',
           size: 'compact',
-          callback: function(token) {
+          action: 'inbox_protection',
+          callback: async function(token) {
             window.turnstileToken = token;
             const desc = document.getElementById('turnstile-status-desc');
             if (desc) {
               desc.textContent = 'Human visitor verified successfully.';
               desc.className = 'text-[11px] font-semibold text-emerald-600';
+            }
+            // If user has zero inboxes yet (first visit ever), automatically create initial inbox!
+            if (state.inboxes.length === 0) {
+              await createInitialInboxWithTurnstile(token);
+            }
+          },
+          'expired-callback': function() {
+            window.turnstileToken = null;
+            const desc = document.getElementById('turnstile-status-desc');
+            if (desc) {
+              desc.textContent = 'Security challenge expired. Renewing challenge...';
+              desc.className = 'text-[11px] text-amber-600';
+            }
+            if (window.turnstile && window.turnstileWidgetId !== undefined) {
+              window.turnstile.reset(window.turnstileWidgetId);
             }
           },
           'error-callback': function() {
@@ -1204,6 +1413,42 @@ function renderCloudflareTurnstile(siteKey) {
         clearInterval(interval);
       }
     }, 200);
+  }
+}
+
+// Automatically create initial inbox slot once Turnstile verifies human visitor
+async function createInitialInboxWithTurnstile(token) {
+  const hwId = window.AppUtils ? window.AppUtils.getDeviceId() : 'browser-client';
+  try {
+    const res = await fetch('/api/inbox/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-device-fingerprint': hwId,
+        'cf-turnstile-token': token
+      },
+      body: JSON.stringify({ device_id: hwId, turnstile_token: token })
+    });
+    const data = await res.json();
+    if (res.ok && (data.inbox || data.inboxes)) {
+      if (data.inboxes && Array.isArray(data.inboxes)) {
+        state.inboxes = data.inboxes;
+        state.activeIndex = 0;
+      } else if (data.inbox && data.inbox.address) {
+        state.inboxes = [data.inbox.address];
+        state.activeIndex = 0;
+      }
+      saveStateToStorage();
+      renderApp();
+      triggerInboxRefresh(false);
+      // Reset Turnstile token and challenge so next action has a fresh challenge ready
+      window.turnstileToken = null;
+      if (window.turnstile && window.turnstileWidgetId !== undefined) {
+        window.turnstile.reset(window.turnstileWidgetId);
+      }
+    }
+  } catch (e) {
+    console.error('Initial inbox creation error:', e);
   }
 }
 

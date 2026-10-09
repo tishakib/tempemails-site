@@ -184,55 +184,68 @@ function parseMimeEmail(raw) {
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 
-  const boundaryMatch = headerBlock.match(/boundary\s*=\s*"?([^"\n;]+)"?/i);
   let htmlContent = "";
   let textContent = "";
 
-  function processPart(partHeadersRaw, partBodyRaw) {
-    const partHeaders = partHeadersRaw.replace(/\n[ \t]+/g, " ");
-    const isBase64 = /content-transfer-encoding:\s*base64/i.test(partHeaders);
-    const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(partHeaders);
-    const csMatch = partHeaders.match(/charset\s*=\s*"?([^"\n;]+)"?/i);
-    const charset = csMatch ? csMatch[1].trim().toLowerCase() : "utf-8";
+  // Recursive MIME multipart parser: handles nested multipart/mixed, multipart/alternative, multipart/related
+  function walkParts(partHeadersRaw, partBodyRaw) {
+    const partHeaders = (partHeadersRaw || "").replace(/\n[ \t]+/g, " ");
+    const boundaryMatch = partHeaders.match(/boundary\s*=\s*"?([^"\r\n;]+)"?/i);
 
-    let decoded = partBodyRaw;
-    if (isBase64) decoded = decodeBase64(decoded, charset);
-    else if (isQP) decoded = decodeQuotedPrintable(decoded, charset);
+    if (boundaryMatch) {
+      const boundary = boundaryMatch[1];
+      const boundaryRegex = new RegExp("--" + boundary.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+      const parts = partBodyRaw.split(boundaryRegex);
 
-    if (/content-type:\s*text\/html/i.test(partHeaders)) {
-      htmlContent = decoded.trim();
-    } else if (/content-type:\s*text\/plain/i.test(partHeaders)) {
-      textContent = decoded.trim();
+      for (const part of parts) {
+        if (!part || part.trim() === "" || part.trim() === "--") continue;
+        const norm = part.replace(/\r\n/g, "\n");
+        const sep = norm.indexOf("\n\n");
+        if (sep === -1) continue;
+
+        const subHeaders = norm.substring(0, sep).replace(/\n[ \t]+/g, " ");
+        const subBody = norm.substring(sep + 2);
+        walkParts(subHeaders, subBody);
+      }
+    } else {
+      const isBase64 = /content-transfer-encoding:\s*base64/i.test(partHeaders);
+      const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(partHeaders);
+      const csMatch = partHeaders.match(/charset\s*=\s*"?([^"\n;]+)"?/i);
+      const charset = csMatch ? csMatch[1].trim().toLowerCase() : "utf-8";
+
+      let decoded = partBodyRaw;
+      if (isBase64) decoded = decodeBase64(decoded, charset);
+      else if (isQP) decoded = decodeQuotedPrintable(decoded, charset);
+
+      if (/content-type:\s*text\/html/i.test(partHeaders)) {
+        htmlContent = decoded.trim();
+      } else if (/content-type:\s*text\/plain/i.test(partHeaders)) {
+        if (!textContent) textContent = decoded.trim();
+      }
     }
   }
 
-  if (boundaryMatch) {
-    const boundary = boundaryMatch[1];
-    const boundaryRegex = new RegExp("--" + boundary.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-    const parts = bodyBlock.split(boundaryRegex);
+  walkParts(headerBlock, bodyBlock);
 
-    for (const part of parts) {
-      if (!part || part.trim() === "" || part.trim() === "--") continue;
-      const partSplit = part.indexOf("\n\n");
-      if (partSplit === -1) continue;
-
-      const partHeaders = part.substring(0, partSplit);
-      const partBody = part.substring(partSplit + 2);
-      processPart(partHeaders, partBody);
-    }
-  } else {
-    processPart(headerBlock, bodyBlock);
-  }
-
-  // Construct final display HTML
+  // Construct final display HTML with full sanitization
   let finalHtml = "";
   if (htmlContent) {
     finalHtml = htmlContent
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
       .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
       .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
+      .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "")
+      .replace(/<applet\b[^<]*(?:(?!<\/applet>)<[^<]*)*<\/applet>/gi, "")
+      .replace(/<form\b[^<]*(?:(?!<\/form>)<[^<]*)*<\/form>/gi, "")
       .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
-      .replace(/href\s*=\s*(["'])\s*javascript:[^"']*\1/gi, 'href="#"');
+      .replace(/href\s*=\s*(["'])\s*(?:javascript|vbscript|data):[^"']*\1/gi, 'href="#"')
+      .replace(/src\s*=\s*(["'])\s*(?:javascript|vbscript):[^"']*\1/gi, 'src=""')
+      .replace(/<a\b([^>]*)/gi, (match, attrs) => {
+        let updated = attrs;
+        if (!/target\s*=/i.test(updated)) updated += ' target="_blank"';
+        if (!/rel\s*=/i.test(updated)) updated += ' rel="noopener noreferrer"';
+        return '<a ' + updated.trim();
+      });
   } else if (textContent) {
     const escaped = escapeHtml(textContent);
     finalHtml = `<div dir="auto" style="white-space: pre-wrap; word-break: normal; line-break: auto; line-height: 1.6; font-family: sans-serif;">${escaped

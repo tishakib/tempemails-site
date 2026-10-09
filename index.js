@@ -3,6 +3,32 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
+// Load environment variables from .env if present (zero-dependency pure Node.js)
+function loadEnv() {
+  const envPath = path.join(__dirname, '.env');
+  if (fs.existsSync(envPath)) {
+    try {
+      const content = fs.readFileSync(envPath, 'utf8');
+      content.split('\n').forEach(line => {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) return;
+        const eqIdx = trimmed.indexOf('=');
+        if (eqIdx !== -1) {
+          const key = trimmed.substring(0, eqIdx).trim();
+          let val = trimmed.substring(eqIdx + 1).trim();
+          if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+            val = val.substring(1, val.length - 1);
+          }
+          if (process.env[key] === undefined) {
+            process.env[key] = val;
+          }
+        }
+      });
+    } catch (e) {}
+  }
+}
+loadEnv();
+
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = process.cwd();
 const LOCAL_DATA_FILE = path.join(__dirname, 'data_store.json');
@@ -32,8 +58,7 @@ const initialData = {
     service_enabled: true,
     maintenance_message: 'Our email servers are currently undergoing scheduled maintenance. New inbox generation will resume shortly. Thank you for your patience!',
     turnstile_enabled: true,
-    turnstile_site_key: '1x00000000000000000000AA',
-    turnstile_secret_key: '1x0000000000000000000000000000000AA',
+    turnstile_site_key: '0x4AAAAAAFRu_7JO3yDw1SR7',
     admin_password: 'shakib2026',
     google_search_console: '_L5-YT0C3h80QPkTQncQ_MDu0QFNbBLnH4ZaQna9FPI',
     google_analytics_id: '',
@@ -254,15 +279,27 @@ function decodeBase64(rawStr, charset = 'utf-8') {
 
 // Safe HTML Sanitizer (Strips XSS vectors while preserving styling, tables, fonts, layout & links)
 function sanitizeHtml(html) {
-  if (!html) return '';
+  if (!html || typeof html !== 'string') return '';
   return html
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
     .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
     .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
+    .replace(/<applet\b[^<]*(?:(?!<\/applet>)<[^<]*)*<\/applet>/gi, '')
+    .replace(/<form\b[^<]*(?:(?!<\/form>)<[^<]*)*<\/form>/gi, '')
+    .replace(/<meta\b[^>]*http-equiv=["']?refresh["']?[^>]*>/gi, '')
     .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/href\s*=\s*(["'])\s*javascript:[^"']*\1/gi, 'href="#"')
-    .replace(/src\s*=\s*(["'])\s*javascript:[^"']*\1/gi, 'src=""')
+    .replace(/href\s*=\s*(["'])\s*(?:javascript|vbscript|data):[^"']*\1/gi, 'href="#"')
+    .replace(/src\s*=\s*(["'])\s*(?:javascript|vbscript):[^"']*\1/gi, 'src=""')
+    .replace(/style\s*=\s*(["'])([\s\S]*?)\1/gi, (match, quote, styleContent) => {
+      // Neutralize dangerous CSS expressions
+      const cleanStyle = styleContent
+        .replace(/expression\s*\([^)]*\)/gi, '')
+        .replace(/behavior\s*:[^;]*/gi, '')
+        .replace(/-moz-binding\s*:[^;]*/gi, '')
+        .replace(/url\s*\(\s*(["']?)\s*(?:javascript|vbscript):[^)]*\)/gi, 'none');
+      return `style=${quote}${cleanStyle}${quote}`;
+    })
     .replace(/<a\b([^>]*)/gi, (match, attrs) => {
       let updated = attrs;
       if (!/target\s*=/i.test(updated)) updated += ' target="_blank"';
@@ -271,61 +308,83 @@ function sanitizeHtml(html) {
     });
 }
 
-// RFC 822 / MIME Multipart Parser & Sanitizer
+// RFC 822 / MIME Multipart Parser & Sanitizer with Recursive Tree Traversal
 function parseServerMime(raw) {
+  if (!raw || typeof raw !== 'string') {
+    return {
+      finalHtml: '<p style="color: #94A3B8;">(Empty message)</p>',
+      textContent: '',
+      snippet: '',
+      otp: null,
+      partnerLink: null,
+      subject: '',
+      fromName: '',
+      fromEmail: ''
+    };
+  }
+
   const normalized = raw.replace(/\r\n/g, '\n');
   const splitIdx = normalized.indexOf('\n\n');
   if (splitIdx === -1) {
+    const escaped = normalized.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return {
-      finalHtml: `<p style="white-space: pre-wrap; word-break: normal; line-break: auto; font-family: sans-serif;">${raw}</p>`,
-      snippet: raw.substring(0, 160),
+      finalHtml: `<p style="white-space: pre-wrap; word-break: normal; line-break: auto; font-family: sans-serif;">${escaped}</p>`,
+      textContent: normalized,
+      snippet: normalized.substring(0, 160),
       otp: null,
-      partnerLink: null
+      partnerLink: null,
+      subject: '',
+      fromName: '',
+      fromEmail: ''
     };
   }
 
   const rawHeaders = normalized.substring(0, splitIdx).replace(/\n[ \t]+/g, ' ');
   const bodyBlock = normalized.substring(splitIdx + 2);
 
-  const boundaryMatch = rawHeaders.match(/boundary\s*=\s*"?([^"\n;]+)"?/i);
   let htmlContent = '';
   let textContent = '';
 
-  function processMimePart(partHeadersRaw, partBodyRaw) {
-    const partHeaders = partHeadersRaw.replace(/\n[ \t]+/g, ' ');
-    const isB64 = /content-transfer-encoding:\s*base64/i.test(partHeaders);
-    const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(partHeaders);
-    const csMatch = partHeaders.match(/charset\s*=\s*"?([^"\n;]+)"?/i);
-    const charset = csMatch ? csMatch[1].trim().toLowerCase() : 'utf-8';
+  // Recursive MIME multipart parser: handles nested multipart/mixed, multipart/alternative, multipart/related
+  function walkMime(partHeadersRaw, partBodyRaw) {
+    const partHeaders = (partHeadersRaw || '').replace(/\n[ \t]+/g, ' ');
+    const boundaryMatch = partHeaders.match(/boundary\s*=\s*"?([^"\r\n;]+)"?/i);
 
-    let decoded = partBodyRaw;
-    if (isB64) decoded = decodeBase64(decoded, charset);
-    else if (isQP) decoded = decodeQuotedPrintable(decoded, charset);
+    if (boundaryMatch) {
+      const boundary = boundaryMatch[1];
+      const boundaryRegex = new RegExp('--' + boundary.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      const parts = partBodyRaw.split(boundaryRegex);
 
-    if (/content-type:\s*text\/html/i.test(partHeaders)) {
-      htmlContent = decoded.trim();
-    } else if (/content-type:\s*text\/plain/i.test(partHeaders)) {
-      textContent = decoded.trim();
+      for (const part of parts) {
+        if (!part || part.trim() === '' || part.trim() === '--') continue;
+        const normPart = part.replace(/\r\n/g, '\n');
+        const sep = normPart.indexOf('\n\n');
+        if (sep === -1) continue;
+
+        const subHeaders = normPart.substring(0, sep).replace(/\n[ \t]+/g, ' ');
+        const subBody = normPart.substring(sep + 2);
+        walkMime(subHeaders, subBody);
+      }
+    } else {
+      // Leaf part: decode content according to encoding and charset
+      const isB64 = /content-transfer-encoding:\s*base64/i.test(partHeaders);
+      const isQP = /content-transfer-encoding:\s*quoted-printable/i.test(partHeaders);
+      const csMatch = partHeaders.match(/charset\s*=\s*"?([^"\r\n;]+)"?/i);
+      const charset = csMatch ? csMatch[1].trim().toLowerCase() : 'utf-8';
+
+      let decoded = partBodyRaw;
+      if (isB64) decoded = decodeBase64(decoded, charset);
+      else if (isQP) decoded = decodeQuotedPrintable(decoded, charset);
+
+      if (/content-type:\s*text\/html/i.test(partHeaders)) {
+        htmlContent = decoded.trim();
+      } else if (/content-type:\s*text\/plain/i.test(partHeaders)) {
+        if (!textContent) textContent = decoded.trim();
+      }
     }
   }
 
-  if (boundaryMatch) {
-    const boundary = boundaryMatch[1];
-    const boundaryRegex = new RegExp('--' + boundary.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-    const parts = bodyBlock.split(boundaryRegex);
-
-    for (const part of parts) {
-      if (!part || part.trim() === '' || part.trim() === '--') continue;
-      const partSplit = part.indexOf('\n\n');
-      if (partSplit === -1) continue;
-
-      const partHeaders = part.substring(0, partSplit);
-      const partBody = part.substring(partSplit + 2);
-      processMimePart(partHeaders, partBody);
-    }
-  } else {
-    processMimePart(rawHeaders, bodyBlock);
-  }
+  walkMime(rawHeaders, bodyBlock);
 
   let finalHtml = '';
   if (htmlContent) {
@@ -342,7 +401,7 @@ function parseServerMime(raw) {
   const cleanText = (textContent || finalHtml.replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim();
   const snippet = cleanText.substring(0, 160);
 
-  // Multilingual OTP Extraction (English, Bengali, Hindi, Arabic, European keywords)
+  // Multilingual OTP Extraction (English, Bengali, Hindi, Arabic, French, German, Spanish)
   let otp = null;
   const contextOtpMatch = cleanText.match(/(?:code|otp|verification|pin|password|token|কোর্ড|কোড|ওটিপি|যাচাইকরণ|पिन|सत्यापन|رمز|تحقق|تأكيد|código|bestätigung)[^\w\d\u0980-\u09FF\u0900-\u097F\u0600-\u06FF]{1,30}(\b\d{4,8}\b)/i);
   if (contextOtpMatch) {
@@ -374,7 +433,115 @@ function parseServerMime(raw) {
     fromEmail = nameMatch[2].trim();
   }
 
-  return { finalHtml, snippet, otp, partnerLink, subject, fromName, fromEmail };
+  return { finalHtml, textContent, snippet, otp, partnerLink, subject, fromName, fromEmail };
+}
+
+// -------------------------------------------------------------
+// Cloudflare Turnstile Verification & Security Management
+// -------------------------------------------------------------
+function getTurnstileSiteKey() {
+  return process.env.TURNSTILE_SITE_KEY || (storeCache && storeCache.settings && storeCache.settings.turnstile_site_key) || '0x4AAAAAAFRu_7JO3yDw1SR7';
+}
+
+function getTurnstileSecretKey() {
+  return process.env.TURNSTILE_SECRET_KEY || (storeCache && storeCache.settings && storeCache.settings.turnstile_secret_key) || '';
+}
+
+// Memory tracking of used tokens to prevent replay / double-use attacks
+const usedTurnstileTokens = new Map();
+
+function isTokenAlreadyUsed(token) {
+  pruneUsedTokens();
+  return usedTurnstileTokens.has(token);
+}
+
+function markTokenAsUsed(token) {
+  usedTurnstileTokens.set(token, Date.now());
+}
+
+function pruneUsedTokens() {
+  const now = Date.now();
+  const maxAge = 10 * 60 * 1000; // 10 minutes TTL
+  for (const [t, time] of usedTurnstileTokens.entries()) {
+    if (now - time > maxAge) {
+      usedTurnstileTokens.delete(t);
+    }
+  }
+}
+
+async function verifyTurnstileToken(token, clientIp, action = '') {
+  const store = getStore();
+  if (store.settings.turnstile_enabled === false) {
+    return { success: true, bypassed: true };
+  }
+
+  const secret = getTurnstileSecretKey();
+  if (!secret) {
+    console.error('Turnstile verification failed: missing TURNSTILE_SECRET_KEY');
+    return { success: false, error: 'Turnstile secret key not configured on server.' };
+  }
+
+  if (!token || typeof token !== 'string' || !token.trim()) {
+    return { success: false, error: 'Turnstile verification token is missing.' };
+  }
+
+  const trimmedToken = token.trim();
+
+  if (isTokenAlreadyUsed(trimmedToken)) {
+    return { success: false, error: 'Turnstile token already used or expired.' };
+  }
+
+  // Automated test hook: in test environment, tokens prefixed with TEST_VALID_TOKEN_ or official testing key
+  if (secret === '1x0000000000000000000000000000000AA' || (process.env.NODE_ENV === 'test' && trimmedToken.startsWith('TEST_VALID_TOKEN_'))) {
+    markTokenAsUsed(trimmedToken);
+    return { success: true, test: true };
+  }
+
+  const postData = new URLSearchParams({
+    secret: secret,
+    response: trimmedToken,
+    remoteip: clientIp || ''
+  }).toString();
+
+  try {
+    const cfRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(postData).toString()
+      },
+      body: postData,
+      signal: AbortSignal.timeout(6000)
+    });
+
+    if (!cfRes.ok) {
+      return { success: false, error: `Cloudflare challenge service returned HTTP ${cfRes.status}` };
+    }
+
+    const data = await cfRes.json();
+    if (data.success) {
+      // Validate expected hostname where applicable
+      if (data.hostname) {
+        const allowedHosts = ['tempemails.site', 'www.tempemails.site', 'localhost', '127.0.0.1', 'example.com'];
+        const hostMatches = allowedHosts.includes(data.hostname.toLowerCase()) || data.hostname.toLowerCase().endsWith('.tempemails.site');
+        if (!hostMatches) {
+          return { success: false, error: 'Turnstile verification failed: unexpected origin hostname.' };
+        }
+      }
+      markTokenAsUsed(trimmedToken);
+      return { success: true, data };
+    } else {
+      return {
+        success: false,
+        error: 'Security challenge verification failed. Please try again.',
+        errorCodes: data['error-codes']
+      };
+    }
+  } catch (err) {
+    console.error('Turnstile verification network error:', err.message || err);
+    // Fail closed per security requirement
+    return { success: false, error: 'Security verification could not be completed. Please try again.' };
+  }
 }
 
 function getClientIp(req) {
@@ -530,7 +697,23 @@ function getOrInitDeviceSession(store, req, parsedUrl, body = {}) {
     return { key: primaryKey, session, deviceId: hw || ip };
   }
 
-  // CASE 3: True first-time visitor with zero existing inboxes — generate initial inbox
+  // CASE 3: First-time visitor with zero existing inboxes
+  // When Turnstile is enabled, protect initial inbox creation so bots cannot mass-generate inboxes
+  if (store.settings.turnstile_enabled !== false) {
+    session = {
+      inboxes: [],
+      activeIndex: 0,
+      changesCount: {},
+      ip: ip,
+      hw_id: hw,
+      created_at: new Date().toISOString()
+    };
+    store.device_sessions[primaryKey] = session;
+    saveStore(store);
+    return { key: primaryKey, session, deviceId: hw || ip, requires_verification: true };
+  }
+
+  // Turnstile disabled: auto-generate initial inbox directly
   const initialAddr = generateRandomAddress();
   session = {
     inboxes: [initialAddr],
@@ -587,7 +770,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       service_enabled: store.settings.service_enabled !== false,
       maintenance_message: store.settings.maintenance_message || 'Our email servers are currently undergoing scheduled maintenance. New inbox generation will resume shortly.',
       turnstile_enabled: store.settings.turnstile_enabled !== false,
-      turnstile_site_key: store.settings.turnstile_site_key || '1x00000000000000000000AA',
+      turnstile_site_key: getTurnstileSiteKey(),
       google_search_console: store.settings.google_search_console || '',
       google_analytics_id: store.settings.google_analytics_id || '',
       custom_head_scripts: store.settings.custom_head_scripts || '',
@@ -682,8 +865,8 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       service_enabled: store.settings.service_enabled !== false,
       maintenance_message: store.settings.maintenance_message || '',
       turnstile_enabled: store.settings.turnstile_enabled !== false,
-      turnstile_site_key: store.settings.turnstile_site_key || '',
-      turnstile_secret_key: store.settings.turnstile_secret_key || '',
+      turnstile_site_key: getTurnstileSiteKey(),
+      turnstile_secret_configured: Boolean(getTurnstileSecretKey()),
       admin_username: store.settings.admin_username || 'admin',
       google_search_console: store.settings.google_search_console || '',
       google_analytics_id: store.settings.google_analytics_id || '',
@@ -938,6 +1121,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
       return true;
     }
 
+    const clientIp = getClientIp(req);
     const maxLimit = store.settings.max_inboxes_per_user !== undefined ? store.settings.max_inboxes_per_user : 3;
     const { session, deviceId } = getOrInitDeviceSession(store, req, parsedUrl, body);
 
@@ -946,6 +1130,20 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
         error: `Device limit reached. You can hold up to ${maxLimit} active inboxes on this device.` 
       });
       return true;
+    }
+
+    // Turnstile Security Verification for protected inbox creation
+    if (store.settings.turnstile_enabled !== false) {
+      const token = body.turnstile_token || body.token || req.headers['cf-turnstile-token'];
+      if (!token) {
+        sendJson(res, 403, { error: 'Security verification required. Please complete Cloudflare Turnstile challenge.' });
+        return true;
+      }
+      const verifyRes = await verifyTurnstileToken(token, clientIp, 'create_inbox');
+      if (!verifyRes.success) {
+        sendJson(res, 403, { error: verifyRes.error || 'Turnstile verification failed.' });
+        return true;
+      }
     }
 
     const address = (body.address || generateRandomAddress()).toLowerCase().trim();
@@ -976,6 +1174,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
   if (pathname === '/api/inbox/change' && method === 'POST') {
     const body = await parseJsonBody(req);
     const store = getStore();
+    const clientIp = getClientIp(req);
     const { session, deviceId } = getOrInitDeviceSession(store, req, parsedUrl, body);
     const maxChanges = store.settings.max_email_changes_per_inbox || 3;
 
@@ -995,6 +1194,20 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     if (used >= maxChanges) {
       sendJson(res, 429, { error: `Maximum ${maxChanges} address changes reached for this inbox.` });
       return true;
+    }
+
+    // Turnstile Security Verification for address change
+    if (store.settings.turnstile_enabled !== false) {
+      const token = body.turnstile_token || body.token || req.headers['cf-turnstile-token'];
+      if (!token) {
+        sendJson(res, 403, { error: 'Security verification required to change email address.' });
+        return true;
+      }
+      const verifyRes = await verifyTurnstileToken(token, clientIp, 'change_inbox');
+      if (!verifyRes.success) {
+        sendJson(res, 403, { error: verifyRes.error || 'Turnstile verification failed.' });
+        return true;
+      }
     }
 
     const newAddress = generateRandomAddress().toLowerCase().trim();

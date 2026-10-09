@@ -341,14 +341,14 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block text-[11px] font-semibold text-slate-400 uppercase mb-1">Turnstile Site Key</label>
-                <input type="text" id="setting-turnstile-sitekey" placeholder="1x00000000000000000000AA" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-[#F4413D]">
+                <input type="text" id="setting-turnstile-sitekey" placeholder="0x4AAAAAAFRu_7JO3yDw1SR7" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-[#F4413D]">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-400 uppercase mb-1">Turnstile Secret Key</label>
-                <input type="password" id="setting-turnstile-secretkey" placeholder="1x0000000000000000000000000000000AA" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-[#F4413D]">
+                <label class="block text-[11px] font-semibold text-slate-400 uppercase mb-1">Turnstile Secret Key (Backend Env)</label>
+                <input type="password" id="setting-turnstile-secretkey" placeholder="•••••••••••••••• (Secure in server environment)" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-[#F4413D]">
               </div>
             </div>
-            <p class="text-[11px] text-slate-500">Official Cloudflare Turnstile testing keys are active by default.</p>
+            <p class="text-[11px] text-slate-500">Cloudflare Turnstile is active. Secret Key is stored exclusively in backend server environment (TURNSTILE_SECRET_KEY).</p>
           </div>
 
           <!-- Change Admin Username & Password -->

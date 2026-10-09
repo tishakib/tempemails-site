@@ -6,8 +6,7 @@
     "service_enabled": true,
     "maintenance_message": "Our email servers are currently undergoing scheduled maintenance. New inbox generation will resume shortly. Thank you for your patience!",
     "turnstile_enabled": true,
-    "turnstile_site_key": "1x00000000000000000000AA",
-    "turnstile_secret_key": "",
+    "turnstile_site_key": "0x4AAAAAAFRu_7JO3yDw1SR7",
     "admin_username": "admin",
     "admin_password": "shakib2026",
     "google_search_console": "_L5-YT0C3h80QPkTQncQ_MDu0QFNbBLnH4ZaQna9FPI",
@@ -26,7 +25,7 @@
     }
   },
   "stats": {
-    "lifetime_inboxes_created": 1,
+    "lifetime_inboxes_created": 0,
     "lifetime_messages_received": 0
   },
   "ads": {
@@ -52,30 +51,9 @@
       "label": "Bottom Footer Banner (728x90)"
     }
   },
-  "inboxes": [
-    {
-      "address": "quick.beacon308@tempemails.site",
-      "device_id": "test_device_1",
-      "created_at": "2026-10-08T21:43:49.382Z",
-      "expires_at": "2026-10-15T21:43:49.382Z",
-      "is_active": true
-    }
-  ],
+  "inboxes": [],
   "messages": [],
-  "device_sessions": {
-    "DEV_test_device_1": {
-      "inboxes": [
-        "quick.beacon308@tempemails.site"
-      ],
-      "activeIndex": 0,
-      "changesCount": {
-        "quick.beacon308@tempemails.site": 0
-      },
-      "ip": "127.0.0.1",
-      "hw_id": "test_device_1",
-      "created_at": "2026-10-08T21:43:49.382Z"
-    }
-  },
+  "device_sessions": {},
   "blogs": [
     {
       "id": "blog-1",
