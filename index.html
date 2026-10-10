@@ -11,28 +11,27 @@
   <meta name="theme-color" content="#F4413D">
 
   <!-- Primary SEO Meta Tags -->
-  <title>tempemails.site - Free Disposable Temporary Email Service | 100% Anonymous</title>
-  <meta name="title" content="tempemails.site - Free Disposable Temporary Email Service | 100% Anonymous">
-  <meta name="description" content="Generate instant, disposable temporary email addresses with tempemails.site. Manage up to 7 concurrent inboxes, copy verification OTPs in 1 click, and protect your privacy from spam.">
-  <meta name="keywords" content="temp mail, temporary email, disposable email, 10 minute mail, fake email, throwaway email, anonymous email, spam protection, tempemails.site">
+  <title>Free Temp Mail &amp; Temporary Email | tempemails.site</title>
+  <meta name="title" content="Free Temp Mail &amp; Temporary Email | tempemails.site">
+  <meta name="description" content="Create a free temporary email address, receive incoming messages and verification codes, and help keep unwanted mail out of your primary inbox.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://tempemails.site/">
+  <link rel="canonical" href="https://www.tempemails.site/">
 
   <!-- Google Search Console Verification -->
   <meta name="google-site-verification" content="_L5-YT0C3h80QPkTQncQ_MDu0QFNbBLnH4ZaQna9FPI">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://tempemails.site/">
-  <meta property="og:title" content="tempemails.site - Fast & Secure Disposable Temp Mail">
-  <meta property="og:description" content="Keep your real email clean. Create up to 7 temporary emails, receive OTP codes instantly, and block junk mail.">
-  <meta property="og:image" content="https://tempemails.site/assets/img/logo.png">
+  <meta property="og:url" content="https://www.tempemails.site/">
+  <meta property="og:title" content="Free Temp Mail &amp; Temporary Email | tempemails.site">
+  <meta property="og:description" content="Create a free temporary email address, receive incoming messages and verification codes, and help keep unwanted mail out of your primary inbox.">
+  <meta property="og:image" content="https://www.tempemails.site/assets/img/logo.png">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://tempemails.site/">
-  <meta property="twitter:title" content="tempemails.site - Free Disposable Temporary Email Service">
-  <meta property="twitter:description" content="Protect your identity with temporary inboxes. Fast, free, and secure.">
+  <meta property="twitter:url" content="https://www.tempemails.site/">
+  <meta property="twitter:title" content="Free Temp Mail &amp; Temporary Email | tempemails.site">
+  <meta property="twitter:description" content="Create a free temporary email address, receive incoming messages and verification codes, and help keep unwanted mail out of your primary inbox.">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -69,21 +68,42 @@
   <!-- DOMPurify Security Sanitizer for Email Isolation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/dompurify.min.js"></script>
 
-  <!-- Structured Data (JSON-LD) for Google SEO -->
+    <!-- Structured Data (JSON-LD) for Google SEO -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "tempemails.site",
-    "url": "https://tempemails.site/",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "All",
-    "description": "Free, anonymous disposable temporary email service allowing users to manage up to 7 concurrent inboxes with automatic OTP extraction.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    }
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "tempemails.site",
+        "url": "https://www.tempemails.site/",
+        "description": "Free disposable temporary email generator to protect personal inboxes from spam and unsolicited tracking.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.tempemails.site/blog?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "Organization",
+        "name": "tempemails.site",
+        "url": "https://www.tempemails.site/",
+        "logo": "https://www.tempemails.site/assets/img/logo.png"
+      },
+      {
+        "@type": "WebApplication",
+        "name": "tempemails.site Temporary Email",
+        "url": "https://www.tempemails.site/",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "description": "Create free temporary email addresses, receive incoming messages and verification codes, and help keep unwanted mail out of your primary inbox.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    ]
   }
   </script>
 </head>
@@ -94,7 +114,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- Brand Logo (TM Emblem Logo + tempemails.site) -->
-      <a href="./index.html" class="flex items-center gap-3 group">
+      <a href="/" class="flex items-center gap-3 group">
         <img src="./assets/img/logo.png" alt="tempemails.site Logo" class="w-10 h-10 rounded-xl object-cover shadow-md shadow-red-500/20 group-hover:scale-105 transition-transform border border-slate-100">
         <div class="flex flex-col">
           <span class="text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
@@ -104,12 +124,13 @@
         </div>
       </a>
 
-      <!-- Navigation Links (Only Home, About Us, FAQ, Contact Us) -->
+            <!-- Navigation Links -->
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
-        <a href="./index.html" class="text-[#F4413D] font-bold">Home</a>
-        <a href="./about.html" class="hover:text-[#F4413D] transition-colors">About Us</a>
-        <a href="./faq.html" class="hover:text-[#F4413D] transition-colors">FAQ</a>
-        <a href="./contact.html" class="hover:text-[#F4413D] transition-colors">Contact Us</a>
+        <a href="/" class="text-[#F4413D] font-bold">Home</a>
+        <a href="/about" class="hover:text-[#F4413D] transition-colors">About Us</a>
+        <a href="/faq" class="hover:text-[#F4413D] transition-colors">FAQ</a>
+        <a href="/blog" class="hover:text-[#F4413D] transition-colors">Blog</a>
+        <a href="/contact" class="hover:text-[#F4413D] transition-colors">Contact Us</a>
       </nav>
 
       <!-- Right Header Actions -->
@@ -128,12 +149,13 @@
 
     </div>
 
-    <!-- Mobile Dropdown Menu (Only Home, About Us, FAQ, Contact Us) -->
+        <!-- Mobile Dropdown Menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-4 space-y-2 text-sm font-medium">
-      <a href="./index.html" class="block py-2 text-[#F4413D] font-bold">Home</a>
-      <a href="./about.html" class="block py-2 text-slate-700 hover:text-[#F4413D]">About Us</a>
-      <a href="./faq.html" class="block py-2 text-slate-700 hover:text-[#F4413D]">FAQ</a>
-      <a href="./contact.html" class="block py-2 text-slate-700 hover:text-[#F4413D]">Contact Us</a>
+      <a href="/" class="block py-2 text-[#F4413D] font-bold">Home</a>
+      <a href="/about" class="block py-2 text-slate-700 hover:text-[#F4413D]">About Us</a>
+      <a href="/faq" class="block py-2 text-slate-700 hover:text-[#F4413D]">FAQ</a>
+      <a href="/blog" class="block py-2 text-slate-700 hover:text-[#F4413D]">Blog</a>
+      <a href="/contact" class="block py-2 text-slate-700 hover:text-[#F4413D]">Contact Us</a>
     </div>
   </header>
 
@@ -147,8 +169,18 @@
       <!-- LEFT SIDEBAR AD (Dynamic Slot: Skyscraper 160x600) -->
       <aside id="ad-slot-sidebar" class="hidden xl:block shrink-0"></aside>
 
-      <!-- CENTER APPLICATION COLUMN (Email Box & Gmail Inbox) -->
-      <div class="w-full max-w-4xl shrink mx-auto flex flex-col gap-5">
+            <!-- CENTER APPLICATION COLUMN (Email Box & Gmail Inbox) -->
+      <div class="w-full max-w-4xl shrink mx-auto flex flex-col gap-4">
+
+        <!-- Page Introduction & Primary H1 -->
+        <div class="text-center max-w-2xl mx-auto pt-2 pb-1">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Free Temp Mail &amp; Temporary Email Generator
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+            Create a disposable temporary email address, receive incoming messages and verification codes, and protect your primary inbox from spam.
+          </p>
+        </div>
 
         <!-- INTERACTIVE EMAIL APP CONTAINER (Can be blurred during maintenance) -->
         <div id="email-app-wrapper" class="relative flex flex-col gap-5">
@@ -352,7 +384,7 @@
           </div>
           <div class="flex items-center gap-2 text-xs font-semibold shrink-0">
             <span class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-700 shadow-xs">
-              Limit: <span id="policy-max-inboxes" class="font-bold text-[#F4413D]">7</span> Inboxes
+              Limit: <span id="policy-max-inboxes" class="font-bold text-[#F4413D]">5</span> Inboxes
             </span>
             <span class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-700 shadow-xs">
               Changes: <span id="policy-max-changes" class="font-bold text-slate-900">3</span> Allowed
@@ -428,7 +460,7 @@
           Every day, internet users are required to submit their personal email address to download whitepapers, register for trials, test web services, or access public Wi-Fi hotspots. Unfortunately, this exposes your primary mailbox to spam bots, aggressive marketing newsletters, tracking cookies, and severe data breaches.
         </p>
         <p>
-          <strong>tempemails.site</strong> solves this problem by providing completely anonymous, disposable, and secure mailboxes. You don't need any password, registration, or credit card. It acts as an impenetrable shield between unknown internet websites and your primary personal email.
+          <strong>tempemails.site</strong> solves this problem by providing completely anonymous, disposable, and secure mailboxes. You don't need any password, registration, or credit card. It acts as a secure privacy barrier between unknown internet websites and your primary personal email.
         </p>
       </div>
 
@@ -452,7 +484,82 @@
       </div>
     </div>
 
-    <!-- 3. Frequently Asked Questions (FAQ Accordion) -->
+    
+    <!-- 3. Featured Privacy & Email Guides (Internal Linking to 10 Articles) -->
+    <div>
+      <div class="text-center max-w-2xl mx-auto mb-8">
+        <h2 class="text-2xl font-bold text-slate-900">
+          Privacy &amp; Temporary Email Guides
+        </h2>
+        <p class="text-slate-600 text-sm mt-1">
+          Learn how to maximize your digital privacy, troubleshoot OTP verification, and manage disposable mailboxes.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/blog/what-is-temp-mail" class="p-5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#F4413D] block mb-1">Fundamentals</span>
+          <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">What Is Temp Mail? A Complete Guide</h3>
+          <p class="text-xs text-slate-500 line-clamp-2">How disposable mail routing works, core benefits, and how it protects your personal inbox.</p>
+        </a>
+
+        <a href="/blog/how-to-use-temporary-email" class="p-5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#F4413D] block mb-1">Tutorial</span>
+          <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">How to Use tempemails.site Step-by-Step</h3>
+          <p class="text-xs text-slate-500 line-clamp-2">A practical guide to generating addresses, 1-click copying, OTP extraction, and multi-inbox tabs.</p>
+        </a>
+
+        <a href="/blog/temporary-email-otp-verification" class="p-5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#F4413D] block mb-1">Verification</span>
+          <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Receiving OTP &amp; Verification Codes</h3>
+          <p class="text-xs text-slate-500 line-clamp-2">How automated regex extracts verification PINs, magic links, and how to resolve delivery delays.</p>
+        </a>
+
+        <a href="/blog/temporary-email-vs-regular-email" class="p-5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#F4413D] block mb-1">Comparison</span>
+          <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Temporary Email vs Regular Webmail</h3>
+          <p class="text-xs text-slate-500 line-clamp-2">In-depth feature comparison covering account recovery, privacy, storage, and suitable use cases.</p>
+        </a>
+
+        <a href="/blog/is-temporary-email-legal" class="p-5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#F4413D] block mb-1">Legal &amp; Ethics</span>
+          <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Is Temporary Email Legal?</h3>
+          <p class="text-xs text-slate-500 line-clamp-2">Educational overview of privacy laws, legitimate use cases, terms of service, and restrictions.</p>
+        </a>
+
+        <a href="/blog/is-temp-mail-safe" class="p-5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#F4413D] block mb-1">Security</span>
+          <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Is Temp Mail Safe? Privacy Analysis</h3>
+          <p class="text-xs text-slate-500 line-clamp-2">Examine session isolation, shared vs private inboxes, phishing defenses, and essential rules.</p>
+        </a>
+
+        <a href="/blog/temp-mail-not-receiving-emails" class="p-5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#F4413D] block mb-1">Troubleshooting</span>
+          <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Not Receiving Emails? Troubleshooting</h3>
+          <p class="text-xs text-slate-500 line-clamp-2">Actionable diagnostic checklist for delayed verification emails, spam filtering, and address rotation.</p>
+        </a>
+
+        <a href="/blog/disposable-email-use-cases" class="p-5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#F4413D] block mb-1">Privacy Strategy</span>
+          <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Best Everyday Disposable Email Uses</h3>
+          <p class="text-xs text-slate-500 line-clamp-2">Practical ways to use burner inboxes for gated downloads, Wi-Fi portals, and software trials.</p>
+        </a>
+
+        <a href="/blog/temporary-email-for-testing" class="p-5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#F4413D] block mb-1">Developers</span>
+          <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Temporary Email for QA &amp; Testing</h3>
+          <p class="text-xs text-slate-500 line-clamp-2">How developers and QA teams validate signup flows, multi-role invites, and staging notifications.</p>
+        </a>
+      </div>
+
+      <div class="text-center mt-6">
+        <a href="/blog" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#F4413D] hover:underline">
+          View all 10 privacy guides on our blog &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- 4. Frequently Asked Questions (FAQ Accordion) -->
     <div>
       <h2 class="text-2xl font-bold text-slate-900 mb-6 text-center">Frequently Asked Questions</h2>
       <div class="space-y-3 max-w-3xl mx-auto">
@@ -477,7 +584,7 @@
             </span>
           </summary>
           <p class="mt-3 text-sm text-slate-600 leading-relaxed">
-            You can have up to 5 concurrent active inboxes at the same time. If you need a new one, you can delete an existing one or click "Change" to regenerate it.
+            You can manage up to 5 concurrent active inboxes at the same time. If you need a new one, you can delete an existing one or click "Change" to regenerate it.
           </p>
         </details>
 
@@ -523,7 +630,7 @@
   <!-- BOTTOM AD BANNER (Dynamically Controlled) -->
   <section id="ad-slot-bottom" class="hidden w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8"></section>
 
-  <!-- FOOTER -->
+    <!-- FOOTER -->
   <footer class="bg-white border-t border-slate-200 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -531,7 +638,7 @@
         <!-- Brand Info -->
         <div class="space-y-4 md:col-span-1">
           <div class="flex items-center gap-3">
-            <img src="./assets/img/logo.png" alt="tempemails.site logo" class="w-9 h-9 rounded-xl shadow-xs object-cover border border-slate-200">
+            <img src="/assets/img/logo.png" alt="tempemails.site logo" class="w-9 h-9 rounded-xl shadow-xs object-cover border border-slate-200">
             <span class="text-lg font-bold text-slate-900 tracking-tight">tempemails<span class="text-[#F4413D]">.site</span></span>
           </div>
           <p class="text-xs text-slate-500 leading-relaxed">
@@ -539,7 +646,7 @@
           </p>
           <div class="flex items-center gap-2 text-xs text-slate-500">
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>All systems 100% operational</span>
+            <span>All systems operational</span>
           </div>
         </div>
 
@@ -547,33 +654,33 @@
         <div>
           <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Navigation</h4>
           <ul class="space-y-2 text-xs text-slate-600">
-            <li><a href="./index.html" class="hover:text-[#F4413D] transition-colors">Home</a></li>
-            <li><a href="./about.html" class="hover:text-[#F4413D] transition-colors">About Us</a></li>
-            <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">FAQ</a></li>
-            <li><a href="./contact.html" class="hover:text-[#F4413D] transition-colors">Contact Us</a></li>
+            <li><a href="/" class="hover:text-[#F4413D] transition-colors">Home</a></li>
+            <li><a href="/about" class="hover:text-[#F4413D] transition-colors">About Us</a></li>
+            <li><a href="/faq" class="hover:text-[#F4413D] transition-colors">FAQ</a></li>
+            <li><a href="/blog" class="hover:text-[#F4413D] transition-colors">Blog</a></li>
+            <li><a href="/contact" class="hover:text-[#F4413D] transition-colors">Contact Us</a></li>
           </ul>
         </div>
 
-        <!-- Resources & Articles -->
+        <!-- Resources & Guides -->
         <div>
           <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Resources & Guides</h4>
           <ul class="space-y-2 text-xs text-slate-600">
-            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Blog & Tech Articles</a></li>
-            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">How OTP Extraction Works</a></li>
-            <li><a href="./blog.html" class="hover:text-[#F4413D] transition-colors">Email Privacy Protection</a></li>
-            <li><a href="./faq.html" class="hover:text-[#F4413D] transition-colors">Disposable Email Safety</a></li>
+            <li><a href="/blog" class="hover:text-[#F4413D] transition-colors">Blog & Tech Articles</a></li>
+            <li><a href="/blog/what-is-temp-mail" class="hover:text-[#F4413D] transition-colors">What Is Temp Mail?</a></li>
+            <li><a href="/blog/how-to-use-temporary-email" class="hover:text-[#F4413D] transition-colors">How to Use Temp Mail</a></li>
+            <li><a href="/blog/temporary-email-otp-verification" class="hover:text-[#F4413D] transition-colors">OTP Verification Guide</a></li>
           </ul>
         </div>
 
-        <!-- Legal & Compliance -->
+        <!-- Legal & Policies -->
         <div>
           <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Legal & Policies</h4>
           <ul class="space-y-2 text-xs text-slate-600">
-            <li><a href="./privacy.html" class="hover:text-[#F4413D] transition-colors">Privacy Policy</a></li>
-            <li><a href="./terms.html" class="hover:text-[#F4413D] transition-colors">Terms of Service</a></li>
-            <li><a href="./privacy.html#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
+            <li><a href="/privacy" class="hover:text-[#F4413D] transition-colors">Privacy Policy</a></li>
+            <li><a href="/terms" class="hover:text-[#F4413D] transition-colors">Terms of Service</a></li>
+            <li><a href="/privacy#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
             <li><button type="button" onclick="window.openCookieSettingsModal && window.openCookieSettingsModal()" class="hover:text-[#F4413D] transition-colors flex items-center gap-1 text-left cursor-pointer">🍪 Cookie Preferences</button></li>
-            <li><a href="./terms.html#disclaimer" class="hover:text-[#F4413D] transition-colors">Disclaimer & DMCA</a></li>
           </ul>
         </div>
 
@@ -583,7 +690,7 @@
       <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
         <p>&copy; 2026 tempemails.site. Developed with ❤️ by <span class="font-bold text-slate-700">Shakib Hasan</span>.</p>
         <p class="flex items-center gap-1.5">
-          <span>Protected with hardware fingerprinting & zero logging</span>
+          <span>Privacy-focused ephemeral email architecture</span>
         </p>
       </div>
     </div>

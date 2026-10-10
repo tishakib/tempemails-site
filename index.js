@@ -52,7 +52,7 @@ const MIME_TYPES = {
 // Initial Database Structure
 const initialData = {
   settings: {
-    max_inboxes_per_user: 3,
+    max_inboxes_per_user: 5,
     max_email_changes_per_inbox: 3,
     retention_days: 7,
     service_enabled: true,
@@ -67,7 +67,7 @@ const initialData = {
       enabled: true,
       name: 'Shakib Hasan',
       title: 'Lead Developer & Creator',
-      bio: 'Full-Stack Developer passionate about digital privacy and frictionless web experiences. Built tempemails.site to give everyone instant, anonymous temporary email addresses protected by hardware fingerprinting and zero logs.',
+      bio: 'Full-Stack Developer passionate about digital privacy and frictionless web experiences. Built tempemails.site to give everyone instant, privacy-focused temporary email addresses without passwords, tracking, or personal data collection.',
       avatar_initials: 'SH',
       avatar_image: '',
       coffee_button_text: 'Buy Me a Coffee (Get a Coffee)',
@@ -1478,7 +1478,7 @@ const requestHandler = async (req, res) => {
       for (const b of store.blogs) {
         if (b.status === 'published' && b.slug) {
           const mod = b.created_at ? b.created_at.split('T')[0] : today;
-          xml += `  <url>\n    <loc>${baseUrl}/blog-article?slug=${encodeURIComponent(b.slug)}</loc>\n    <lastmod>${mod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+          xml += `  <url>\n    <loc>${baseUrl}/blog/${encodeURIComponent(b.slug)}</loc>\n    <lastmod>${mod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
         }
       }
     }
@@ -1504,11 +1504,38 @@ const requestHandler = async (req, res) => {
     return;
   }
 
+  // Handle 301 Redirect for legacy /blog-article routes
+  if (reqPath === '/blog-article' || reqPath === '/blog-article.html') {
+    const slug = parsedUrl.query.slug;
+    const target = slug ? `/blog/${encodeURIComponent(slug)}` : '/blog';
+    res.writeHead(301, {
+      'Location': target,
+      'Cache-Control': 'public, max-age=86400'
+    });
+    res.end();
+    return;
+  }
+
   // Handle Clean URLs & Secret Admin Portal
   if (reqPath === '/admin-shakib' || reqPath === '/admin-shakib/') {
     reqPath = '/admin-shakib.html';
   } else if (reqPath === '/' || reqPath === '') {
     reqPath = '/index.html';
+  } else if (reqPath === '/blog' || reqPath === '/blog/') {
+    reqPath = '/blog.html';
+  }
+
+  // Handle Clean /blog/:slug routes
+  if (reqPath.startsWith('/blog/')) {
+    const slug = reqPath.replace(/^\/blog\//, '').replace(/\/$/, '');
+    const articleFile = path.join(PUBLIC_DIR, 'blog', slug + '.html');
+    if (fs.existsSync(articleFile)) {
+      reqPath = path.join('blog', slug + '.html');
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end('<!DOCTYPE html><html><head><title>404 Not Found</title></head><body style="font-family:sans-serif;text-align:center;padding:50px;"><h1>404 Article Not Found</h1><p>The requested blog article does not exist.</p><p><a href="/blog">Browse All Articles</a> &bull; <a href="/">Return to Home</a></p></body></html>');
+      return;
+    }
   }
 
   let filePath = path.join(PUBLIC_DIR, reqPath);

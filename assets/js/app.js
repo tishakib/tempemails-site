@@ -6,7 +6,7 @@
 // Configuration
 const CONFIG = {
   DOMAIN: 'workspacemail.xyz',
-  MAX_INBOXES: 3,
+  MAX_INBOXES: 5,
   MAX_CHANGES: 3, // Allowed changes per address
   REFRESH_INTERVAL: 15, // seconds
   STORAGE_KEY_INBOXES: 'tempemails_slots_v1',

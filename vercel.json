@@ -2,9 +2,21 @@
   "cleanUrls": true,
   "functions": {
     "index.js": {
-      "includeFiles": "{*.html,*.xml,*.txt,assets/**,data_store.json}"
+      "includeFiles": "{*.html,*.xml,*.txt,assets/**,blog/**,data_store.json}"
     }
   },
+  "redirects": [
+    {
+      "source": "/blog-article.html",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/blog-article",
+      "destination": "/blog",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/admin-shakib",
