@@ -19,14 +19,14 @@
       "bio": "Full-Stack Developer passionate about digital privacy and frictionless web experiences. Built tempemails.site from the ground up to provide fast, privacy-focused temporary email addresses without passwords, tracking, or personal data collection.",
       "avatar_initials": "SH",
       "avatar_image": "",
-      "coffee_button_text": "Buy Me a Coffee (Get a Coffee)",
-      "coffee_link": "mailto:support@tempemails.site?subject=Coffee%20Support%20for%20Shakib%20Hasan",
+      "coffee_button_text": "Contact Support",
+      "coffee_link": "mailto:support@tempemails.site",
       "contact_email": "support@tempemails.site"
     }
   },
   "stats": {
     "lifetime_inboxes_created": 2,
-    "lifetime_messages_received": 3
+    "lifetime_messages_received": 5
   },
   "ads": {
     "master_enabled": false,
@@ -61,6 +61,32 @@
     }
   ],
   "messages": [
+    {
+      "id": "msg-1791644076072-496",
+      "inbox_address": "alex_turner@workspacemail.xyz",
+      "from": "verify@example.com",
+      "from_name": "Service Verification",
+      "subject": "Your Security Code is 839201",
+      "body_html": "<p>Welcome! Your login code is <strong>839201</strong>.</p>",
+      "snippet": "Your login code is 839201",
+      "otp": null,
+      "partner_link": null,
+      "created_at": "2026-10-10T14:54:36.072Z",
+      "is_unread": true
+    },
+    {
+      "id": "msg-1791644033405-937",
+      "inbox_address": "alex_turner@workspacemail.xyz",
+      "from": "verify@example.com",
+      "from_name": "Service Verification",
+      "subject": "Your Security Code is 839201",
+      "body_html": "<p>Welcome! Your login code is <strong>839201</strong>.</p>",
+      "snippet": "Your login code is 839201",
+      "otp": null,
+      "partner_link": null,
+      "created_at": "2026-10-10T14:53:53.405Z",
+      "is_unread": true
+    },
     {
       "id": "msg-1791642393071-821",
       "inbox_address": "alex_turner@workspacemail.xyz",

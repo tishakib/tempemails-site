@@ -37,12 +37,10 @@
 
       <!-- Strictly 4 Navigation Links -->
             <!-- Navigation Links -->
-            <!-- Navigation Links -->
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
         <a href="/" class="hover:text-[#F4413D] transition-colors">Home</a>
         <a href="/about" class="hover:text-[#F4413D] transition-colors">About Us</a>
         <a href="/faq" class="hover:text-[#F4413D] transition-colors">FAQ</a>
-        <a href="/blog" class="hover:text-[#F4413D] transition-colors">Blog</a>
         <a href="/contact" class="text-[#F4413D] font-bold">Contact Us</a>
       </nav>
 
@@ -195,33 +193,15 @@
           </a>
         </div>
 
-        <!-- Developer Attribution & Coffee Treat Card -->
-        <div id="contact-dev-card" class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 rounded-2xl border border-slate-800 shadow-lg p-6 text-white space-y-4 relative overflow-hidden">
-          <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-red-500/10 rounded-full blur-xl pointer-events-none"></div>
-          
-          <div class="flex items-center gap-3 relative z-10">
-            <div id="contact-dev-avatar" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#F4413D] to-orange-500 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-red-500/30 shrink-0">
-              SH
-            </div>
-            <div>
-              <div id="contact-dev-title" class="text-[10px] font-bold text-red-400 uppercase tracking-wider">Lead Developer</div>
-              <h3 id="contact-dev-name" class="font-bold text-white text-base">Shakib Hasan</h3>
-            </div>
+        <!-- Direct Support & Security Information -->
+        <div class="bg-slate-100/80 rounded-2xl border border-slate-200/80 p-5 space-y-2">
+          <div class="flex items-center gap-2 text-xs font-bold text-slate-800">
+            <span>⚡</span>
+            <span>Fast Turnaround Guarantee</span>
           </div>
-
-          <p id="contact-dev-bio" class="text-xs text-slate-300 leading-relaxed relative z-10">
-            Founder & Architect of tempemails.site. If this tool helped protect your identity or rescued you from endless email spam, consider supporting ongoing hosting costs!
+          <p class="text-[11px] text-slate-600 leading-relaxed">
+            Our engineering team monitors incoming submissions daily. Critical deliverability bugs, MX DNS reports, and API requests receive prioritized responses within 24 hours.
           </p>
-
-          <div class="pt-2 relative z-10 space-y-2">
-            <a id="contact-dev-coffee-link" href="mailto:support@tempemails.site?subject=Coffee%20Support%20for%20Shakib%20Hasan" class="w-full py-2.5 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-amber-500/20">
-              <span>☕</span>
-              <span id="contact-dev-coffee-text">Buy Me a Coffee (Get a Coffee)</span>
-            </a>
-            <a href="/about" class="block text-center text-[11px] text-slate-400 hover:text-white transition-colors">
-              Read about the project background &rarr;
-            </a>
-          </div>
         </div>
 
         <!-- Privacy & Spam Safeguard -->
@@ -279,7 +259,7 @@
         <div>
           <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Resources & Guides</h4>
           <ul class="space-y-2 text-xs text-slate-600">
-            <li><a href="/blog" class="hover:text-[#F4413D] transition-colors">Blog & Tech Articles</a></li>
+            <li><a href="/blog" class="hover:text-[#F4413D] transition-colors font-semibold text-slate-900">Blog &amp; Privacy Articles &rarr;</a></li>
             <li><a href="/blog/what-is-temp-mail" class="hover:text-[#F4413D] transition-colors">What Is Temp Mail?</a></li>
             <li><a href="/blog/how-to-use-temporary-email" class="hover:text-[#F4413D] transition-colors">How to Use Temp Mail</a></li>
             <li><a href="/blog/temporary-email-otp-verification" class="hover:text-[#F4413D] transition-colors">OTP Verification Guide</a></li>
@@ -292,9 +272,9 @@
           <ul class="space-y-2 text-xs text-slate-600">
             <li><a href="/privacy" class="hover:text-[#F4413D] transition-colors">Privacy Policy</a></li>
             <li><a href="/terms" class="hover:text-[#F4413D] transition-colors">Terms of Service</a></li>
-            <li><a href="./privacy.html#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
+            <li><a href="/privacy#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
             <li><button type="button" onclick="window.openCookieSettingsModal && window.openCookieSettingsModal()" class="hover:text-[#F4413D] transition-colors flex items-center gap-1 text-left cursor-pointer">🍪 Cookie Preferences</button></li>
-            <li><a href="./terms.html#disclaimer" class="hover:text-[#F4413D] transition-colors">Disclaimer & DMCA</a></li>
+            <li><a href="/terms#disclaimer" class="hover:text-[#F4413D] transition-colors">Disclaimer &amp; DMCA</a></li>
           </ul>
         </div>
 
@@ -302,7 +282,7 @@
 
       <!-- Copyright -->
       <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-        <p>&copy; 2026 tempemails.site. Developed with ❤️ by <span class="font-bold text-slate-700">Shakib Hasan</span>.</p>
+        <p>&copy; 2026 tempemails.site. All rights reserved.</p>
         <p class="flex items-center gap-1.5">
           <span>Privacy-focused ephemeral email architecture</span>
         </p>
@@ -412,33 +392,8 @@
         }
       } catch (e) {}
     }
-    // Load Dynamic Developer Profile from Backend
-    async function loadDeveloperProfile() {
-      try {
-        const res = await fetch('/api/settings');
-        if (!res.ok) return;
-        const data = await res.json();
-        const dev = data.developer;
-        if (!dev) return;
-
-        const card = document.getElementById('contact-dev-card');
-        if (dev.enabled === false) {
-          if (card) card.classList.add('hidden');
-          return;
-        }
-
-        if (document.getElementById('contact-dev-name')) document.getElementById('contact-dev-name').textContent = dev.name || 'Shakib Hasan';
-        if (document.getElementById('contact-dev-title')) document.getElementById('contact-dev-title').textContent = dev.title || 'Lead Developer';
-        if (document.getElementById('contact-dev-bio')) document.getElementById('contact-dev-bio').textContent = dev.bio || '';
-        if (document.getElementById('contact-dev-avatar')) document.getElementById('contact-dev-avatar').textContent = dev.avatar_initials || 'SH';
-        if (document.getElementById('contact-dev-coffee-text')) document.getElementById('contact-dev-coffee-text').textContent = dev.coffee_button_text || 'Buy Me a Coffee (Get a Coffee)';
-        if (document.getElementById('contact-dev-coffee-link') && dev.coffee_link) document.getElementById('contact-dev-coffee-link').href = dev.coffee_link;
-      } catch (e) {}
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
       initAds();
-      loadDeveloperProfile();
     });
   </script>
 

@@ -35,12 +35,10 @@
 
       <!-- Strictly 4 Navigation Links -->
             <!-- Navigation Links -->
-            <!-- Navigation Links -->
       <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
         <a href="/" class="hover:text-[#F4413D] transition-colors">Home</a>
         <a href="/about" class="text-[#F4413D] font-bold">About Us</a>
         <a href="/faq" class="hover:text-[#F4413D] transition-colors">FAQ</a>
-        <a href="/blog" class="hover:text-[#F4413D] transition-colors">Blog</a>
         <a href="/contact" class="hover:text-[#F4413D] transition-colors">Contact Us</a>
       </nav>
 
@@ -115,32 +113,26 @@
       </div>
     </article>
 
-    <!-- STANDALONE DEVELOPER ATTRIBUTION & COFFEE CARD -->
-    <section id="about-dev-section" class="mt-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-slate-800 rounded-2xl text-white shadow-xl p-6 sm:p-10 relative overflow-hidden">
+    <!-- PLATFORM CALL TO ACTION -->
+    <section class="mt-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-slate-800 rounded-2xl text-white shadow-xl p-6 sm:p-10 relative overflow-hidden">
       <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-red-500/10 rounded-full blur-2xl pointer-events-none"></div>
-      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10">
-        <div id="about-dev-avatar" class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#F4413D] to-orange-500 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-red-500/30 shrink-0 border border-white/20">
-          SH
-        </div>
-        <div class="flex-1 text-center sm:text-left">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-[11px] font-bold border border-red-500/30 mb-2">
-            <span id="about-dev-badge">👨‍💻 Lead Developer & Creator</span>
+      <div class="relative z-10 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div class="max-w-xl">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-[11px] font-bold border border-red-500/30 mb-3">
+            <span>🛡️ Built for Maximum Privacy</span>
           </div>
           <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
-            Developed with ❤️ by <span id="about-dev-name">Shakib Hasan</span>
+            Ready to Protect Your Personal Inbox?
           </h3>
-          <p id="about-dev-bio" class="text-xs sm:text-sm text-slate-300 mt-2.5 leading-relaxed max-w-2xl">
-            Full-Stack Developer passionate about digital privacy and frictionless web experiences. Built <strong>tempemails.site</strong> from the ground up to give netizens instant, anonymous temporary email addresses protected by session storage tokens and zero logs.
+          <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+            Generate free, disposable temporary email addresses in one click. Zero personal registration, no passwords, and automated message self-destruction.
           </p>
-          <div class="mt-6 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-            <button onclick="openCoffeeModal()" class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-extrabold text-xs sm:text-sm rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center gap-2 transform hover:-translate-y-0.5 cursor-pointer">
-              <span class="text-base">☕</span>
-              <span id="about-dev-coffee-text">Buy Me a Coffee (Get a Coffee)</span>
-            </button>
-            <a href="/contact" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl border border-slate-700 transition-colors flex items-center gap-1.5">
-              <span>💬 Suggestions & Advice</span>
-            </a>
-          </div>
+        </div>
+        <div class="shrink-0">
+          <a href="/" class="px-6 py-3 bg-[#F4413D] hover:bg-red-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-red-500/30 transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
+            <span>✉️</span>
+            <span>Create Disposable Email</span>
+          </a>
         </div>
       </div>
     </section>
@@ -181,11 +173,11 @@
           </ul>
         </div>
 
-                        <!-- Resources & Guides -->
+        <!-- Resources & Guides -->
         <div>
           <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Resources & Guides</h4>
           <ul class="space-y-2 text-xs text-slate-600">
-            <li><a href="/blog" class="hover:text-[#F4413D] transition-colors">Blog & Tech Articles</a></li>
+            <li><a href="/blog" class="hover:text-[#F4413D] transition-colors font-semibold text-slate-900">Blog &amp; Privacy Articles &rarr;</a></li>
             <li><a href="/blog/what-is-temp-mail" class="hover:text-[#F4413D] transition-colors">What Is Temp Mail?</a></li>
             <li><a href="/blog/how-to-use-temporary-email" class="hover:text-[#F4413D] transition-colors">How to Use Temp Mail</a></li>
             <li><a href="/blog/temporary-email-otp-verification" class="hover:text-[#F4413D] transition-colors">OTP Verification Guide</a></li>
@@ -198,9 +190,9 @@
           <ul class="space-y-2 text-xs text-slate-600">
             <li><a href="/privacy" class="hover:text-[#F4413D] transition-colors">Privacy Policy</a></li>
             <li><a href="/terms" class="hover:text-[#F4413D] transition-colors">Terms of Service</a></li>
-            <li><a href="./privacy.html#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
+            <li><a href="/privacy#cookies" class="hover:text-[#F4413D] transition-colors">Cookie Policy</a></li>
             <li><button type="button" onclick="window.openCookieSettingsModal && window.openCookieSettingsModal()" class="hover:text-[#F4413D] transition-colors flex items-center gap-1 text-left cursor-pointer">🍪 Cookie Preferences</button></li>
-            <li><a href="./terms.html#disclaimer" class="hover:text-[#F4413D] transition-colors">Disclaimer & DMCA</a></li>
+            <li><a href="/terms#disclaimer" class="hover:text-[#F4413D] transition-colors">Disclaimer &amp; DMCA</a></li>
           </ul>
         </div>
 
@@ -208,7 +200,7 @@
 
       <!-- Copyright -->
       <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-        <p>&copy; 2026 tempemails.site. Developed with ❤️ by <span class="font-bold text-slate-700">Shakib Hasan</span>.</p>
+        <p>&copy; 2026 tempemails.site. All rights reserved.</p>
         <p class="flex items-center gap-1.5">
           <span>Privacy-focused ephemeral email architecture</span>
         </p>
@@ -216,58 +208,8 @@
     </div>
   </footer>
 
-  <!-- Buy Me a Coffee Interactive Modal -->
-  <div id="coffee-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 sm:p-8 text-white shadow-2xl relative text-center">
-      <button onclick="closeCoffeeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 text-lg">✕</button>
-      <div class="w-16 h-16 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg shadow-amber-500/10">
-        ☕
-      </div>
-      <h3 class="text-xl font-bold text-white">Buy Shakib Hasan a Coffee</h3>
-      <p class="text-xs text-slate-300 mt-2 leading-relaxed">
-        Thank you for supporting <strong>tempemails.site</strong>! If this free disposable email service saved you time or protected your personal data, you can treat Shakib to a warm coffee or support ongoing server infrastructure.
-      </p>
-
-      <div class="my-5 p-4 bg-slate-950/80 rounded-xl border border-slate-800 text-left space-y-2.5 text-xs">
-        <div class="flex items-center justify-between">
-          <span class="text-slate-400">Developer:</span>
-          <span class="font-bold text-white">Shakib Hasan</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-slate-400">Inquiries:</span>
-          <a href="mailto:support@tempemails.site" class="text-red-400 hover:underline font-mono">support@tempemails.site</a>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-slate-400">Feature Ideas:</span>
-          <a href="/contact" class="text-emerald-400 hover:underline">Submit Feedback Form &rarr;</a>
-        </div>
-      </div>
-
-      <div class="space-y-2.5">
-        <a href="mailto:support@tempemails.site?subject=Coffee%20Support%20for%20Shakib%20Hasan" class="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-extrabold rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25">
-          <span>☕ Send Coffee Treat via Email</span>
-        </a>
-        <a href="/contact" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition-colors flex items-center justify-center">
-          Send Feedback & Suggestions
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Dynamic Ads Loader Script & Modal Logic -->
+  <!-- Dynamic Ads Loader Script -->
   <script>
-    function openCoffeeModal() {
-      const modal = document.getElementById('coffee-modal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-
-    function closeCoffeeModal() {
-      const modal = document.getElementById('coffee-modal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
     async function initAds() {
       try {
         const adsRes = await fetch('/api/ads');
@@ -303,31 +245,8 @@
       }
     }
 
-    async function loadDeveloperProfile() {
-      try {
-        const res = await fetch('/api/settings');
-        if (!res.ok) return;
-        const data = await res.json();
-        const dev = data.developer;
-        if (!dev) return;
-
-        const sec = document.getElementById('about-dev-section');
-        if (dev.enabled === false) {
-          if (sec) sec.classList.add('hidden');
-          return;
-        }
-
-        if (document.getElementById('about-dev-name')) document.getElementById('about-dev-name').textContent = dev.name || 'Shakib Hasan';
-        if (document.getElementById('about-dev-badge')) document.getElementById('about-dev-badge').textContent = '👨‍💻 ' + (dev.title || 'Lead Developer & Creator');
-        if (document.getElementById('about-dev-bio')) document.getElementById('about-dev-bio').textContent = dev.bio || '';
-        if (document.getElementById('about-dev-avatar')) document.getElementById('about-dev-avatar').textContent = dev.avatar_initials || 'SH';
-        if (document.getElementById('about-dev-coffee-text')) document.getElementById('about-dev-coffee-text').textContent = dev.coffee_button_text || 'Buy Me a Coffee (Get a Coffee)';
-      } catch (e) {}
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
       initAds();
-      loadDeveloperProfile();
     });
   </script>
 

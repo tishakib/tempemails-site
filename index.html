@@ -129,7 +129,6 @@
         <a href="/" class="text-[#F4413D] font-bold">Home</a>
         <a href="/about" class="hover:text-[#F4413D] transition-colors">About Us</a>
         <a href="/faq" class="hover:text-[#F4413D] transition-colors">FAQ</a>
-        <a href="/blog" class="hover:text-[#F4413D] transition-colors">Blog</a>
         <a href="/contact" class="hover:text-[#F4413D] transition-colors">Contact Us</a>
       </nav>
 
@@ -149,12 +148,11 @@
 
     </div>
 
-        <!-- Mobile Dropdown Menu -->
+    <!-- Mobile Dropdown Menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-4 space-y-2 text-sm font-medium">
       <a href="/" class="block py-2 text-[#F4413D] font-bold">Home</a>
       <a href="/about" class="block py-2 text-slate-700 hover:text-[#F4413D]">About Us</a>
       <a href="/faq" class="block py-2 text-slate-700 hover:text-[#F4413D]">FAQ</a>
-      <a href="/blog" class="block py-2 text-slate-700 hover:text-[#F4413D]">Blog</a>
       <a href="/contact" class="block py-2 text-slate-700 hover:text-[#F4413D]">Contact Us</a>
     </div>
   </header>
@@ -485,148 +483,47 @@
     </div>
 
     
-    <!-- 3. Featured Privacy & Email Guides (Internal Linking to 10 Articles) -->
-    <div>
-      <div class="text-center max-w-2xl mx-auto mb-8">
-        <h2 class="text-2xl font-bold text-slate-900">
-          Privacy &amp; Temporary Email Guides
+    <!-- 3. Quick Help & Platform Resources -->
+    <div class="bg-gradient-to-br from-slate-50 to-red-50/20 rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+      <div class="max-w-2xl mx-auto text-center mb-6">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-[#F4413D] bg-red-50 border border-red-100 px-2.5 py-1 rounded-full">Support &amp; Resources</span>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mt-2">
+          Need Help or Have Inquiries?
         </h2>
-        <p class="text-slate-600 text-sm mt-1">
-          Learn how to maximize your digital privacy, troubleshoot OTP verification, and manage disposable mailboxes.
+        <p class="text-xs sm:text-sm text-slate-600 mt-1.5">
+          Access our helpful guides, read answers to common questions, or contact our support team.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <a href="/blog/what-is-temp-mail" class="bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group overflow-hidden flex flex-col">
-          <div class="h-40 overflow-hidden bg-slate-100 relative">
-            <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&auto=format&fit=crop&q=80" alt="Concept of secure disposable temp mail and digital privacy inbox" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="225">
-            <span class="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur text-[#F4413D] border border-red-100 px-2 py-0.5 rounded shadow-2xs">Fundamentals</span>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
+        <!-- Card 1: Contact Us -->
+        <a href="/contact" class="p-5 bg-white rounded-xl border border-slate-200 hover:border-[#F4413D]/50 hover:shadow-sm transition-all group flex flex-col justify-between">
+          <div>
+            <div class="w-9 h-9 rounded-lg bg-red-50 text-[#F4413D] flex items-center justify-center text-lg mb-3">💬</div>
+            <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors">Contact Support</h3>
+            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Have questions, feedback, or need developer assistance? Reach out to our dedicated support desk.</p>
           </div>
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">What Is Temp Mail? A Complete Guide</h3>
-              <p class="text-xs text-slate-500 line-clamp-2">How disposable mail routing works, core benefits, and how it protects your personal inbox.</p>
-            </div>
-            <span class="text-[11px] text-[#F4413D] font-semibold mt-3 flex items-center gap-1">Read guide &rarr;</span>
-          </div>
+          <span class="text-xs text-[#F4413D] font-bold mt-4 flex items-center gap-1">Contact Us &rarr;</span>
         </a>
 
-        <a href="/blog/how-to-use-temporary-email" class="bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group overflow-hidden flex flex-col">
-          <div class="h-40 overflow-hidden bg-slate-100 relative">
-            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&auto=format&fit=crop&q=80" alt="User working on laptop generating a temporary email inbox" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="225">
-            <span class="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur text-[#F4413D] border border-red-100 px-2 py-0.5 rounded shadow-2xs">Tutorial</span>
+        <!-- Card 2: FAQ -->
+        <a href="/faq" class="p-5 bg-white rounded-xl border border-slate-200 hover:border-[#F4413D]/50 hover:shadow-sm transition-all group flex flex-col justify-between">
+          <div>
+            <div class="w-9 h-9 rounded-lg bg-red-50 text-[#F4413D] flex items-center justify-center text-lg mb-3">❓</div>
+            <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors">Frequently Asked Questions</h3>
+            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Comprehensive answers on 7-day retention, inbox limits, OTP delivery, and message auto-purging.</p>
           </div>
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">How to Use tempemails.site Step-by-Step</h3>
-              <p class="text-xs text-slate-500 line-clamp-2">A practical guide to generating addresses, 1-click copying, OTP extraction, and multi-inbox tabs.</p>
-            </div>
-            <span class="text-[11px] text-[#F4413D] font-semibold mt-3 flex items-center gap-1">Read guide &rarr;</span>
-          </div>
+          <span class="text-xs text-[#F4413D] font-bold mt-4 flex items-center gap-1">Browse FAQ &rarr;</span>
         </a>
 
-        <a href="/blog/temporary-email-otp-verification" class="bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group overflow-hidden flex flex-col">
-          <div class="h-40 overflow-hidden bg-slate-100 relative">
-            <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=600&auto=format&fit=crop&q=80" alt="Digital cyber lock and instant one-time password OTP verification screen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="225">
-            <span class="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur text-[#F4413D] border border-red-100 px-2 py-0.5 rounded shadow-2xs">Verification</span>
+        <!-- Card 3: About Platform -->
+        <a href="/about" class="p-5 bg-white rounded-xl border border-slate-200 hover:border-[#F4413D]/50 hover:shadow-sm transition-all group flex flex-col justify-between">
+          <div>
+            <div class="w-9 h-9 rounded-lg bg-red-50 text-[#F4413D] flex items-center justify-center text-lg mb-3">🛡️</div>
+            <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors">About Our Platform</h3>
+            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Learn how our ephemeral email architecture shields your personal identity from trackers and spam.</p>
           </div>
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Receiving OTP &amp; Verification Codes</h3>
-              <p class="text-xs text-slate-500 line-clamp-2">How automated regex extracts verification PINs, magic links, and how to resolve delivery delays.</p>
-            </div>
-            <span class="text-[11px] text-[#F4413D] font-semibold mt-3 flex items-center gap-1">Read guide &rarr;</span>
-          </div>
-        </a>
-
-        <a href="/blog/temporary-email-vs-regular-email" class="bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group overflow-hidden flex flex-col">
-          <div class="h-40 overflow-hidden bg-slate-100 relative">
-            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80" alt="Comparison between permanent personal email and disposable mail privacy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="225">
-            <span class="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur text-[#F4413D] border border-red-100 px-2 py-0.5 rounded shadow-2xs">Comparison</span>
-          </div>
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Temporary Email vs Regular Webmail</h3>
-              <p class="text-xs text-slate-500 line-clamp-2">In-depth feature comparison covering account recovery, privacy, storage, and suitable use cases.</p>
-            </div>
-            <span class="text-[11px] text-[#F4413D] font-semibold mt-3 flex items-center gap-1">Read guide &rarr;</span>
-          </div>
-        </a>
-
-        <a href="/blog/is-temporary-email-legal" class="bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group overflow-hidden flex flex-col">
-          <div class="h-40 overflow-hidden bg-slate-100 relative">
-            <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&auto=format&fit=crop&q=80" alt="Legal justice gavel and compliance documentation for digital communication" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="225">
-            <span class="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur text-[#F4413D] border border-red-100 px-2 py-0.5 rounded shadow-2xs">Legal &amp; Ethics</span>
-          </div>
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Is Temporary Email Legal?</h3>
-              <p class="text-xs text-slate-500 line-clamp-2">Educational overview of privacy laws, legitimate use cases, terms of service, and restrictions.</p>
-            </div>
-            <span class="text-[11px] text-[#F4413D] font-semibold mt-3 flex items-center gap-1">Read guide &rarr;</span>
-          </div>
-        </a>
-
-        <a href="/blog/is-temp-mail-safe" class="bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group overflow-hidden flex flex-col">
-          <div class="h-40 overflow-hidden bg-slate-100 relative">
-            <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&auto=format&fit=crop&q=80" alt="Cybersecurity firewall code and data encryption shield for webmail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="225">
-            <span class="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur text-[#F4413D] border border-red-100 px-2 py-0.5 rounded shadow-2xs">Security</span>
-          </div>
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Is Temp Mail Safe? Privacy Analysis</h3>
-              <p class="text-xs text-slate-500 line-clamp-2">Examine session isolation, shared vs private inboxes, phishing defenses, and essential rules.</p>
-            </div>
-            <span class="text-[11px] text-[#F4413D] font-semibold mt-3 flex items-center gap-1">Read guide &rarr;</span>
-          </div>
-        </a>
-
-        <a href="/blog/temp-mail-not-receiving-emails" class="bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group overflow-hidden flex flex-col">
-          <div class="h-40 overflow-hidden bg-slate-100 relative">
-            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80" alt="Technical mail server diagnostics and network troubleshooting" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="225">
-            <span class="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur text-[#F4413D] border border-red-100 px-2 py-0.5 rounded shadow-2xs">Troubleshooting</span>
-          </div>
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Not Receiving Emails? Troubleshooting</h3>
-              <p class="text-xs text-slate-500 line-clamp-2">Actionable diagnostic checklist for delayed verification emails, spam filtering, and address rotation.</p>
-            </div>
-            <span class="text-[11px] text-[#F4413D] font-semibold mt-3 flex items-center gap-1">Read guide &rarr;</span>
-          </div>
-        </a>
-
-        <a href="/blog/disposable-email-use-cases" class="bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group overflow-hidden flex flex-col">
-          <div class="h-40 overflow-hidden bg-slate-100 relative">
-            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=80" alt="Modern digital marketing, Wi-Fi signup, and disposable mail use cases" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="225">
-            <span class="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur text-[#F4413D] border border-red-100 px-2 py-0.5 rounded shadow-2xs">Privacy Strategy</span>
-          </div>
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Best Everyday Disposable Email Uses</h3>
-              <p class="text-xs text-slate-500 line-clamp-2">Practical ways to use burner inboxes for gated downloads, Wi-Fi portals, and software trials.</p>
-            </div>
-            <span class="text-[11px] text-[#F4413D] font-semibold mt-3 flex items-center gap-1">Read guide &rarr;</span>
-          </div>
-        </a>
-
-        <a href="/blog/temporary-email-for-testing" class="bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#F4413D]/40 hover:shadow-sm transition-all group overflow-hidden flex flex-col">
-          <div class="h-40 overflow-hidden bg-slate-100 relative">
-            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80" alt="Software developer workstation writing automated tests and email QA scripts" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="225">
-            <span class="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur text-[#F4413D] border border-red-100 px-2 py-0.5 rounded shadow-2xs">Developers</span>
-          </div>
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h3 class="font-bold text-slate-900 text-sm group-hover:text-[#F4413D] transition-colors mb-2">Temporary Email for QA &amp; Testing</h3>
-              <p class="text-xs text-slate-500 line-clamp-2">How developers and QA teams validate signup flows, multi-role invites, and staging notifications.</p>
-            </div>
-            <span class="text-[11px] text-[#F4413D] font-semibold mt-3 flex items-center gap-1">Read guide &rarr;</span>
-          </div>
-        </a>
-      </div>
-
-      <div class="text-center mt-6">
-        <a href="/blog" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#F4413D] hover:underline">
-          View all 10 privacy guides on our blog &rarr;
+          <span class="text-xs text-[#F4413D] font-bold mt-4 flex items-center gap-1">Read About Us &rarr;</span>
         </a>
       </div>
     </div>
@@ -729,7 +626,6 @@
             <li><a href="/" class="hover:text-[#F4413D] transition-colors">Home</a></li>
             <li><a href="/about" class="hover:text-[#F4413D] transition-colors">About Us</a></li>
             <li><a href="/faq" class="hover:text-[#F4413D] transition-colors">FAQ</a></li>
-            <li><a href="/blog" class="hover:text-[#F4413D] transition-colors">Blog</a></li>
             <li><a href="/contact" class="hover:text-[#F4413D] transition-colors">Contact Us</a></li>
           </ul>
         </div>
@@ -738,7 +634,7 @@
         <div>
           <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Resources & Guides</h4>
           <ul class="space-y-2 text-xs text-slate-600">
-            <li><a href="/blog" class="hover:text-[#F4413D] transition-colors">Blog & Tech Articles</a></li>
+            <li><a href="/blog" class="hover:text-[#F4413D] transition-colors font-semibold text-slate-900">Blog &amp; Privacy Articles &rarr;</a></li>
             <li><a href="/blog/what-is-temp-mail" class="hover:text-[#F4413D] transition-colors">What Is Temp Mail?</a></li>
             <li><a href="/blog/how-to-use-temporary-email" class="hover:text-[#F4413D] transition-colors">How to Use Temp Mail</a></li>
             <li><a href="/blog/temporary-email-otp-verification" class="hover:text-[#F4413D] transition-colors">OTP Verification Guide</a></li>
@@ -760,7 +656,7 @@
 
       <!-- Copyright -->
       <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-        <p>&copy; 2026 tempemails.site. Developed with ❤️ by <span class="font-bold text-slate-700">Shakib Hasan</span>.</p>
+        <p>&copy; 2026 tempemails.site. All rights reserved.</p>
         <p class="flex items-center gap-1.5">
           <span>Privacy-focused ephemeral email architecture</span>
         </p>
