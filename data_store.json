@@ -5,8 +5,8 @@
     "retention_days": 7,
     "service_enabled": true,
     "maintenance_message": "Our email servers are currently undergoing scheduled maintenance. New inbox generation will resume shortly. Thank you for your patience!",
-    "turnstile_enabled": true,
-    "turnstile_site_key": "0x4AAAAAAFRu_7JO3yDw1SR7",
+    "turnstile_enabled": false,
+    "turnstile_site_key": "",
     "admin_username": "admin",
     "admin_password": "shakib2026",
     "google_search_console": "_L5-YT0C3h80QPkTQncQ_MDu0QFNbBLnH4ZaQna9FPI",
@@ -26,7 +26,7 @@
   },
   "stats": {
     "lifetime_inboxes_created": 4,
-    "lifetime_messages_received": 12
+    "lifetime_messages_received": 14
   },
   "ads": {
     "master_enabled": false,
@@ -75,6 +75,32 @@
     }
   ],
   "messages": [
+    {
+      "id": "msg-1791719463250-311",
+      "inbox_address": "test-qa-recipient@tempemails.site",
+      "from": "security@service.com",
+      "from_name": "Service Security",
+      "subject": "Your 2FA Verification Code",
+      "body_html": "<p>Your verification code is <strong>948123</strong>.</p>",
+      "snippet": "Your verification code is 948123.",
+      "otp": "948123",
+      "partner_link": null,
+      "created_at": "2026-10-11T11:51:03.250Z",
+      "is_unread": true
+    },
+    {
+      "id": "msg-1791719413281-627",
+      "inbox_address": "test-qa-recipient@tempemails.site",
+      "from": "security@service.com",
+      "from_name": "Service Security",
+      "subject": "Your 2FA Verification Code",
+      "body_html": "<p>Your verification code is <strong>948123</strong>.</p>",
+      "snippet": "Your verification code is 948123.",
+      "otp": "948123",
+      "partner_link": null,
+      "created_at": "2026-10-11T11:50:13.281Z",
+      "is_unread": true
+    },
     {
       "id": "msg-1791717941575-978",
       "inbox_address": "test-qa-recipient@tempemails.site",

@@ -57,8 +57,8 @@ const initialData = {
     retention_days: 7,
     service_enabled: true,
     maintenance_message: 'Our email servers are currently undergoing scheduled maintenance. New inbox generation will resume shortly. Thank you for your patience!',
-    turnstile_enabled: true,
-    turnstile_site_key: '0x4AAAAAAFRu_7JO3yDw1SR7',
+    turnstile_enabled: false,
+    turnstile_site_key: '',
     admin_password: 'shakib2026',
     google_search_console: '_L5-YT0C3h80QPkTQncQ_MDu0QFNbBLnH4ZaQna9FPI',
     google_analytics_id: '',
@@ -170,6 +170,11 @@ function saveStore(data) {
   } catch (e) {
     // Non-fatal if filesystem is restricted
   }
+  if (DATA_FILE !== LOCAL_DATA_FILE) {
+    try {
+      fs.writeFileSync(LOCAL_DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
+    } catch (e) {}
+  }
 }
 
 // Helper: Parse JSON Body
@@ -187,13 +192,16 @@ function parseJsonBody(req) {
   });
 }
 
-// Helper: JSON Response
+// Helper: JSON Response with Anti-Cache & Real-time headers
 function sendJson(res, statusCode, data) {
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+    'Pragma': 'no-cache',
+    'Expires': '0',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-device-fingerprint'
   });
   res.end(JSON.stringify(data));
 }
@@ -863,22 +871,24 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     return true;
   }
 
-  // 4. Admin Inboxes List
+  // 4. Admin Inboxes List (Only shows inboxes that have received emails)
   if (pathname === '/api/admin/inboxes' && method === 'GET') {
     const store = getStore();
-    const inboxesWithCounts = store.inboxes.map(inbox => {
-      const msgCount = store.messages.filter(m => m.inbox_address === inbox.address).length;
-      return { ...inbox, message_count: msgCount };
-    });
-    sendJson(res, 200, inboxesWithCounts);
+    const activeInboxes = (store.inboxes || [])
+      .map(inbox => {
+        const msgs = (store.messages || []).filter(m => (m.inbox_address || '').toLowerCase().trim() === (inbox.address || '').toLowerCase().trim());
+        return { ...inbox, message_count: msgs.length };
+      })
+      .filter(inbox => inbox.message_count > 0);
+    sendJson(res, 200, activeInboxes);
     return true;
   }
 
-  // 5. Admin Inspect Messages for a specific inbox
+  // 5. Admin Inspect Messages for a specific inbox (Case-insensitive matching)
   if (pathname === '/api/admin/inbox-messages' && method === 'GET') {
-    const address = parsedUrl.query.address;
+    const address = (parsedUrl.query.address || '').toLowerCase().trim();
     const store = getStore();
-    const inboxMsgs = store.messages.filter(m => m.inbox_address === address);
+    const inboxMsgs = (store.messages || []).filter(m => (m.inbox_address || '').toLowerCase().trim() === address);
     sendJson(res, 200, inboxMsgs);
     return true;
   }
@@ -1129,6 +1139,19 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
 
     store.messages.unshift(newMsg);
     store.stats.lifetime_messages_received++;
+
+    // Ensure active recipient is registered in store.inboxes
+    if (!store.inboxes.some(i => (i.address || '').toLowerCase().trim() === toAddress.toLowerCase().trim())) {
+      store.inboxes.unshift({
+        id: 'inbox-' + Date.now(),
+        address: toAddress,
+        device_id: 'live-recipient',
+        created_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + (store.settings.retention_days || 7) * 24 * 3600000).toISOString(),
+        is_active: true
+      });
+    }
+
     saveStore(store);
 
     sendJson(res, 200, { success: true, messageId: newMsg.id });
@@ -1329,7 +1352,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
 
   // 11. Client Route: Get Messages for Inbox
   if (pathname === '/api/inbox/messages' && method === 'GET') {
-    const email = (parsedUrl.query.email || '').toLowerCase().trim();
+    const email = (parsedUrl.query.email || parsedUrl.query.address || '').toLowerCase().trim();
     if (!email) {
       sendJson(res, 400, { error: 'Missing email query parameter.' });
       return true;

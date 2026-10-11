@@ -14,8 +14,8 @@ const CONFIG = {
   STORAGE_KEY_MESSAGES: 'tempemails_messages_v1',
   STORAGE_KEY_CHANGES: 'tempemails_changes_count_v1',
   API_ENDPOINT: '/api',
-  TURNSTILE_ENABLED: true,
-  TURNSTILE_SITE_KEY: '0x4AAAAAAFRu_7JO3yDw1SR7'
+  TURNSTILE_ENABLED: false,
+  TURNSTILE_SITE_KEY: ''
 };
 
 // No demo emails - clean authentic inbox
@@ -159,7 +159,7 @@ async function initApp() {
 
   // Step 3: Fetch dynamic system settings from backend
   try {
-    const res = await fetch('/api/settings');
+    const res = await fetch(`/api/settings?_t=${Date.now()}`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       if (data.max_inboxes_per_user) {
@@ -198,14 +198,14 @@ async function initApp() {
 
       // Handle Cloudflare Turnstile Anti-Bot
       if (data.turnstile_enabled !== undefined) {
-        CONFIG.TURNSTILE_ENABLED = data.turnstile_enabled !== false;
+        CONFIG.TURNSTILE_ENABLED = data.turnstile_enabled === true;
       }
       if (data.turnstile_site_key) {
         CONFIG.TURNSTILE_SITE_KEY = data.turnstile_site_key;
       }
 
       const turnstileWrap = document.getElementById('turnstile-wrapper');
-      if (CONFIG.TURNSTILE_ENABLED === false) {
+      if (!CONFIG.TURNSTILE_ENABLED) {
         if (turnstileWrap) turnstileWrap.classList.add('hidden');
       } else {
         if (turnstileWrap) turnstileWrap.classList.remove('hidden');
@@ -227,6 +227,9 @@ async function initApp() {
         }
         meta.content = gscCode;
       }
+
+      // Immediately re-render with active backend limits
+      renderApp();
     }
   } catch (err) {
     console.log('Running in offline/local mode');
@@ -234,8 +237,9 @@ async function initApp() {
 
   // Step 4: Validate and sync session with backend (Never reset active address on reload)
   try {
-    const sessionUrl = `/api/inbox/device-session?device_id=${encodeURIComponent(hwId)}&current_address=${encodeURIComponent(activeEmailBefore)}&inboxes=${encodeURIComponent(JSON.stringify(state.inboxes))}`;
+    const sessionUrl = `/api/inbox/device-session?device_id=${encodeURIComponent(hwId)}&current_address=${encodeURIComponent(activeEmailBefore)}&inboxes=${encodeURIComponent(JSON.stringify(state.inboxes))}&_t=${Date.now()}`;
     const sessionRes = await fetch(sessionUrl, {
+      cache: 'no-store',
       headers: {
         'x-device-fingerprint': hwId,
         'x-current-address': activeEmailBefore,
@@ -1181,7 +1185,7 @@ window.triggerInboxRefresh = async function(isManual = false) {
   state.activeSyncEmail = currentEmail;
 
   try {
-    const res = await fetch(`/api/inbox/messages?email=${encodeURIComponent(currentEmail)}`);
+    const res = await fetch(`/api/inbox/messages?email=${encodeURIComponent(currentEmail)}&_t=${Date.now()}`, { cache: 'no-store' });
     // Discard response if active inbox changed while fetch was in flight
     if (state.activeSyncEmail !== getActiveEmail()) {
       state.isSyncing = false;

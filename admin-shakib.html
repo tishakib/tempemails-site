@@ -1017,7 +1017,7 @@
     // Load Live Stats
     async function loadAdminStats() {
       try {
-        const res = await fetch('/api/admin/stats');
+        const res = await fetch(`/api/admin/stats?_t=${Date.now()}`, { cache: 'no-store' });
         const stats = await res.json();
         document.getElementById('stat-total-inboxes').textContent = stats.lifetime_created;
         document.getElementById('stat-active-inboxes').textContent = stats.active_now;
@@ -1034,7 +1034,7 @@
       tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-slate-500">Loading active inboxes...</td></tr>';
 
       try {
-        const res = await fetch('/api/admin/inboxes');
+        const res = await fetch(`/api/admin/inboxes?_t=${Date.now()}`, { cache: 'no-store' });
         const inboxes = await res.json();
 
         if (inboxes.length === 0) {
@@ -1073,7 +1073,7 @@
       document.getElementById('inspect-modal').classList.add('flex');
 
       try {
-        const res = await fetch(`/api/admin/inbox-messages?address=${encodeURIComponent(address)}`);
+        const res = await fetch(`/api/admin/inbox-messages?address=${encodeURIComponent(address)}&_t=${Date.now()}`, { cache: 'no-store' });
         const messages = await res.json();
 
         if (messages.length === 0) {
@@ -1133,34 +1133,27 @@
       if (s.custom_head_scripts !== undefined) document.getElementById('setting-head-scripts').value = s.custom_head_scripts;
     }
 
-    // Load Settings with 100% Persistent Local Backup & Server Auto-Sync
+    // Load Settings with Live Server State & Safe Offline Fallback
     async function loadAdminSettings() {
-      // 1. Immediately populate from local storage so values NEVER revert to defaults upon page reload
-      const local = localStorage.getItem('tre_admin_persisted_settings');
-      let localObj = null;
-      if (local) {
-        try {
-          localObj = JSON.parse(local);
-          applySettingsToForm(localObj);
-        } catch (e) {}
-      }
-
       try {
-        const res = await fetch('/api/admin/settings');
-        const s = await res.json();
-        if (!localObj) {
+        const res = await fetch(`/api/admin/settings?_t=${Date.now()}`, { cache: 'no-store' });
+        if (res.ok) {
+          const s = await res.json();
           localStorage.setItem('tre_admin_persisted_settings', JSON.stringify(s));
           applySettingsToForm(s);
-        } else {
-          // Keep server memory hot and synced with admin's saved configuration
-          fetch('/api/admin/settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(localObj)
-          }).catch(() => {});
+          return;
         }
       } catch (err) {
-        console.error('Settings load error:', err);
+        console.error('Settings load error from server:', err);
+      }
+
+      // Fallback to local backup only if server is unreachable
+      const local = localStorage.getItem('tre_admin_persisted_settings');
+      if (local) {
+        try {
+          const localObj = JSON.parse(local);
+          applySettingsToForm(localObj);
+        } catch (e) {}
       }
     }
 
@@ -1242,32 +1235,25 @@
     }
 
     async function loadDeveloperSettings() {
-      const local = localStorage.getItem('tre_admin_persisted_dev');
-      let localObj = null;
-      if (local) {
-        try {
-          localObj = JSON.parse(local);
-          applyDevToForm(localObj);
-        } catch (e) {}
-      }
-
       try {
-        const res = await fetch('/api/admin/settings');
-        const s = await res.json();
-        const d = s.developer || {};
-
-        if (!localObj) {
+        const res = await fetch(`/api/admin/settings?_t=${Date.now()}`, { cache: 'no-store' });
+        if (res.ok) {
+          const s = await res.json();
+          const d = s.developer || {};
           localStorage.setItem('tre_admin_persisted_dev', JSON.stringify(d));
           applyDevToForm(d);
-        } else {
-          fetch('/api/admin/developer', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(localObj)
-          }).catch(() => {});
+          return;
         }
       } catch (err) {
-        console.error('Failed to load developer settings:', err);
+        console.error('Failed to load developer settings from server:', err);
+      }
+
+      const local = localStorage.getItem('tre_admin_persisted_dev');
+      if (local) {
+        try {
+          const localObj = JSON.parse(local);
+          applyDevToForm(localObj);
+        } catch (e) {}
       }
     }
 
@@ -1349,31 +1335,24 @@
     }
 
     async function loadAdminAds() {
-      const local = localStorage.getItem('tre_admin_persisted_ads');
-      let localObj = null;
-      if (local) {
-        try {
-          localObj = JSON.parse(local);
-          applyAdsToForm(localObj);
-        } catch (e) {}
-      }
-
       try {
-        const res = await fetch('/api/admin/ads');
-        const ads = await res.json();
-        
-        if (!localObj) {
+        const res = await fetch(`/api/admin/ads?_t=${Date.now()}`, { cache: 'no-store' });
+        if (res.ok) {
+          const ads = await res.json();
           localStorage.setItem('tre_admin_persisted_ads', JSON.stringify(ads));
           applyAdsToForm(ads);
-        } else {
-          fetch('/api/admin/ads', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(localObj)
-          }).catch(() => {});
+          return;
         }
       } catch (err) {
-        console.error('Error loading ads configuration:', err);
+        console.error('Error loading ads configuration from server:', err);
+      }
+
+      const local = localStorage.getItem('tre_admin_persisted_ads');
+      if (local) {
+        try {
+          const localObj = JSON.parse(local);
+          applyAdsToForm(localObj);
+        } catch (e) {}
       }
     }
 
@@ -1431,7 +1410,7 @@
       const container = document.getElementById('blog-list-container');
       const badge = document.getElementById('blog-total-badge');
       try {
-        const res = await fetch('/api/blogs');
+        const res = await fetch(`/api/blogs?_t=${Date.now()}`, { cache: 'no-store' });
         cachedBlogs = await res.json();
         if (badge) badge.textContent = `${cachedBlogs.length} Articles`;
 
@@ -1697,7 +1676,7 @@
     // Load User Feedback Messages
     async function loadAdminContacts() {
       try {
-        const res = await fetch('/api/admin/contacts');
+        const res = await fetch(`/api/admin/contacts?_t=${Date.now()}`, { cache: 'no-store' });
         if (!res.ok) return;
         const contacts = await res.json();
         const tbody = document.getElementById('contacts-table-body');
