@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4413D" />
+      <stop offset="100%" stop-color="#DC2626" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.9" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Background Layer -->
+  <rect width="1200" height="630" fill="url(#bgGrad)" />
+
+  <!-- Ambient Glowing Blobs -->
+  <circle cx="150" cy="150" r="280" fill="#F4413D" opacity="0.12" filter="blur(80px)" />
+  <circle cx="1050" cy="480" r="280" fill="#3B82F6" opacity="0.08" filter="blur(90px)" />
+
+  <!-- Grid overlay -->
+  <g stroke="#334155" stroke-width="1" opacity="0.2">
+    <line x1="0" y1="105" x2="1200" y2="105" />
+    <line x1="0" y1="210" x2="1200" y2="210" />
+    <line x1="0" y1="315" x2="1200" y2="315" />
+    <line x1="0" y1="420" x2="1200" y2="420" />
+    <line x1="0" y1="525" x2="1200" y2="525" />
+    <line x1="200" y1="0" x2="200" y2="630" />
+    <line x1="400" y1="0" x2="400" y2="630" />
+    <line x1="600" y1="0" x2="600" y2="630" />
+    <line x1="800" y1="0" x2="800" y2="630" />
+    <line x1="1000" y1="0" x2="1000" y2="630" />
+  </g>
+
+  <!-- Top Header / Brand Watermark -->
+  <g transform="translate(80, 70)">
+    <rect width="42" height="42" rx="10" fill="url(#brandGrad)" />
+    <text x="21" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="20" fill="#FFFFFF" text-anchor="middle">T</text>
+    <text x="56" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="22" fill="#FFFFFF">tempemails<tspan fill="#F4413D">.site</tspan></text>
+  </g>
+
+  <!-- Category Tag -->
+  <g transform="translate(80, 140)">
+    <rect width="160" height="34" rx="17" fill="#F4413D" fill-opacity="0.15" stroke="#F4413D" stroke-opacity="0.4" stroke-width="1.5" />
+    <text x="80" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="13" fill="#F87171" text-anchor="middle" letter-spacing="1">RETENTION POLICY</text>
+  </g>
+
+  <!-- Main Title & Subtitle Container -->
+  <g transform="translate(80, 220)">
+    <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="38" fill="#F8FAFC" letter-spacing="-0.5">
+      <tspan x="0" dy="0">How Long Does Temp Mail Last?</tspan>
+    </text>
+    <text x="0" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="400" font-size="19" fill="#94A3B8" width="550">
+      7-day retention, slot limits, browser persistence and auto-purging
+    </text>
+  </g>
+
+  <!-- Right Visual / Diagram Area -->
+  <g transform="translate(680, 110)" filter="url(#shadow)">
+    <rect width="440" height="420" rx="24" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5" />
+    
+      <!-- Calendar & Timeline Visual -->
+      <g transform="translate(60, 50)">
+        <rect width="320" height="100" rx="14" fill="#0F172A" stroke="#334155" />
+        <text x="25" y="40" font-family="sans-serif" font-weight="bold" font-size="15" fill="#FFFFFF">7 Days Retention Window</text>
+        <text x="25" y="65" font-family="sans-serif" font-size="12" fill="#94A3B8">Inboxes &amp; messages persist for 1 week</text>
+        <text x="25" y="85" font-family="sans-serif" font-size="11" fill="#10B981">✓ Survives page reloads &amp; browser restart</text>
+
+        <rect y="120" width="320" height="90" rx="14" fill="#0F172A" stroke="#334155" />
+        <text x="25" y="155" font-family="sans-serif" font-weight="bold" font-size="15" fill="#FFFFFF">Max 5 Concurrent Inboxes</text>
+        <text x="25" y="180" font-family="sans-serif" font-size="12" fill="#94A3B8">Hold 5 active addresses simultaneously</text>
+
+        <rect y="230" width="320" height="80" rx="14" fill="#0F172A" stroke="#F4413D" />
+        <text x="25" y="265" font-family="sans-serif" font-weight="bold" font-size="14" fill="#F4413D">Permanent Automated Purge</text>
+        <text x="25" y="290" font-family="sans-serif" font-size="11" fill="#94A3B8">All disk &amp; memory data wiped clean</text>
+      </g>
+    
+  </g>
+
+  <!-- Bottom Metadata Bar -->
+  <g transform="translate(80, 545)">
+    <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#64748B" font-weight="500">
+      🛡️ Ephemeral Inbound Mail Architecture &bull; Official tempemails.site Guide
+    </text>
+  </g>
+</svg>

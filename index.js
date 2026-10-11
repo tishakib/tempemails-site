@@ -1476,7 +1476,7 @@ const requestHandler = async (req, res) => {
 
     if (Array.isArray(store.blogs)) {
       for (const b of store.blogs) {
-        if (b.status === 'published' && b.slug) {
+        if ((!b.status || b.status === 'published') && b.slug) {
           const mod = b.created_at ? b.created_at.split('T')[0] : today;
           xml += `  <url>\n    <loc>${baseUrl}/blog/${encodeURIComponent(b.slug)}</loc>\n    <lastmod>${mod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
         }

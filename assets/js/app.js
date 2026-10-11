@@ -168,6 +168,7 @@ async function initApp() {
       if (data.max_email_changes_per_inbox) {
         CONFIG.MAX_CHANGES = data.max_email_changes_per_inbox;
       }
+      const statusIndicator = document.getElementById('system-status-indicator');
       if (data.service_enabled === false) {
         showToast('Notice: Service is currently in maintenance mode.', 'warning');
         const overlay = document.getElementById('maintenance-overlay');
@@ -176,9 +177,15 @@ async function initApp() {
         if (overlayText && data.maintenance_message) {
           overlayText.textContent = data.maintenance_message;
         }
+        if (statusIndicator) {
+          statusIndicator.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span><span>Scheduled maintenance in progress</span>';
+        }
       } else {
         const overlay = document.getElementById('maintenance-overlay');
         if (overlay) overlay.classList.add('hidden');
+        if (statusIndicator) {
+          statusIndicator.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>All systems operational</span>';
+        }
       }
 
       // Update Dynamic Policy Display Card
