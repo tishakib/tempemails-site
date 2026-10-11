@@ -1495,7 +1495,7 @@ const requestHandler = async (req, res) => {
 
   // Handle robots.txt
   if (reqPath === '/robots.txt') {
-    const robots = `User-agent: *\nAllow: /\nDisallow: /admin-shakib\nDisallow: /admin-shakib.html\nDisallow: /api/\n\nSitemap: https://www.tempemails.site/sitemap.xml\n`;
+    const robots = `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: https://www.tempemails.site/sitemap.xml\n`;
     res.writeHead(200, {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=86400'
