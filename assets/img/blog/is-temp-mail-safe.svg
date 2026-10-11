@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -10,11 +11,17 @@
       <stop offset="100%" stop-color="#DC2626" />
     </linearGradient>
     <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.9" />
-      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.9" />
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.95" />
     </linearGradient>
     <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.4" />
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+    <filter id="glowRed" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="60" />
+    </filter>
+    <filter id="glowBlue" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="60" />
     </filter>
   </defs>
 
@@ -22,8 +29,8 @@
   <rect width="1200" height="630" fill="url(#bgGrad)" />
 
   <!-- Ambient Glowing Blobs -->
-  <circle cx="150" cy="150" r="280" fill="#F4413D" opacity="0.12" filter="blur(80px)" />
-  <circle cx="1050" cy="480" r="280" fill="#3B82F6" opacity="0.08" filter="blur(90px)" />
+  <circle cx="150" cy="150" r="240" fill="#F4413D" opacity="0.12" filter="url(#glowRed)" />
+  <circle cx="1050" cy="480" r="240" fill="#3B82F6" opacity="0.08" filter="url(#glowBlue)" />
 
   <!-- Grid overlay -->
   <g stroke="#334155" stroke-width="1" opacity="0.2">
@@ -48,8 +55,8 @@
 
   <!-- Category Tag -->
   <g transform="translate(80, 140)">
-    <rect width="160" height="34" rx="17" fill="#F4413D" fill-opacity="0.15" stroke="#F4413D" stroke-opacity="0.4" stroke-width="1.5" />
-    <text x="80" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="13" fill="#F87171" text-anchor="middle" letter-spacing="1">SECURITY ANALYSIS</text>
+    <rect width="170" height="34" rx="17" fill="#F4413D" fill-opacity="0.15" stroke="#F4413D" stroke-opacity="0.4" stroke-width="1.5" />
+    <text x="85" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="13" fill="#F87171" text-anchor="middle" letter-spacing="1">SECURITY ANALYSIS</text>
   </g>
 
   <!-- Main Title & Subtitle Container -->
@@ -57,7 +64,7 @@
     <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="38" fill="#F8FAFC" letter-spacing="-0.5">
       <tspan x="0" dy="0">Is Temp Mail Safe?</tspan>
     </text>
-    <text x="0" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="400" font-size="19" fill="#94A3B8" width="550">
+    <text x="0" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="400" font-size="19" fill="#94A3B8">
       Session isolation, privacy defenses and critical safety warnings
     </text>
   </g>
@@ -69,16 +76,16 @@
       <!-- Security Shield & Safe / Unsafe Matrix -->
       <g transform="translate(60, 50)">
         <rect width="320" height="130" rx="12" fill="#0F172A" stroke="#10B981" stroke-width="1.5" />
-        <text x="25" y="35" font-family="sans-serif" font-weight="bold" font-size="14" fill="#10B981">✓ SAFE &amp; ENCOURAGED</text>
-        <text x="25" y="65" font-family="sans-serif" font-size="12" fill="#E2E8F0">&bull; Software trials &amp; demo signups</text>
-        <text x="25" y="90" font-family="sans-serif" font-size="12" fill="#E2E8F0">&bull; Public Wi-Fi captive portals</text>
-        <text x="25" y="115" font-family="sans-serif" font-size="12" fill="#E2E8F0">&bull; Download gates &amp; web forums</text>
+        <text x="25" y="35" font-family="sans-serif" font-weight="bold" font-size="14" fill="#10B981">&#x2713; SAFE &amp; ENCOURAGED</text>
+        <text x="25" y="65" font-family="sans-serif" font-size="12" fill="#E2E8F0">&#8226; Software trials &amp; demo signups</text>
+        <text x="25" y="90" font-family="sans-serif" font-size="12" fill="#E2E8F0">&#8226; Public Wi-Fi captive portals</text>
+        <text x="25" y="115" font-family="sans-serif" font-size="12" fill="#E2E8F0">&#8226; Download gates &amp; web forums</text>
 
         <rect y="155" width="320" height="150" rx="12" fill="#0F172A" stroke="#F4413D" stroke-width="1.5" />
-        <text x="25" y="190" font-family="sans-serif" font-weight="bold" font-size="14" fill="#F4413D">✗ DANGEROUS &amp; PROHIBITED</text>
-        <text x="25" y="220" font-family="sans-serif" font-size="12" fill="#E2E8F0">&bull; Banking &amp; investment accounts</text>
-        <text x="25" y="245" font-family="sans-serif" font-size="12" fill="#E2E8F0">&bull; Crypto wallets &amp; exchanges</text>
-        <text x="25" y="270" font-family="sans-serif" font-size="12" fill="#E2E8F0">&bull; Primary password recovery accounts</text>
+        <text x="25" y="190" font-family="sans-serif" font-weight="bold" font-size="14" fill="#F4413D">&#x2717; DANGEROUS &amp; PROHIBITED</text>
+        <text x="25" y="220" font-family="sans-serif" font-size="12" fill="#E2E8F0">&#8226; Banking &amp; investment accounts</text>
+        <text x="25" y="245" font-family="sans-serif" font-size="12" fill="#E2E8F0">&#8226; Crypto wallets &amp; exchanges</text>
+        <text x="25" y="270" font-family="sans-serif" font-size="12" fill="#E2E8F0">&#8226; Primary password recovery accounts</text>
       </g>
     
   </g>
@@ -86,7 +93,7 @@
   <!-- Bottom Metadata Bar -->
   <g transform="translate(80, 545)">
     <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#64748B" font-weight="500">
-      🛡️ Ephemeral Inbound Mail Architecture &bull; Official tempemails.site Guide
+      &#x1F6E1; Ephemeral Inbound Mail Architecture &#8226; Official tempemails.site Guide
     </text>
   </g>
 </svg>

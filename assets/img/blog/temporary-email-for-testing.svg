@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -10,11 +11,17 @@
       <stop offset="100%" stop-color="#DC2626" />
     </linearGradient>
     <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.9" />
-      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.9" />
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.95" />
     </linearGradient>
     <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.4" />
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+    <filter id="glowRed" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="60" />
+    </filter>
+    <filter id="glowBlue" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="60" />
     </filter>
   </defs>
 
@@ -22,8 +29,8 @@
   <rect width="1200" height="630" fill="url(#bgGrad)" />
 
   <!-- Ambient Glowing Blobs -->
-  <circle cx="150" cy="150" r="280" fill="#F4413D" opacity="0.12" filter="blur(80px)" />
-  <circle cx="1050" cy="480" r="280" fill="#3B82F6" opacity="0.08" filter="blur(90px)" />
+  <circle cx="150" cy="150" r="240" fill="#F4413D" opacity="0.12" filter="url(#glowRed)" />
+  <circle cx="1050" cy="480" r="240" fill="#3B82F6" opacity="0.08" filter="url(#glowBlue)" />
 
   <!-- Grid overlay -->
   <g stroke="#334155" stroke-width="1" opacity="0.2">
@@ -48,17 +55,17 @@
 
   <!-- Category Tag -->
   <g transform="translate(80, 140)">
-    <rect width="160" height="34" rx="17" fill="#F4413D" fill-opacity="0.15" stroke="#F4413D" stroke-opacity="0.4" stroke-width="1.5" />
-    <text x="80" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="13" fill="#F87171" text-anchor="middle" letter-spacing="1">DEVELOPMENT</text>
+    <rect width="170" height="34" rx="17" fill="#F4413D" fill-opacity="0.15" stroke="#F4413D" stroke-opacity="0.4" stroke-width="1.5" />
+    <text x="85" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="13" fill="#F87171" text-anchor="middle" letter-spacing="1">DEVELOPMENT</text>
   </g>
 
   <!-- Main Title & Subtitle Container -->
   <g transform="translate(80, 220)">
     <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="38" fill="#F8FAFC" letter-spacing="-0.5">
-      <tspan x="0" dy="0">Temp Mail for QA &amp; Devs</tspan>
+      <tspan x="0" dy="0">Temp Mail for QA &amp;amp; Devs</tspan>
     </text>
-    <text x="0" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="400" font-size="19" fill="#94A3B8" width="550">
-      Automated signup flows, webhook verification &amp; multi-role testing
+    <text x="0" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="400" font-size="19" fill="#94A3B8">
+      Automated signup flows, webhook verification &amp;amp; multi-role testing
     </text>
   </g>
 
@@ -75,11 +82,11 @@
         
         <text x="25" y="65" font-family="monospace" font-size="12" fill="#60A5FA">// Automated QA Pipeline</text>
         <text x="25" y="95" font-family="monospace" font-size="12" fill="#F8FAFC">POST /api/inbox/create</text>
-        <text x="25" y="125" font-family="monospace" font-size="12" fill="#34D399">&rarr; 201 Created: user_qa_01@site</text>
+        <text x="25" y="125" font-family="monospace" font-size="12" fill="#34D399">&#8594; 201 Created: user_qa_01@site</text>
         <text x="25" y="155" font-family="monospace" font-size="12" fill="#F8FAFC">POST /auth/register { email }</text>
-        <text x="25" y="185" font-family="monospace" font-size="12" fill="#34D399">&rarr; 200 OK: verification_sent</text>
+        <text x="25" y="185" font-family="monospace" font-size="12" fill="#34D399">&#8594; 200 OK: verification_sent</text>
         <text x="25" y="215" font-family="monospace" font-size="12" fill="#F8FAFC">GET /api/inbox/messages</text>
-        <text x="25" y="245" font-family="monospace" font-size="12" fill="#F472B6">&rarr; OTP Extracted: "839201" [PASS]</text>
+        <text x="25" y="245" font-family="monospace" font-size="12" fill="#F472B6">&#8594; OTP Extracted: &quot;839201&quot; [PASS]</text>
       </g>
       <text x="220" y="365" font-family="sans-serif" font-weight="bold" font-size="12" fill="#94A3B8" text-anchor="middle">Supports CI/CD integration &amp; manual QA</text>
     
@@ -88,7 +95,7 @@
   <!-- Bottom Metadata Bar -->
   <g transform="translate(80, 545)">
     <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#64748B" font-weight="500">
-      🛡️ Ephemeral Inbound Mail Architecture &bull; Official tempemails.site Guide
+      &#x1F6E1; Ephemeral Inbound Mail Architecture &#8226; Official tempemails.site Guide
     </text>
   </g>
 </svg>

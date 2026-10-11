@@ -26,7 +26,7 @@
   },
   "stats": {
     "lifetime_inboxes_created": 4,
-    "lifetime_messages_received": 8
+    "lifetime_messages_received": 9
   },
   "ads": {
     "master_enabled": false,
@@ -75,6 +75,19 @@
     }
   ],
   "messages": [
+    {
+      "id": "msg-1791715745364-943",
+      "inbox_address": "test-qa-recipient@tempemails.site",
+      "from": "security@service.com",
+      "from_name": "Service Security",
+      "subject": "Your 2FA Verification Code",
+      "body_html": "<p>Your verification code is <strong>948123</strong>.</p>",
+      "snippet": "Your verification code is 948123.",
+      "otp": "948123",
+      "partner_link": null,
+      "created_at": "2026-10-11T10:49:05.364Z",
+      "is_unread": true
+    },
     {
       "id": "msg-1791715078955-185",
       "inbox_address": "test-qa-recipient@tempemails.site",
@@ -161,7 +174,7 @@
       "title": "What Is Temp Mail? A Complete Guide to Temporary Email",
       "slug": "what-is-temp-mail",
       "category": "Fundamentals",
-      "cover_image": "/assets/img/blog/what-is-temp-mail.svg",
+      "cover_image": "/assets/img/blog/what-is-temp-mail.png",
       "summary": "Discover what temporary disposable email is, how cloud mail routing operates, why it prevents inbox spam and tracking, and how to use it safely.",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
@@ -170,7 +183,7 @@
       "title": "How to Use tempemails.site to Create a Temporary Email Address",
       "slug": "how-to-use-temporary-email",
       "category": "Tutorial",
-      "cover_image": "/assets/img/blog/how-to-use-temporary-email.svg",
+      "cover_image": "/assets/img/blog/how-to-use-temporary-email.png",
       "summary": "A practical step-by-step walkthrough of generating disposable addresses, copying verification codes, switching between 5 inboxes, and managing mailboxes on tempemails.site.",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
@@ -179,7 +192,7 @@
       "title": "How to Receive OTP and Verification Emails with Temp Mail",
       "slug": "temporary-email-otp-verification",
       "category": "Verification",
-      "cover_image": "/assets/img/blog/temporary-email-otp-verification.svg",
+      "cover_image": "/assets/img/blog/temporary-email-otp-verification.png",
       "summary": "Learn how verification codes and magic links are processed in disposable mailboxes, how automated OTP extraction works, and how to troubleshoot delivery delays.",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
@@ -188,7 +201,7 @@
       "title": "Temporary Email vs Regular Email: Differences, Benefits and Limitations",
       "slug": "temporary-email-vs-regular-email",
       "category": "Comparison",
-      "cover_image": "/assets/img/blog/temporary-email-vs-regular-email.svg",
+      "cover_image": "/assets/img/blog/temporary-email-vs-regular-email.png",
       "summary": "An in-depth side-by-side comparison of disposable email and permanent webmail providers covering security, recovery, privacy, storage, and suitable use cases.",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
@@ -197,7 +210,7 @@
       "title": "Is Temporary Email Legal? Uses, Restrictions and Responsible Practices",
       "slug": "is-temporary-email-legal",
       "category": "Legal & Ethics",
-      "cover_image": "/assets/img/blog/is-temporary-email-legal.svg",
+      "cover_image": "/assets/img/blog/is-temporary-email-legal.png",
       "summary": "Explore the legal frameworks surrounding disposable email addresses, legitimate privacy use cases, platform terms of service, and strictly prohibited fraudulent activities.",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
@@ -206,7 +219,7 @@
       "title": "Is Temp Mail Safe? Privacy Risks and Best Practices",
       "slug": "is-temp-mail-safe",
       "category": "Security",
-      "cover_image": "/assets/img/blog/is-temp-mail-safe.svg",
+      "cover_image": "/assets/img/blog/is-temp-mail-safe.png",
       "summary": "An objective security analysis of temporary email services, examining session isolation, public versus private inboxes, phishing vectors, and essential security habits.",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
@@ -215,7 +228,7 @@
       "title": "Temporary Email Not Receiving a Verification Code? Troubleshooting Guide",
       "slug": "temp-mail-not-receiving-emails",
       "category": "Troubleshooting",
-      "cover_image": "/assets/img/blog/temp-mail-not-receiving-emails.svg",
+      "cover_image": "/assets/img/blog/temp-mail-not-receiving-emails.png",
       "summary": "Step-by-step diagnostic advice for when verification emails fail to arrive, covering sender greylisting, anti-bot filtering, domain blocklists, and browser cache issues.",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
@@ -224,7 +237,7 @@
       "title": "The Best Uses of Disposable Email for Privacy and Everyday Online Tasks",
       "slug": "disposable-email-use-cases",
       "category": "Privacy Strategy",
-      "cover_image": "/assets/img/blog/disposable-email-use-cases.svg",
+      "cover_image": "/assets/img/blog/disposable-email-use-cases.png",
       "summary": "Practical, everyday ways to use burner email addresses to safeguard your privacy during gated content downloads, public Wi-Fi logins, customer inquiries, and online testing.",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
@@ -233,7 +246,7 @@
       "title": "How Developers Can Use Temporary Email for Website and App Testing",
       "slug": "temporary-email-for-testing",
       "category": "Developer Tools",
-      "cover_image": "/assets/img/blog/temporary-email-for-testing.svg",
+      "cover_image": "/assets/img/blog/temporary-email-for-testing.png",
       "summary": "A practical guide for QA engineers and developers using disposable email inboxes to validate user registration flows, email verification webhooks, and automated staging test suites.",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
@@ -242,7 +255,7 @@
       "title": "How Long Does Temp Mail Last? Expiration, Inbox Limits and Retention",
       "slug": "how-long-does-temp-mail-last",
       "category": "Architecture",
-      "cover_image": "/assets/img/blog/how-long-does-temp-mail-last.svg",
+      "cover_image": "/assets/img/blog/how-long-does-temp-mail-last.png",
       "summary": "Detailed breakdown of disposable email lifetimes, tempemails.site's 7-day retention policy, concurrent inbox limits, and why temporary inboxes should never hold permanent accounts.",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
@@ -251,7 +264,7 @@
       "title": "Why Is My Temporary Email Address Rejected? Causes and Safe Alternatives",
       "slug": "why-is-temporary-email-rejected",
       "category": "Troubleshooting",
-      "cover_image": "/assets/img/blog/why-is-temporary-email-rejected.svg",
+      "cover_image": "/assets/img/blog/why-is-temporary-email-rejected.png",
       "summary": "Understand why signup forms reject disposable email addresses, how domain reputation algorithms detect temporary inboxes, and safe, legitimate alternatives.",
       "created_at": "2026-10-11T10:00:00.000Z"
     },
@@ -260,7 +273,7 @@
       "title": "Temporary Email vs Email Alias: Differences, Privacy, and When to Use Each",
       "slug": "temporary-email-vs-email-alias",
       "category": "Privacy Strategy",
-      "cover_image": "/assets/img/blog/temporary-email-vs-email-alias.svg",
+      "cover_image": "/assets/img/blog/temporary-email-vs-email-alias.png",
       "summary": "Compare temporary disposable emails with email forwarding aliases. Learn the key tradeoffs in privacy, message retention, recovery, and daily usability.",
       "created_at": "2026-10-11T11:00:00.000Z"
     }
