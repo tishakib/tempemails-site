@@ -218,3 +218,173 @@ body, input, textarea, select, button {
 .toast.warning {
   border-left: 4px solid #F59E0B;
 }
+
+/* ========================================================
+   DARK THEME STYLES (Ultra-Smooth OLED/Slate Dark Mode)
+   ======================================================== */
+html.dark {
+  color-scheme: dark;
+  --brand-bg: #0B0F19;
+  --brand-navy: #F8FAFC;
+  --brand-slate: #E2E8F0;
+  --brand-border: #1E293B;
+}
+
+html.dark body {
+  background-color: #0B0F19 !important;
+  color: #E2E8F0 !important;
+}
+
+/* Header & Navigation */
+html.dark header {
+  background-color: rgba(11, 15, 25, 0.92) !important;
+  border-color: #1E293B !important;
+}
+
+/* Cards, Inboxes & Containers */
+html.dark .bg-white {
+  background-color: #111827 !important;
+  color: #F8FAFC !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #0B0F19 !important;
+}
+
+html.dark .bg-slate-100,
+html.dark .bg-slate-100\/70,
+html.dark .bg-slate-100\/80 {
+  background-color: #1E293B !important;
+  color: #F1F5F9 !important;
+}
+
+html.dark .bg-slate-200 {
+  background-color: #334155 !important;
+}
+
+/* Text Overrides */
+html.dark .text-slate-900 {
+  color: #F8FAFC !important;
+}
+
+html.dark .text-slate-800 {
+  color: #F1F5F9 !important;
+}
+
+html.dark .text-slate-700 {
+  color: #CBD5E1 !important;
+}
+
+html.dark .text-slate-600 {
+  color: #94A3B8 !important;
+}
+
+html.dark .text-slate-500 {
+  color: #64748B !important;
+}
+
+html.dark .text-slate-400 {
+  color: #94A3B8 !important;
+}
+
+/* Borders */
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-200\/60,
+html.dark .divide-slate-100,
+html.dark .divide-slate-200 {
+  border-color: #1E293B !important;
+}
+
+html.dark .border-slate-300 {
+  border-color: #334155 !important;
+}
+
+/* Inputs, Textareas & Selects */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #0B0F19 !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748B !important;
+}
+
+/* Hover States in Dark Mode */
+html.dark tr.hover\:bg-slate-50:hover,
+html.dark .hover\:bg-slate-50:hover {
+  background-color: #1E293B !important;
+}
+
+/* Footers */
+html.dark footer {
+  background-color: #070A12 !important;
+  border-color: #1E293B !important;
+}
+
+/* Code & Pre */
+html.dark pre,
+html.dark code:not(.hljs) {
+  background-color: #0B0F19 !important;
+  color: #E2E8F0 !important;
+  border-color: #1E293B !important;
+}
+
+/* Subtle background overrides */
+html.dark .bg-slate-900 {
+  background-color: #0F172A !important;
+}
+
+/* Modals */
+html.dark #qr-modal > div,
+html.dark #language-modal > div,
+html.dark #cookie-settings-modal > div {
+  background-color: #111827 !important;
+  color: #F8FAFC !important;
+  border-color: #1E293B !important;
+}
+
+/* Google Translate Hidden Styles & Smooth Integration */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner-frame,
+iframe.goog-te-banner-frame {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+}
+
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+#google_translate_element {
+  display: none !important;
+}
+
+.skiptranslate:not(.allow-translate) {
+  display: none !important;
+}
+
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Custom Language Card Animations */
+.lang-card {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lang-card:hover {
+  transform: translateY(-2px);
+}

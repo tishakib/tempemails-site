@@ -15,7 +15,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/css/styles.css">
+  
+
+  <!-- Immediate Theme Init (Prevent FOUC) -->
+  <script>
+    (function(){try{const t=localStorage.getItem('tre_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();
+  </script>
   <link rel="canonical" href="https://www.tempemails.site/contact">
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-red-500 selection:text-white">
@@ -280,12 +285,29 @@
 
       </div>
 
-      <!-- Copyright -->
-      <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-        <p>&copy; 2026 tempemails.site. All rights reserved.</p>
-        <p class="flex items-center gap-1.5">
-          <span>Privacy-focused ephemeral email architecture</span>
-        </p>
+            <!-- Copyright & Controls -->
+      <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+        <div class="flex flex-col sm:flex-row items-center gap-2">
+          <p>&copy; 2026 tempemails.site. All rights reserved.</p>
+          <span class="hidden sm:inline text-slate-300">&bull;</span>
+          <p>Privacy-focused ephemeral email architecture</p>
+        </div>
+
+        <!-- Controls: Language & Theme -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Language Selector Button -->
+          <button type="button" onclick="window.openLanguageModal && window.openLanguageModal()" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:border-[#F4413D] text-slate-700 hover:text-[#F4413D] transition-all shadow-2xs font-medium text-xs cursor-pointer group">
+            <span id="footer-lang-flag">🌐</span>
+            <span id="footer-lang-name">English</span>
+            <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-[#F4413D] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+          </button>
+
+          <!-- Dark Mode Toggle Button -->
+          <button type="button" onclick="window.toggleDarkMode && window.toggleDarkMode()" id="footer-theme-toggle" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:border-[#F4413D] text-slate-700 hover:text-[#F4413D] transition-all shadow-2xs font-medium text-xs cursor-pointer">
+            <span id="footer-theme-icon">🌙</span>
+            <span id="footer-theme-text">Dark Mode</span>
+          </button>
+        </div>
       </div>
     </div>
   </footer>
@@ -399,5 +421,7 @@
 
   <!-- Advanced Privacy & Cookie Consent Manager -->
   <script src="./assets/js/cookie-consent.js"></script>
+  <!-- Neural Language Translator & Dark Mode Engine -->
+  <script src="/assets/js/translator-theme.js"></script>
 </body>
 </html>
