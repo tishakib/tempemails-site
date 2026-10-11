@@ -388,3 +388,105 @@ body {
 .lang-card:hover {
   transform: translateY(-2px);
 }
+
+/* ========================================================
+   LANGUAGE SELECTOR MODAL DEDICATED STYLES
+   Ensures 100% Identical, Spacious, Elegant Look on All Pages
+   ======================================================== */
+.lang-modal-box {
+  width: 95% !important;
+  max-width: 860px !important;
+  max-height: 84vh !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+html.dark .lang-modal-box {
+  background-color: #111827 !important;
+  border-color: #1E293B !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+.lang-search-box {
+  background-color: #F8FAFC !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0F172A !important;
+  font-size: 13px !important;
+}
+
+html.dark .lang-search-box {
+  background-color: #0B0F19 !important;
+  border-color: #334155 !important;
+  color: #F8FAFC !important;
+}
+
+.lang-card-item {
+  min-height: 58px !important;
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  color: #1E293B !important;
+  transition: all 0.18s ease-in-out !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  user-select: none !important;
+}
+
+.lang-card-item:hover {
+  transform: translateY(-2px) !important;
+  border-color: #F4413D !important;
+  background-color: #FFF5F5 !important;
+}
+
+html.dark .lang-card-item {
+  background-color: #162032 !important;
+  border-color: #2D3748 !important;
+  color: #F8FAFC !important;
+}
+
+html.dark .lang-card-item:hover {
+  background-color: #1E293B !important;
+  border-color: #F4413D !important;
+}
+
+.lang-card-item.active {
+  background-color: #FEE2E2 !important;
+  border-color: #F4413D !important;
+  color: #F4413D !important;
+  font-weight: 700 !important;
+}
+
+html.dark .lang-card-item.active {
+  background-color: rgba(244, 65, 61, 0.2) !important;
+  border-color: #F4413D !important;
+  color: #F87171 !important;
+}
+
+.lang-flag {
+  font-size: 26px !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+.lang-title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+}
+
+.lang-subtitle {
+  font-size: 11.5px !important;
+  color: #64748B !important;
+  line-height: 1.2 !important;
+}
+
+html.dark .lang-subtitle {
+  color: #94A3B8 !important;
+}
+

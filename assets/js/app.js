@@ -1399,15 +1399,15 @@ function renderCloudflareTurnstile(siteKey) {
         box.innerHTML = '';
         window.turnstileWidgetId = window.turnstile.render('#cf-turnstile-box', {
           sitekey: key,
-          theme: 'light',
-          size: 'compact',
+          theme: 'auto',
+          size: 'normal',
           action: 'inbox_protection',
           callback: async function(token) {
             window.turnstileToken = token;
             const desc = document.getElementById('turnstile-status-desc');
             if (desc) {
-              desc.textContent = 'Human visitor verified successfully.';
-              desc.className = 'text-[11px] font-semibold text-emerald-600';
+              desc.textContent = 'Human visitor verified successfully. Spam protected.';
+              desc.className = 'text-xs font-semibold text-emerald-600 block mt-0.5';
             }
             // If user has zero inboxes yet (first visit ever), automatically create initial inbox!
             if (state.inboxes.length === 0) {

@@ -245,42 +245,42 @@
 
     const modal = document.createElement('div');
     modal.id = 'language-modal';
-    modal.className = 'fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4';
+    modal.className = 'fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 sm:p-6';
     modal.innerHTML = `
-      <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative border border-slate-200 flex flex-col max-h-[85vh] animate-fade-in">
+      <div class="lang-modal-box rounded-2xl w-full p-6 sm:p-7 shadow-2xl relative flex flex-col animate-fade-in">
         <!-- Header -->
-        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div class="flex items-center gap-3">
-            <span class="text-2xl">🌐</span>
+            <span class="text-3xl">🌐</span>
             <div>
-              <h3 class="font-extrabold text-slate-900 text-lg">Select Language</h3>
-              <p class="text-xs text-slate-500">Real-time neural translation across 45+ international languages</p>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-lg sm:text-xl">Select Language / ভাষা নির্বাচন করুন</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">45+ International languages with real-time neural translation</p>
             </div>
           </div>
-          <button type="button" onclick="window.closeLanguageModal && window.closeLanguageModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer" aria-label="Close">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          <button type="button" onclick="window.closeLanguageModal && window.closeLanguageModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer" aria-label="Close">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
 
         <!-- Search Input -->
-        <div class="py-3">
+        <div class="py-3.5">
           <div class="relative">
             <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input type="text" id="lang-search-input" placeholder="Search language or country (e.g. Spanish, हिन्दी, العربية, বাংলা)..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#F4413D] transition-colors">
+            <input type="text" id="lang-search-input" placeholder="Search language or country (e.g. Hindi, Spanish, বাংলা, العربية, Deutsch)..." class="lang-search-box w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:border-[#F4413D] transition-colors">
           </div>
         </div>
 
-        <!-- Language Grid -->
-        <div id="language-grid-container" class="flex-1 overflow-y-auto pr-1 grid grid-cols-2 sm:grid-cols-3 gap-2.5 py-2">
+        <!-- Language Grid (3 Columns on Desktop, 2 on Mobile, Scrollable) -->
+        <div id="language-grid-container" class="flex-1 overflow-y-auto pr-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 py-2">
         </div>
 
         <!-- Footer -->
-        <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-          <span class="flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
+          <span class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
             <span>Browser auto-detection active</span>
           </span>
-          <button type="button" onclick="window.setSiteLanguage && window.setSiteLanguage('en')" class="text-xs font-semibold text-[#F4413D] hover:underline cursor-pointer">
+          <button type="button" onclick="window.setSiteLanguage && window.setSiteLanguage('en')" class="text-xs font-bold text-[#F4413D] hover:underline cursor-pointer">
             Reset to English (Default)
           </button>
         </div>
@@ -335,7 +335,7 @@
 
     if (filtered.length === 0) {
       container.innerHTML = `
-        <div class="col-span-full py-8 text-center text-slate-400 text-xs">
+        <div class="col-span-full py-12 text-center text-slate-400 text-sm">
           No languages found matching "${query}".
         </div>
       `;
@@ -346,24 +346,20 @@
       const isActive = code === activeCode;
       const card = document.createElement('button');
       card.type = 'button';
-      card.className = `lang-card text-left p-2.5 rounded-xl border flex items-center justify-between gap-2.5 cursor-pointer transition-all ${
-        isActive
-          ? 'bg-red-50/70 border-[#F4413D] text-[#F4413D] font-bold shadow-2xs'
-          : 'bg-white border-slate-200 hover:border-[#F4413D]/50 hover:bg-slate-50 text-slate-700'
-      }`;
+      card.className = `lang-card-item ${isActive ? 'active' : ''}`;
       card.onclick = function () {
         setSiteLanguage(code);
       };
 
       card.innerHTML = `
-        <div class="flex items-center gap-2.5 overflow-hidden">
-          <span class="text-xl shrink-0">${item.flag}</span>
+        <div class="flex items-center gap-3 overflow-hidden">
+          <span class="lang-flag">${item.flag}</span>
           <div class="truncate">
-            <div class="text-xs font-bold truncate leading-tight">${item.native}</div>
-            <div class="text-[10px] text-slate-400 truncate leading-tight">${item.name}</div>
+            <div class="lang-title truncate">${item.native}</div>
+            <div class="lang-subtitle truncate">${item.name}</div>
           </div>
         </div>
-        ${isActive ? '<span class="text-[#F4413D] text-sm shrink-0 font-bold">✓</span>' : ''}
+        ${isActive ? '<span class="text-[#F4413D] text-base font-extrabold shrink-0">✓</span>' : ''}
       `;
 
       container.appendChild(card);
