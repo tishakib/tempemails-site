@@ -25,6 +25,13 @@
   <script>
     (function(){try{const t=localStorage.getItem('tre_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();
   </script>
+  <!-- Vercel Web Analytics & Speed Insights -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex items-center justify-center p-6 text-center font-sans">
   <div class="max-w-md bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
