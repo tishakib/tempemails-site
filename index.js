@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const { renderArticleHtml, renderBlogListingHtml } = require('./blog_renderer.js');
 
 // Load environment variables from .env if present (zero-dependency pure Node.js)
 function loadEnv() {
@@ -1010,6 +1011,41 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     return true;
   }
 
+function syncBlogStaticFiles(store) {
+  try {
+    const blogDir = path.join(PUBLIC_DIR, 'blog');
+    if (!fs.existsSync(blogDir)) fs.mkdirSync(blogDir, { recursive: true });
+
+    // Update blog listing page
+    const listingHtml = renderBlogListingHtml(store.blogs || []);
+    fs.writeFileSync(path.join(PUBLIC_DIR, 'blog.html'), listingHtml, 'utf8');
+
+    // Update individual articles
+    (store.blogs || []).forEach(b => {
+      const artHtml = renderArticleHtml(b, store.blogs);
+      fs.writeFileSync(path.join(blogDir, b.slug + '.html'), artHtml, 'utf8');
+    });
+
+    // Update sitemap.xml
+    const sitemapPath = path.join(PUBLIC_DIR, 'sitemap.xml');
+    let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    sitemapXml += `  <url>\n    <loc>https://www.tempemails.site/</loc>\n    <lastmod>2026-10-13</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
+    sitemapXml += `  <url>\n    <loc>https://www.tempemails.site/about</loc>\n    <lastmod>2026-10-13</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+    sitemapXml += `  <url>\n    <loc>https://www.tempemails.site/faq</loc>\n    <lastmod>2026-10-13</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+    sitemapXml += `  <url>\n    <loc>https://www.tempemails.site/contact</loc>\n    <lastmod>2026-10-13</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+    sitemapXml += `  <url>\n    <loc>https://www.tempemails.site/blog</loc>\n    <lastmod>2026-10-13</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+    (store.blogs || []).forEach(b => {
+      const mod = b.updated_at ? b.updated_at.substring(0, 10) : (b.created_at ? b.created_at.substring(0, 10) : '2026-10-13');
+      sitemapXml += `  <url>\n    <loc>https://www.tempemails.site/blog/${b.slug}</loc>\n    <lastmod>${mod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+    });
+    sitemapXml += `  <url>\n    <loc>https://www.tempemails.site/privacy</loc>\n    <lastmod>2026-10-13</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.5</priority>\n  </url>\n`;
+    sitemapXml += `  <url>\n    <loc>https://www.tempemails.site/terms</loc>\n    <lastmod>2026-10-13</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.5</priority>\n  </url>\n</urlset>\n`;
+    fs.writeFileSync(sitemapPath, sitemapXml, 'utf8');
+  } catch (err) {
+    console.error('Error syncing blog static files:', err);
+  }
+}
+
   if (pathname === '/api/admin/blogs' && method === 'POST') {
     const body = await parseJsonBody(req);
     const store = getStore();
@@ -1052,6 +1088,7 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
     }
 
     saveStore(store);
+    syncBlogStaticFiles(store);
     sendJson(res, 200, { success: true, blog: blogData });
     return true;
   }
@@ -1059,8 +1096,16 @@ async function handleApiRequest(req, res, pathname, method, parsedUrl) {
   if (pathname === '/api/admin/blogs' && method === 'DELETE') {
     const id = parsedUrl.query.id;
     const store = getStore();
+    const blogToDelete = (store.blogs || []).find(b => b.id === id);
+    if (blogToDelete) {
+      try {
+        const filePath = path.join(PUBLIC_DIR, 'blog', blogToDelete.slug + '.html');
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      } catch (e) {}
+    }
     store.blogs = (store.blogs || []).filter(b => b.id !== id);
     saveStore(store);
+    syncBlogStaticFiles(store);
     sendJson(res, 200, { success: true });
     return true;
   }
@@ -1544,13 +1589,28 @@ const requestHandler = async (req, res) => {
     reqPath = '/admin-shakib.html';
   } else if (reqPath === '/' || reqPath === '') {
     reqPath = '/index.html';
-  } else if (reqPath === '/blog' || reqPath === '/blog/') {
+  } else if (reqPath === '/blog' || reqPath === '/blog/' || reqPath === '/blog.html') {
+    const store = getStore();
+    if (store.blogs && store.blogs.length > 0) {
+      const html = renderBlogListingHtml(store.blogs);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(html);
+      return;
+    }
     reqPath = '/blog.html';
   }
 
   // Handle Clean /blog/:slug routes
   if (reqPath.startsWith('/blog/')) {
     const slug = reqPath.replace(/^\/blog\//, '').replace(/\/$/, '');
+    const store = getStore();
+    const blog = (store.blogs || []).find(b => b.slug === slug);
+    if (blog) {
+      const html = renderArticleHtml(blog, store.blogs);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(html);
+      return;
+    }
     const articleFile = path.join(PUBLIC_DIR, 'blog', slug + '.html');
     if (fs.existsSync(articleFile)) {
       reqPath = path.join('blog', slug + '.html');

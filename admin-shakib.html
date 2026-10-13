@@ -776,7 +776,7 @@
 
           <!-- Permalink Slug -->
           <div class="flex items-center gap-2 bg-slate-950 px-3 py-2 rounded-xl border border-slate-800 text-xs">
-            <span class="text-slate-500 font-mono">Permalink: tempemails.site/blog-article.html?slug=</span>
+            <span class="text-slate-500 font-mono">Permalink: tempemails.site/blog/</span>
             <input type="text" id="blog-editor-slug" placeholder="how-to-protect-privacy" oninput="updateGooglePreview()" class="flex-1 bg-transparent text-red-400 font-mono focus:outline-none text-xs">
           </div>
 
@@ -1456,7 +1456,7 @@
                     <button onclick="openBlogEditor('${b.id}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg text-xs transition-colors flex items-center gap-1">
                       <span>Edit</span>
                     </button>
-                    <a href="./blog-article.html?slug=${encodeURIComponent(b.slug)}" target="_blank" class="px-2.5 py-1.5 bg-slate-800/60 hover:bg-slate-800 text-slate-300 rounded-lg text-xs transition-colors">
+                    <a href="/blog/${encodeURIComponent(b.slug)}" target="_blank" class="px-2.5 py-1.5 bg-slate-800/60 hover:bg-slate-800 text-slate-300 rounded-lg text-xs transition-colors">
                       View
                     </a>
                     <button onclick="deleteBlog('${b.id}')" class="px-2.5 py-1.5 text-red-400 hover:bg-red-500/10 rounded-lg text-xs transition-colors">
@@ -1494,7 +1494,9 @@
           document.getElementById('blog-editor-status').value = blog.status || 'published';
           document.getElementById('blog-editor-image-url').value = blog.cover_image || '';
           document.getElementById('blog-image-preview').src = blog.cover_image || '';
-          wysiwyg.innerHTML = blog.content_html || `<p>${blog.summary || ''}</p>`;
+          const bodyHtml = blog.content_html || `<p>${blog.summary || ''}</p>`;
+          wysiwyg.innerHTML = bodyHtml;
+          htmlTextarea.value = bodyHtml;
           document.getElementById('studio-modal-heading').textContent = `Editing: ${blog.title.substring(0, 30)}...`;
           document.getElementById('studio-publish-btn-text').textContent = 'Update Article';
         }
