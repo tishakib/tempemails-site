@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4413D" />
+      <stop offset="100%" stop-color="#DC2626" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.95" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+    <filter id="glowRed" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="60" />
+    </filter>
+    <filter id="glowBlue" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="60" />
+    </filter>
+  </defs>
+
+  <!-- Background Layer -->
+  <rect width="1200" height="630" fill="url(#bgGrad)" />
+
+  <!-- Ambient Glowing Blobs -->
+  <circle cx="150" cy="150" r="240" fill="#F4413D" opacity="0.12" filter="url(#glowRed)" />
+  <circle cx="1050" cy="480" r="240" fill="#3B82F6" opacity="0.08" filter="url(#glowBlue)" />
+
+  <!-- Grid overlay -->
+  <g stroke="#334155" stroke-width="1" opacity="0.2">
+    <line x1="0" y1="105" x2="1200" y2="105" />
+    <line x1="0" y1="210" x2="1200" y2="210" />
+    <line x1="0" y1="315" x2="1200" y2="315" />
+    <line x1="0" y1="420" x2="1200" y2="420" />
+    <line x1="0" y1="525" x2="1200" y2="525" />
+    <line x1="200" y1="0" x2="200" y2="630" />
+    <line x1="400" y1="0" x2="400" y2="630" />
+    <line x1="600" y1="0" x2="600" y2="630" />
+    <line x1="800" y1="0" x2="800" y2="630" />
+    <line x1="1000" y1="0" x2="1000" y2="630" />
+  </g>
+
+  <!-- Top Header / Brand Watermark -->
+  <g transform="translate(80, 70)">
+    <rect width="42" height="42" rx="10" fill="url(#brandGrad)" />
+    <text x="21" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="20" fill="#FFFFFF" text-anchor="middle">T</text>
+    <text x="56" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="22" fill="#FFFFFF">tempemails<tspan fill="#F4413D">.site</tspan></text>
+  </g>
+
+  <!-- Category Tag -->
+  <g transform="translate(80, 140)">
+    <rect width="210" height="34" rx="17" fill="#F4413D" fill-opacity="0.15" stroke="#F4413D" stroke-opacity="0.4" stroke-width="1.5" />
+    <text x="105" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="12" fill="#F87171" text-anchor="middle" letter-spacing="1">DIGITAL PRIVACY</text>
+  </g>
+
+  <!-- Main Title & Subtitle Container -->
+  <g transform="translate(80, 220)">
+    <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="34" fill="#F8FAFC" letter-spacing="-0.5">
+      <tspan x="0" dy="0">Why Do We Need a Temporary Email?</tspan>
+    </text>
+    <text x="0" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="400" font-size="18" fill="#94A3B8">
+      7 reasons to stop giving away your permanent personal address
+    </text>
+  </g>
+
+  <!-- Right Visual / Diagram Area -->
+  <g transform="translate(680, 110)" filter="url(#shadow)">
+    <rect width="440" height="420" rx="24" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5" />
+    
+      <g transform="translate(40, 45)">
+        <rect x="0" y="0" width="360" height="250" rx="16" fill="#0F172A" stroke="#F4413D" stroke-width="2" />
+        <text x="25" y="35" font-family="sans-serif" font-size="14" font-weight="bold" fill="#F87171">&#x1F6E1; 7 CORE PRIVACY PILLARS</text>
+        <text x="25" y="65" font-family="sans-serif" font-size="11" fill="#E2E8F0">1. Complete Spam Elimination</text>
+        <text x="25" y="90" font-family="sans-serif" font-size="11" fill="#E2E8F0">2. Corporate Data Breach Insulation</text>
+        <text x="25" y="115" font-family="sans-serif" font-size="11" fill="#E2E8F0">3. Zero Password &amp; Signup Fatigue</text>
+        <text x="25" y="140" font-family="sans-serif" font-size="11" fill="#E2E8F0">4. Effortless Free Trial Testing</text>
+        <text x="25" y="165" font-family="sans-serif" font-size="11" fill="#E2E8F0">5. Safe Public Wi-Fi Hotspot Access</text>
+        <text x="25" y="190" font-family="sans-serif" font-size="11" fill="#E2E8F0">6. Commercial Identity Shielding</text>
+        <text x="25" y="215" font-family="sans-serif" font-size="11" fill="#E2E8F0">7. Reclaiming Primary Inbox Sanity</text>
+      </g>
+    
+  </g>
+
+  <!-- Bottom Metadata Bar -->
+  <g transform="translate(80, 545)">
+    <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#64748B" font-weight="500">
+      &#x1F6E1; Ephemeral Inbound Mail Architecture &#8226; Official tempemails.site Guide
+    </text>
+  </g>
+</svg>

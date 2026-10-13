@@ -26,7 +26,7 @@
   },
   "stats": {
     "lifetime_inboxes_created": 4,
-    "lifetime_messages_received": 17
+    "lifetime_messages_received": 18
   },
   "ads": {
     "master_enabled": false,
@@ -75,6 +75,19 @@
     }
   ],
   "messages": [
+    {
+      "id": "msg-1791905816255-293",
+      "inbox_address": "test-qa-recipient@tempemails.site",
+      "from": "security@service.com",
+      "from_name": "Service Security",
+      "subject": "Your 2FA Verification Code",
+      "body_html": "<p>Your verification code is <strong>948123</strong>.</p>",
+      "snippet": "Your verification code is 948123.",
+      "otp": "948123",
+      "partner_link": null,
+      "created_at": "2026-10-13T15:36:56.255Z",
+      "is_unread": true
+    },
     {
       "id": "msg-1791901333699-841",
       "inbox_address": "test-qa-recipient@tempemails.site",
@@ -380,6 +393,168 @@
       "cover_image": "/assets/img/blog/temporary-email-vs-email-alias.png",
       "summary": "Compare temporary disposable emails with email forwarding aliases. Learn the key tradeoffs in privacy, message retention, recovery, and daily usability.",
       "created_at": "2026-10-11T11:00:00.000Z"
+    },
+    {
+      "id": "blog-13",
+      "title": "Private Domains & Custom Temporary Email: Overcoming Domain Filters",
+      "slug": "temporary-email-with-private-domains",
+      "category": "Advanced Technology",
+      "cover_image": "/assets/img/blog/temporary-email-with-private-domains.svg",
+      "summary": "Discover why public temp mail domains get blocked, how private domain architecture works, and how custom domains ensure high deliverability for signups.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-14",
+      "title": "How to Receive SMS & Email OTP Verification Online in 5 Minutes",
+      "slug": "how-to-receive-otp-verification-online",
+      "category": "Tutorials & Guides",
+      "cover_image": "/assets/img/blog/how-to-receive-otp-verification-online.svg",
+      "summary": "Learn how to receive instant email verification codes and OTP tokens online in under 5 minutes without revealing your primary phone or personal email address.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-15",
+      "title": "How to Use Temporary Email on Android & Mobile: Full PWA & Browser Walkthrough",
+      "slug": "temporary-email-app-for-android-mobile",
+      "category": "Mobile & Apps",
+      "cover_image": "/assets/img/blog/temporary-email-app-for-android-mobile.svg",
+      "summary": "Discover how to access, manage, and pin temporary disposable email inboxes on Android devices using modern responsive web technology without installing untrusted APKs.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-16",
+      "title": "Top Mobile Games and Safe Gaming Registration via Anonymous Disposable Email",
+      "slug": "temporary-email-for-gaming-and-discord",
+      "category": "Gaming & Entertainment",
+      "cover_image": "/assets/img/blog/temporary-email-for-gaming-and-discord.svg",
+      "summary": "Discover how to register for online mobile games, Discord servers, and beta playtests safely without exposing your primary email to gaming data breaches.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-17",
+      "title": "What Is Ransomware? How Disposable Email Protects Against Phishing Attacks",
+      "slug": "what-is-ransomware-and-phishing-protection",
+      "category": "Cybersecurity",
+      "cover_image": "/assets/img/blog/what-is-ransomware-and-phishing-protection.svg",
+      "summary": "Understand the mechanics of ransomware and malicious email attachments, and learn how disposable inboxes prevent spear-phishing from reaching your primary computer.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-18",
+      "title": "Using Disposable Email for Social Media: Facebook, Twitter & Forum Signups Safely",
+      "slug": "disposable-email-for-social-media-facebook",
+      "category": "Privacy Strategy",
+      "cover_image": "/assets/img/blog/disposable-email-for-social-media-facebook.svg",
+      "summary": "Learn how to use disposable temporary email addresses to create privacy-focused social media accounts, browse forums, and protect yourself from social graph tracking.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-19",
+      "title": "How to Protect Your Online Business from Email Spam, Data Harvesting & Scraping",
+      "slug": "how-to-protect-your-online-business",
+      "category": "Business Security",
+      "cover_image": "/assets/img/blog/how-to-protect-your-online-business.svg",
+      "summary": "Discover proven strategies to protect your commercial website, domain, and staff email addresses from automated scraping bots, spam lists, and data harvesters.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-20",
+      "title": "Using Disposable Email in Google Chrome & Desktop Browsers: Workflow Tips",
+      "slug": "temporary-email-chrome-extension-desktop",
+      "category": "Productivity & Browsers",
+      "cover_image": "/assets/img/blog/temporary-email-chrome-extension-desktop.svg",
+      "summary": "Learn how to streamline your web browsing workflow on Google Chrome, Edge, and desktop browsers using instant disposable email shortcuts without installing risky extensions.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-21",
+      "title": "How to Stay Anonymous on the Internet in 2026: Privacy Habits & Ephemeral Inboxes",
+      "slug": "how-to-stay-anonymous-on-the-internet",
+      "category": "Digital Privacy",
+      "cover_image": "/assets/img/blog/how-to-stay-anonymous-on-the-internet.svg",
+      "summary": "A comprehensive modern guide to reclaiming your digital privacy in 2026. Discover practical techniques to minimize your digital footprint using disposable identities.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-22",
+      "title": "Disposable Email as a Marketing Tool: Competitor Audits, Funnel Testing & Privacy",
+      "slug": "disposable-email-as-a-marketer-tool",
+      "category": "Digital Marketing",
+      "cover_image": "/assets/img/blog/disposable-email-as-a-marketer-tool.svg",
+      "summary": "How growth marketers, SEO specialists, and digital agencies use disposable temporary inboxes to audit competitor email funnels, test onboarding flows, and protect agency domains.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-23",
+      "title": "Anonymous File Transfer & Secure Document Delivery Using Disposable Email",
+      "slug": "anonymous-file-transfer-using-disposable-mail",
+      "category": "Security & Files",
+      "cover_image": "/assets/img/blog/anonymous-file-transfer-using-disposable-mail.svg",
+      "summary": "Discover how to safely receive documents, download links, and files from third-party services anonymously using temporary disposable email architecture.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-24",
+      "title": "Why Do We Need a Temporary Email? 7 Reasons to Stop Giving Away Your Real Address",
+      "slug": "why-do-we-need-a-temporary-email",
+      "category": "Digital Privacy",
+      "cover_image": "/assets/img/blog/why-do-we-need-a-temporary-email.svg",
+      "summary": "Discover the top 7 compelling reasons why modern internet users need a temporary disposable email address to safeguard their personal data and eliminate inbox clutter.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-25",
+      "title": "Temporary Email as a Personal Spam Firewall: Shielding Your Primary Mailbox",
+      "slug": "temp-email-address-firewall-spam-protection",
+      "category": "Cybersecurity & Spam",
+      "cover_image": "/assets/img/blog/temp-email-address-firewall-spam-protection.svg",
+      "summary": "Discover how treating temporary disposable email as an architectural firewall insulates your primary mailbox from junk mail, marketing floods, and identity tracking.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-26",
+      "title": "The Technology Behind Disposable Email: Cloudflare Routing, Edge Workers & MIME Parsing",
+      "slug": "the-technology-behind-disposable-email",
+      "category": "Engineering & Tech",
+      "cover_image": "/assets/img/blog/the-technology-behind-disposable-email.svg",
+      "summary": "A deep technical dive into the cloud architecture of modern temporary email services: SMTP routing, Cloudflare Email Workers, MIME parsing, and zero-trust security.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-27",
+      "title": "How to Connect to Public Wi-Fi Without Spam Ads Using an Anonymous Email",
+      "slug": "block-ads-public-wifi-using-anonymous-email",
+      "category": "Tutorials & Guides",
+      "cover_image": "/assets/img/blog/block-ads-public-wifi-using-anonymous-email.svg",
+      "summary": "Learn how to access airport, café, and hotel public Wi-Fi networks safely using disposable temporary email addresses without sacrificing your personal inbox.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-28",
+      "title": "Temporary Email for Free eBooks, Whitepapers & Lead Magnet Downloads",
+      "slug": "temporary-email-for-free-ebooks-whitepapers",
+      "category": "Productivity & Research",
+      "cover_image": "/assets/img/blog/temporary-email-for-free-ebooks-whitepapers.svg",
+      "summary": "Discover how to access gated educational content, industry whitepapers, research studies, and free eBooks without opening your inbox to aggressive sales outreach.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-29",
+      "title": "Who Uses Temporary Email and for What Purposes? Real-World Personas & Case Studies",
+      "slug": "who-uses-temporary-mail-and-why",
+      "category": "Insights & Culture",
+      "cover_image": "/assets/img/blog/who-uses-temporary-mail-and-why.svg",
+      "summary": "An in-depth analysis of who uses disposable temporary email in 2026: software developers, privacy advocates, students, shoppers, and cybersecurity researchers.",
+      "created_at": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "blog-30",
+      "title": "tempemails.site vs Traditional Temp Mail Services: Multi-Inbox Advantage & Modern Privacy",
+      "slug": "best-temp-mail-services-comparison",
+      "category": "Comparisons & Reviews",
+      "cover_image": "/assets/img/blog/best-temp-mail-services-comparison.svg",
+      "summary": "An objective feature comparison between tempemails.site and legacy disposable mail services. Discover the architectural advantages of multi-inbox slots, stealth domains, and OTP extraction.",
+      "created_at": "2026-10-13T12:00:00.000Z"
     }
   ],
   "contacts": []
