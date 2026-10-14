@@ -221,6 +221,9 @@ function renderArticleHtml(article, allArticles = []) {
         ${contentBody}
       </div>
 
+      <!-- Middle Ad Slot (In-Feed Responsive Banner) -->
+      <div id="ad-slot-middle" class="hidden my-8 w-full flex justify-center items-center"></div>
+
       <!-- Call to Action Banner -->
       <div class="p-6 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl border border-red-200 mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
@@ -342,6 +345,8 @@ function renderArticleHtml(article, allArticles = []) {
   <script src="/assets/js/cookie-consent.js"></script>
   <!-- Neural Language Translator & Dark Mode Engine -->
   <script src="/assets/js/translator-theme.js"></script>
+  <!-- Dynamic Ads Loader (Adsterra & Monetization Engine) -->
+  <script src="/assets/js/ads-loader.js" defer></script>
 </body>
 </html>`;
 }
@@ -596,6 +601,8 @@ function renderBlogListingHtml(allArticles = []) {
   <script src="/assets/js/cookie-consent.js"></script>
   <!-- Neural Language Translator & Dark Mode Engine -->
   <script src="/assets/js/translator-theme.js"></script>
+  <!-- Dynamic Ads Loader (Adsterra & Monetization Engine) -->
+  <script src="/assets/js/ads-loader.js" defer></script>
 </body>
 </html>`;
 }

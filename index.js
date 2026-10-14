@@ -81,11 +81,48 @@ const initialData = {
     lifetime_messages_received: 0
   },
   ads: {
-    master_enabled: false,
-    top_banner: { enabled: false, code: '', label: 'Top Leaderboard (728x90 Desktop / 320x50 Mobile)' },
-    middle_banner: { enabled: false, code: '', label: 'Below Generator (728x90 or 300x250)' },
-    sidebar_banner: { enabled: false, code: '', label: 'Sidebar / Content (300x250 or 160x600)' },
-    bottom_banner: { enabled: false, code: '', label: 'Bottom Footer Banner (728x90)' }
+    master_enabled: true,
+    top_banner: {
+      enabled: false,
+      code: '<script>\n  atOptions = {\n    \'key\' : \'998980c77b247e4519d3ef80c6b4337f\',\n    \'format\' : \'iframe\',\n    \'height\' : 90,\n    \'width\' : 728,\n    \'params\' : {}\n  };\n</script>\n<script src="https://dozenfourteen.com/998980c77b247e4519d3ef80c6b4337f/invoke.js"></script>',
+      label: 'Top Leaderboard 728x90 (Desktop Header)'
+    },
+    top_banner_mobile: {
+      enabled: false,
+      code: '<script>\n  atOptions = {\n    \'key\' : \'840beb38503f6b84a0e715995ff066d5\',\n    \'format\' : \'iframe\',\n    \'height\' : 50,\n    \'width\' : 320,\n    \'params\' : {}\n  };\n</script>\n<script src="https://dozenfourteen.com/840beb38503f6b84a0e715995ff066d5/invoke.js"></script>',
+      label: 'Top Mobile Banner 320x50 (Mobile Responsive Header)'
+    },
+    middle_banner: {
+      enabled: true,
+      code: '<script>\n  atOptions = {\n    \'key\' : \'40650a5451d8bdde6c95bca0370405d6\',\n    \'format\' : \'iframe\',\n    \'height\' : 250,\n    \'width\' : 300,\n    \'params\' : {}\n  };\n</script>\n<script src="https://dozenfourteen.com/40650a5451d8bdde6c95bca0370405d6/invoke.js"></script>',
+      label: 'In-Feed Banner 300x250 (Below Generator / Inbox)'
+    },
+    sidebar_banner: {
+      enabled: true,
+      code: '<script>\n  atOptions = {\n    \'key\' : \'729691baba222a98f9a85138b0b4f27f\',\n    \'format\' : \'iframe\',\n    \'height\' : 600,\n    \'width\' : 160,\n    \'params\' : {}\n  };\n</script>\n<script src="https://dozenfourteen.com/729691baba222a98f9a85138b0b4f27f/invoke.js"></script>',
+      label: 'Sidebar Skyscraper 160x600 (Desktop Left)'
+    },
+    sidebar_banner_right: {
+      enabled: true,
+      code: '<script>\n  atOptions = {\n    \'key\' : \'48b714fe1655d13f67500285043aba10\',\n    \'format\' : \'iframe\',\n    \'height\' : 300,\n    \'width\' : 160,\n    \'params\' : {}\n  };\n</script>\n<script src="https://dozenfourteen.com/48b714fe1655d13f67500285043aba10/invoke.js"></script>',
+      label: 'Sidebar Banner 160x300 (Desktop Right)'
+    },
+    bottom_banner: {
+      enabled: true,
+      code: '<script>\n  atOptions = {\n    \'key\' : \'8ce559fce9e84576cd6c5e466fe4195a\',\n    \'format\' : \'iframe\',\n    \'height\' : 60,\n    \'width\' : 468,\n    \'params\' : {}\n  };\n</script>\n<script src="https://dozenfourteen.com/8ce559fce9e84576cd6c5e466fe4195a/invoke.js"></script>',
+      label: 'Bottom Leaderboard 468x60 (Above Footer)'
+    },
+    popunder: {
+      enabled: true,
+      code: '<script src="https://dozenfourteen.com/e8/75/4f/e8754f3d26f6be3a5b86e8ba6235d727.js"></script>',
+      label: 'Popunder / Onclick Script (Adsterra High CPM)'
+    },
+    social_bar: {
+      enabled: true,
+      code: '<script src="https://dozenfourteen.com/01/9c/1c/019c1c2266a6b2bc6ab0ef220dc9b9b7.js"></script>',
+      label: 'Social Bar / In-Page Push (Adsterra High CTR)'
+    },
+    updated_at: 1791965366704
   },
   inboxes: [],
   messages: [],
@@ -1393,6 +1430,7 @@ function syncBlogStaticFiles(store) {
     if (body.bottom_banner) store.ads.bottom_banner = body.bottom_banner;
     if (body.popunder) store.ads.popunder = body.popunder;
     if (body.social_bar) store.ads.social_bar = body.social_bar;
+    store.ads.updated_at = body.updated_at || Date.now();
 
     saveStore(store);
     sendJson(res, 200, { success: true, message: 'Ads configuration successfully updated!', ads: store.ads });

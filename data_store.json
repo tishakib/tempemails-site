@@ -26,19 +26,17 @@
   },
   "stats": {
     "lifetime_inboxes_created": 4,
-    "lifetime_messages_received": 22
+    "lifetime_messages_received": 25
   },
   "ads": {
     "master_enabled": true,
     "top_banner": {
-      "enabled": true,
-      "code": "<script>\n  atOptions = {\n    'key' : '998980c77b247e4519d3ef80c6b4337f',\n    'format' : 'iframe',\n    'height' : 90,\n    'width' : 728,\n    'params' : {}\n  };\n</script>\n<script src=\"https://dozenfourteen.com/998980c77b247e4519d3ef80c6b4337f/invoke.js\"></script>",
-      "label": "Top Leaderboard 728x90 (Desktop Header)"
+      "enabled": false,
+      "code": "<script>\n  atOptions = {\n    'key' : '998980c77b247e4519d3ef80c6b4337f',\n    'format' : 'iframe',\n    'height' : 90,\n    'width' : 728,\n    'params' : {}\n  };\n</script>\n<script src=\"https://dozenfourteen.com/998980c77b247e4519d3ef80c6b4337f/invoke.js\"></script>"
     },
     "top_banner_mobile": {
-      "enabled": true,
-      "code": "<script>\n  atOptions = {\n    'key' : '840beb38503f6b84a0e715995ff066d5',\n    'format' : 'iframe',\n    'height' : 50,\n    'width' : 320,\n    'params' : {}\n  };\n</script>\n<script src=\"https://dozenfourteen.com/840beb38503f6b84a0e715995ff066d5/invoke.js\"></script>",
-      "label": "Top Mobile Banner 320x50 (Mobile Responsive Header)"
+      "enabled": false,
+      "code": "<script>\n  atOptions = {\n    'key' : '840beb38503f6b84a0e715995ff066d5',\n    'format' : 'iframe',\n    'height' : 50,\n    'width' : 320,\n    'params' : {}\n  };\n</script>\n<script src=\"https://dozenfourteen.com/840beb38503f6b84a0e715995ff066d5/invoke.js\"></script>"
     },
     "middle_banner": {
       "enabled": true,
@@ -69,7 +67,8 @@
       "enabled": true,
       "code": "<script src=\"https://dozenfourteen.com/01/9c/1c/019c1c2266a6b2bc6ab0ef220dc9b9b7.js\"></script>",
       "label": "Social Bar / In-Page Push (Adsterra High CTR)"
-    }
+    },
+    "updated_at": 1791965773372
   },
   "inboxes": [
     {
@@ -162,7 +161,7 @@
       "author": "tempemails.site Editorial Team",
       "read_time": "7 min read",
       "status": "published",
-      "updated_at": "2026-10-14T07:48:10.723Z",
+      "updated_at": "2026-10-14T08:16:18.007Z",
       "created_at": "2026-10-10T12:00:00.000Z"
     },
     {

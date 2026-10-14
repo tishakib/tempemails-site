@@ -1491,37 +1491,53 @@
       updateAdsMasterBadge();
 
       if (ads.top_banner) {
-        document.getElementById('ad-top-enabled').checked = ads.top_banner.enabled !== false;
+        document.getElementById('ad-top-enabled').checked = Boolean(ads.top_banner.enabled);
         document.getElementById('ad-top-code').value = ads.top_banner.code || '';
       }
       if (ads.top_banner_mobile) {
-        document.getElementById('ad-top-mobile-enabled').checked = ads.top_banner_mobile.enabled !== false;
+        document.getElementById('ad-top-mobile-enabled').checked = Boolean(ads.top_banner_mobile.enabled);
         document.getElementById('ad-top-mobile-code').value = ads.top_banner_mobile.code || '';
       }
       if (ads.middle_banner) {
-        document.getElementById('ad-middle-enabled').checked = ads.middle_banner.enabled !== false;
+        document.getElementById('ad-middle-enabled').checked = Boolean(ads.middle_banner.enabled);
         document.getElementById('ad-middle-code').value = ads.middle_banner.code || '';
       }
       if (ads.sidebar_banner) {
-        document.getElementById('ad-sidebar-enabled').checked = ads.sidebar_banner.enabled !== false;
+        document.getElementById('ad-sidebar-enabled').checked = Boolean(ads.sidebar_banner.enabled);
         document.getElementById('ad-sidebar-code').value = ads.sidebar_banner.code || '';
       }
       if (ads.sidebar_banner_right) {
-        document.getElementById('ad-sidebar-right-enabled').checked = ads.sidebar_banner_right.enabled !== false;
+        document.getElementById('ad-sidebar-right-enabled').checked = Boolean(ads.sidebar_banner_right.enabled);
         document.getElementById('ad-sidebar-right-code').value = ads.sidebar_banner_right.code || '';
       }
       if (ads.bottom_banner) {
-        document.getElementById('ad-bottom-enabled').checked = ads.bottom_banner.enabled !== false;
+        document.getElementById('ad-bottom-enabled').checked = Boolean(ads.bottom_banner.enabled);
         document.getElementById('ad-bottom-code').value = ads.bottom_banner.code || '';
       }
       if (ads.popunder) {
-        document.getElementById('ad-popunder-enabled').checked = ads.popunder.enabled !== false;
+        document.getElementById('ad-popunder-enabled').checked = Boolean(ads.popunder.enabled);
         document.getElementById('ad-popunder-code').value = ads.popunder.code || '';
       }
       if (ads.social_bar) {
-        document.getElementById('ad-social-bar-enabled').checked = ads.social_bar.enabled !== false;
+        document.getElementById('ad-social-bar-enabled').checked = Boolean(ads.social_bar.enabled);
         document.getElementById('ad-social-bar-code').value = ads.social_bar.code || '';
       }
+
+      initAdsAutoSave();
+    }
+
+    function initAdsAutoSave() {
+      const tab = document.getElementById('tab-ads');
+      if (!tab) return;
+      const checkboxes = tab.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => {
+        if (!cb.dataset.hasAdsListener) {
+          cb.dataset.hasAdsListener = 'true';
+          cb.addEventListener('change', () => {
+            saveAdminAds(true);
+          });
+        }
+      });
     }
 
     function hasConfiguredAds(adsObj) {
@@ -1531,6 +1547,8 @@
     }
 
     async function loadAdminAds() {
+      initAdsAutoSave();
+
       // 1. Immediately populate from localStorage so form is never blank on reload
       let localAds = null;
       try {
@@ -1551,13 +1569,24 @@
           const serverHasCodes = hasConfiguredAds(serverAds);
           const localHasCodes = hasConfiguredAds(localAds);
 
-          if (serverHasCodes) {
-            // Server has active codes, sync to localStorage & form
+          const localTime = (localAds && localAds.updated_at) ? Number(localAds.updated_at) : 0;
+          const serverTime = (serverAds && serverAds.updated_at) ? Number(serverAds.updated_at) : 0;
+
+          if (localAds && localHasCodes && localTime > serverTime) {
+            // Local is newer! Maintain user's explicit toggles and sync back to serverless container
+            console.log('Dual-persistence: Local ads are newer than server, syncing to backend...');
+            applyAdsToForm(localAds);
+            await fetch('/api/admin/ads', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(localAds)
+            });
+          } else if (serverHasCodes) {
+            // Server has current/newer configuration
             localStorage.setItem('tre_admin_persisted_ads', JSON.stringify(serverAds));
             applyAdsToForm(serverAds);
           } else if (localHasCodes) {
-            // Server container restarted (cold start) and wiped /tmp, but local storage has user's ads!
-            // Re-hydrate backend silently so frontend immediately recovers ads
+            // Server cold started with empty/default codes, re-hydrate from local
             console.log('Dual-persistence: Re-hydrating serverless backend with local ads cache...');
             await fetch('/api/admin/ads', {
               method: 'POST',
@@ -1580,7 +1609,7 @@
       }
     }
 
-    async function saveAdminAds() {
+    async function saveAdminAds(isAutoSave = false) {
       const payload = {
         master_enabled: document.getElementById('ad-master-enabled').checked,
         top_banner: {
@@ -1614,11 +1643,13 @@
         social_bar: {
           enabled: document.getElementById('ad-social-bar-enabled').checked,
           code: document.getElementById('ad-social-bar-code').value.trim()
-        }
+        },
+        updated_at: Date.now()
       };
 
       // 1. Immediately persist locally
       localStorage.setItem('tre_admin_persisted_ads', JSON.stringify(payload));
+      updateAdsMasterBadge();
 
       // 2. Persist to server backend
       try {
@@ -1628,8 +1659,11 @@
           body: JSON.stringify(payload)
         });
         const data = await res.json();
-        showToast(data.message || 'Ads configuration successfully updated!');
-        updateAdsMasterBadge();
+        if (isAutoSave) {
+          showToast('Ad status updated & saved automatically!', 'info');
+        } else {
+          showToast(data.message || 'Ads configuration successfully updated!');
+        }
       } catch (err) {
         showToast('Saved locally in browser, but server sync failed: ' + err.message, 'warning');
       }
