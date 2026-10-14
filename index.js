@@ -1389,6 +1389,8 @@ function syncBlogStaticFiles(store) {
     if (body.middle_banner) store.ads.middle_banner = body.middle_banner;
     if (body.sidebar_banner) store.ads.sidebar_banner = body.sidebar_banner;
     if (body.bottom_banner) store.ads.bottom_banner = body.bottom_banner;
+    if (body.popunder) store.ads.popunder = body.popunder;
+    if (body.social_bar) store.ads.social_bar = body.social_bar;
 
     saveStore(store);
     sendJson(res, 200, { success: true, message: 'Ads configuration successfully updated!', ads: store.ads });

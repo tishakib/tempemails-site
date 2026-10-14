@@ -439,6 +439,60 @@
           </button>
         </div>
 
+        <!-- Adsterra & Monetization Strategy Guide -->
+        <div class="bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-blue-500/10 border border-amber-500/30 rounded-2xl p-5 space-y-3">
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">💰</span>
+            <div class="flex-1">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <span>Adsterra Monetization Strategy & Setup Guide</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">MAX REVENUE</span>
+              </h3>
+              <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                Adsterra provides 9+ ad formats. <strong>You do NOT need to put all 9 formats on the site!</strong> Pasting all 9 formats slows page loading and creates a spammy layout.
+                To earn maximum revenue while keeping the temporary email inbox ultra-fast and clean, use these <strong>3 to 4 recommended formats</strong>:
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl">
+                  <div class="text-[11px] font-bold text-amber-400 flex items-center justify-between">
+                    <span>1. Popunder</span>
+                    <span class="text-[9px] bg-amber-500/20 px-1.5 py-0.5 rounded text-amber-300">Top CPM</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400 mt-1">Slot 5. Triggers in a background tab when visitor interacts with inbox. Highest revenue generator.</div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl">
+                  <div class="text-[11px] font-bold text-purple-400 flex items-center justify-between">
+                    <span>2. Social Bar</span>
+                    <span class="text-[9px] bg-purple-500/20 px-1.5 py-0.5 rounded text-purple-300">Top CTR</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400 mt-1">Slot 6. Non-intrusive floating push notification. Very high click rate without breaking layout.</div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl">
+                  <div class="text-[11px] font-bold text-emerald-400 flex items-center justify-between">
+                    <span>3. Top Banner</span>
+                    <span class="text-[9px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-300">728x90</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400 mt-1">Slot 1. Placed right above the email generator box for instant viewability.</div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl">
+                  <div class="text-[11px] font-bold text-blue-400 flex items-center justify-between">
+                    <span>4. In-Feed Banner</span>
+                    <span class="text-[9px] bg-blue-500/20 px-1.5 py-0.5 rounded text-blue-300">300x250</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400 mt-1">Slot 2. Placed below the message list where users wait for incoming OTPs.</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 mt-3 text-[11px] text-slate-400">
+                <span class="text-emerald-400 font-bold flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  Dual-Persistence Active:
+                </span>
+                <span>Settings are stored in both serverless storage and browser local cache so they are never lost on reload or Vercel serverless sleep.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Master Switch Card -->
         <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center justify-between">
           <div>
@@ -453,14 +507,14 @@
           </label>
         </div>
 
-        <!-- 4 Ad Slots Grid -->
+        <!-- 6 Ad Slots Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           <!-- Slot 1: Top Leaderboard -->
           <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-red-400">Slot 1 &bull; Header</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Slot 1 &bull; Header</span>
                 <h4 class="font-bold text-white text-sm">Top Leaderboard Banner</h4>
                 <p class="text-[11px] text-slate-400">Position: Above the temporary email generator box</p>
               </div>
@@ -476,8 +530,11 @@
             </div>
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="text-xs font-semibold text-slate-400">AdSense / HTML Code:</label>
-                <button type="button" onclick="insertAdSenseTemplate('top')" class="text-[10px] text-red-400 hover:text-red-300">+ Insert AdSense Snippet</button>
+                <label class="text-xs font-semibold text-slate-400">AdSense / Adsterra / HTML Code:</label>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="insertAdSenseTemplate('top')" class="text-[10px] text-red-400 hover:text-red-300">+ AdSense</button>
+                  <button type="button" onclick="insertAdsterraBannerTemplate('top', 728, 90)" class="text-[10px] text-emerald-400 hover:text-emerald-300">+ Adsterra 728x90</button>
+                </div>
               </div>
               <textarea id="ad-top-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
             </div>
@@ -487,7 +544,7 @@
           <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-red-400">Slot 2 &bull; Content</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-400">Slot 2 &bull; Content</span>
                 <h4 class="font-bold text-white text-sm">In-Feed Responsive Banner</h4>
                 <p class="text-[11px] text-slate-400">Position: Between active inbox and guide content</p>
               </div>
@@ -498,13 +555,16 @@
             </div>
             <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
               <span class="font-semibold text-slate-300">Recommended Size:</span>
-              <span class="font-mono text-emerald-400">728x90 (Desktop)</span> &bull;
-              <span class="font-mono text-emerald-400">300x250 (Rectangle)</span>
+              <span class="font-mono text-blue-400">300x250 (Medium Rectangle)</span> &bull;
+              <span class="font-mono text-blue-400">728x90 (Desktop)</span>
             </div>
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="text-xs font-semibold text-slate-400">AdSense / HTML Code:</label>
-                <button type="button" onclick="insertAdSenseTemplate('middle')" class="text-[10px] text-red-400 hover:text-red-300">+ Insert AdSense Snippet</button>
+                <label class="text-xs font-semibold text-slate-400">AdSense / Adsterra / HTML Code:</label>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="insertAdSenseTemplate('middle')" class="text-[10px] text-red-400 hover:text-red-300">+ AdSense</button>
+                  <button type="button" onclick="insertAdsterraBannerTemplate('middle', 300, 250)" class="text-[10px] text-blue-400 hover:text-blue-300">+ Adsterra 300x250</button>
+                </div>
               </div>
               <textarea id="ad-middle-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
             </div>
@@ -514,7 +574,7 @@
           <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-red-400">Slot 3 &bull; Sidebar</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400">Slot 3 &bull; Sidebar</span>
                 <h4 class="font-bold text-white text-sm">Sidebar Sticky Skyscraper</h4>
                 <p class="text-[11px] text-slate-400">Position: Sticky Desktop Sidebars (Left / Right)</p>
               </div>
@@ -525,13 +585,16 @@
             </div>
             <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
               <span class="font-semibold text-slate-300">Recommended Size:</span>
-              <span class="font-mono text-emerald-400">160x600 (Desktop)</span> &bull;
-              <span class="font-mono text-emerald-400">300x600 (Wide)</span>
+              <span class="font-mono text-purple-400">160x600 (Desktop)</span> &bull;
+              <span class="font-mono text-purple-400">300x600 (Wide)</span>
             </div>
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="text-xs font-semibold text-slate-400">AdSense / HTML Code:</label>
-                <button type="button" onclick="insertAdSenseTemplate('sidebar')" class="text-[10px] text-red-400 hover:text-red-300">+ Insert AdSense Snippet</button>
+                <label class="text-xs font-semibold text-slate-400">AdSense / Adsterra / HTML Code:</label>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="insertAdSenseTemplate('sidebar')" class="text-[10px] text-red-400 hover:text-red-300">+ AdSense</button>
+                  <button type="button" onclick="insertAdsterraBannerTemplate('sidebar', 160, 600)" class="text-[10px] text-purple-400 hover:text-purple-300">+ Adsterra 160x600</button>
+                </div>
               </div>
               <textarea id="ad-sidebar-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
             </div>
@@ -541,7 +604,7 @@
           <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-red-400">Slot 4 &bull; Footer</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Slot 4 &bull; Footer</span>
                 <h4 class="font-bold text-white text-sm">Bottom Leaderboard Banner</h4>
                 <p class="text-[11px] text-slate-400">Position: Above the Website Footer</p>
               </div>
@@ -557,10 +620,67 @@
             </div>
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="text-xs font-semibold text-slate-400">AdSense / HTML Code:</label>
-                <button type="button" onclick="insertAdSenseTemplate('bottom')" class="text-[10px] text-red-400 hover:text-red-300">+ Insert AdSense Snippet</button>
+                <label class="text-xs font-semibold text-slate-400">AdSense / Adsterra / HTML Code:</label>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="insertAdSenseTemplate('bottom')" class="text-[10px] text-red-400 hover:text-red-300">+ AdSense</button>
+                  <button type="button" onclick="insertAdsterraBannerTemplate('bottom', 728, 90)" class="text-[10px] text-emerald-400 hover:text-emerald-300">+ Adsterra 728x90</button>
+                </div>
               </div>
               <textarea id="ad-bottom-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+            </div>
+          </div>
+
+          <!-- Slot 5: Popunder (Onclick High CPM Ad) -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Slot 5 &bull; Popunder (High CPM)</span>
+                <h4 class="font-bold text-white text-sm">Popunder / Onclick Script</h4>
+                <p class="text-[11px] text-slate-400">Opens ad tab behind visitor clicks. Highest revenue Adsterra format.</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="ad-popunder-enabled" class="sr-only peer" checked>
+                <div class="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
+              <span class="font-semibold text-slate-300">Format:</span>
+              <span class="font-mono text-amber-400">Adsterra Popunder Script</span> &bull;
+              <span class="text-slate-400">Injected globally into &lt;body&gt;</span>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-semibold text-slate-400">Popunder Script Code:</label>
+                <button type="button" onclick="insertPopunderTemplate()" class="text-[10px] text-amber-400 hover:text-amber-300">+ Insert Popunder Sample</button>
+              </div>
+              <textarea id="ad-popunder-code" rows="4" placeholder="<script type='text/javascript' src='//...popunder.js'></script>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+            </div>
+          </div>
+
+          <!-- Slot 6: Social Bar / In-Page Push -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400">Slot 6 &bull; Social Bar (High CTR)</span>
+                <h4 class="font-bold text-white text-sm">Social Bar / In-Page Push Script</h4>
+                <p class="text-[11px] text-slate-400">Floating push notification bar. High clicks without breaking layout.</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="ad-social-bar-enabled" class="sr-only peer" checked>
+                <div class="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
+              <span class="font-semibold text-slate-300">Format:</span>
+              <span class="font-mono text-purple-400">Adsterra Social Bar Script</span> &bull;
+              <span class="text-slate-400">Floating non-intrusive widget</span>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-semibold text-slate-400">Social Bar Script Code:</label>
+                <button type="button" onclick="insertSocialBarTemplate()" class="text-[10px] text-purple-400 hover:text-purple-300">+ Insert Social Bar Sample</button>
+              </div>
+              <textarea id="ad-social-bar-code" rows="4" placeholder="<script type='text/javascript' src='//...socialbar.js'></script>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
             </div>
           </div>
 
@@ -1332,27 +1452,69 @@
         document.getElementById('ad-bottom-enabled').checked = ads.bottom_banner.enabled !== false;
         document.getElementById('ad-bottom-code').value = ads.bottom_banner.code || '';
       }
+      if (ads.popunder) {
+        document.getElementById('ad-popunder-enabled').checked = ads.popunder.enabled !== false;
+        document.getElementById('ad-popunder-code').value = ads.popunder.code || '';
+      }
+      if (ads.social_bar) {
+        document.getElementById('ad-social-bar-enabled').checked = ads.social_bar.enabled !== false;
+        document.getElementById('ad-social-bar-code').value = ads.social_bar.code || '';
+      }
+    }
+
+    function hasConfiguredAds(adsObj) {
+      if (!adsObj) return false;
+      const slots = ['top_banner', 'middle_banner', 'sidebar_banner', 'bottom_banner', 'popunder', 'social_bar'];
+      return slots.some(k => adsObj[k] && adsObj[k].code && adsObj[k].code.trim().length > 0);
     }
 
     async function loadAdminAds() {
+      // 1. Immediately populate from localStorage so form is never blank on reload
+      let localAds = null;
+      try {
+        const local = localStorage.getItem('tre_admin_persisted_ads');
+        if (local) {
+          localAds = JSON.parse(local);
+          applyAdsToForm(localAds);
+        }
+      } catch (e) {
+        console.warn('Error reading local ads cache:', e);
+      }
+
+      // 2. Fetch latest ads configuration from backend
       try {
         const res = await fetch(`/api/admin/ads?_t=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
-          const ads = await res.json();
-          localStorage.setItem('tre_admin_persisted_ads', JSON.stringify(ads));
-          applyAdsToForm(ads);
+          const serverAds = await res.json();
+          const serverHasCodes = hasConfiguredAds(serverAds);
+          const localHasCodes = hasConfiguredAds(localAds);
+
+          if (serverHasCodes) {
+            // Server has active codes, sync to localStorage & form
+            localStorage.setItem('tre_admin_persisted_ads', JSON.stringify(serverAds));
+            applyAdsToForm(serverAds);
+          } else if (localHasCodes) {
+            // Server container restarted (cold start) and wiped /tmp, but local storage has user's ads!
+            // Re-hydrate backend silently so frontend immediately recovers ads
+            console.log('Dual-persistence: Re-hydrating serverless backend with local ads cache...');
+            await fetch('/api/admin/ads', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(localAds)
+            });
+            applyAdsToForm(localAds);
+          } else {
+            // Fresh state
+            applyAdsToForm(serverAds);
+          }
           return;
         }
       } catch (err) {
         console.error('Error loading ads configuration from server:', err);
       }
 
-      const local = localStorage.getItem('tre_admin_persisted_ads');
-      if (local) {
-        try {
-          const localObj = JSON.parse(local);
-          applyAdsToForm(localObj);
-        } catch (e) {}
+      if (localAds) {
+        applyAdsToForm(localAds);
       }
     }
 
@@ -1361,24 +1523,34 @@
         master_enabled: document.getElementById('ad-master-enabled').checked,
         top_banner: {
           enabled: document.getElementById('ad-top-enabled').checked,
-          code: document.getElementById('ad-top-code').value
+          code: document.getElementById('ad-top-code').value.trim()
         },
         middle_banner: {
           enabled: document.getElementById('ad-middle-enabled').checked,
-          code: document.getElementById('ad-middle-code').value
+          code: document.getElementById('ad-middle-code').value.trim()
         },
         sidebar_banner: {
           enabled: document.getElementById('ad-sidebar-enabled').checked,
-          code: document.getElementById('ad-sidebar-code').value
+          code: document.getElementById('ad-sidebar-code').value.trim()
         },
         bottom_banner: {
           enabled: document.getElementById('ad-bottom-enabled').checked,
-          code: document.getElementById('ad-bottom-code').value
+          code: document.getElementById('ad-bottom-code').value.trim()
+        },
+        popunder: {
+          enabled: document.getElementById('ad-popunder-enabled').checked,
+          code: document.getElementById('ad-popunder-code').value.trim()
+        },
+        social_bar: {
+          enabled: document.getElementById('ad-social-bar-enabled').checked,
+          code: document.getElementById('ad-social-bar-code').value.trim()
         }
       };
 
+      // 1. Immediately persist locally
       localStorage.setItem('tre_admin_persisted_ads', JSON.stringify(payload));
 
+      // 2. Persist to server backend
       try {
         const res = await fetch('/api/admin/ads', {
           method: 'POST',
@@ -1389,13 +1561,37 @@
         showToast(data.message || 'Ads configuration successfully updated!');
         updateAdsMasterBadge();
       } catch (err) {
-        showToast('Failed to save ads configuration.', 'error');
+        showToast('Saved locally in browser, but server sync failed: ' + err.message, 'warning');
       }
     }
 
     function insertAdSenseTemplate(slot) {
       const template = `<!-- Google AdSense Unit -->\n<ins class="adsbygoogle"\n     style="display:block"\n     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"\n     data-ad-slot="1234567890"\n     data-ad-format="auto"\n     data-full-width-responsive="true"></ins>\n<script>\n     (adsbygoogle = window.adsbygoogle || []).push({});\n<\/script>`;
       const target = document.getElementById(`ad-${slot}-code`);
+      if (target) {
+        target.value = template;
+      }
+    }
+
+    function insertAdsterraBannerTemplate(slot, width, height) {
+      const template = `<script type="text/javascript">\n\tatOptions = {\n\t\t'key' : 'YOUR_ADSTERRA_BANNER_KEY',\n\t\t'format' : 'iframe',\n\t\t'height' : ${height || 90},\n\t\t'width' : ${width || 728},\n\t\t'params' : {}\n\t};\n<\/script>\n<script type="text/javascript" src="//www.topcreativeformat.com/YOUR_ADSTERRA_BANNER_KEY/invoke.js"><\/script>`;
+      const target = document.getElementById(`ad-${slot}-code`);
+      if (target) {
+        target.value = template;
+      }
+    }
+
+    function insertPopunderTemplate() {
+      const template = `<!-- Adsterra Popunder / Onclick Script -->\n<script type='text/javascript' src='//pl00000000.highperformancegate.com/xx/yy/zz/xxyyzz.js'><\/script>`;
+      const target = document.getElementById('ad-popunder-code');
+      if (target) {
+        target.value = template;
+      }
+    }
+
+    function insertSocialBarTemplate() {
+      const template = `<!-- Adsterra Social Bar Script -->\n<script type='text/javascript' src='//pl00000000.highperformancegate.com/aa/bb/cc/aabbcc.js'><\/script>`;
+      const target = document.getElementById('ad-social-bar-code');
       if (target) {
         target.value = template;
       }

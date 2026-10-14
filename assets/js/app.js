@@ -1339,51 +1339,171 @@ function showToast(message, type = 'info') {
   }, 2800);
 }
 
+// Render Banner Ads inside an isolated iframe to allow document.write (Adsterra invoke.js) & isolate atOptions
+function renderBannerInIframe(container, rawCode, defaultHeight) {
+  if (!container || !rawCode || !rawCode.trim()) return;
+
+  container.innerHTML = '';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'w-full flex flex-col items-center justify-center overflow-hidden';
+
+  const label = document.createElement('span');
+  label.className = 'text-[9px] uppercase tracking-wider text-slate-400 font-semibold mb-1 select-none pointer-events-none';
+  label.textContent = 'Advertisement';
+  wrapper.appendChild(label);
+
+  const iframe = document.createElement('iframe');
+  iframe.className = 'w-full border-0 overflow-hidden';
+  iframe.style.width = '100%';
+  iframe.style.border = 'none';
+  iframe.style.overflow = 'hidden';
+  iframe.scrolling = 'no';
+  iframe.style.minHeight = (defaultHeight || 90) + 'px';
+  iframe.style.background = 'transparent';
+  iframe.setAttribute('loading', 'lazy');
+  iframe.setAttribute('title', 'Sponsored Advertisement');
+
+  wrapper.appendChild(iframe);
+  container.appendChild(wrapper);
+
+  try {
+    const doc = iframe.contentWindow || iframe.contentDocument;
+    const docObj = doc.document || doc;
+    docObj.open();
+    docObj.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base target="_blank">
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100%;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  ${rawCode}
+  <script>
+    function updateFrameHeight() {
+      try {
+        var h = document.body.scrollHeight || document.documentElement.scrollHeight;
+        if (h > 30 && window.frameElement) {
+          window.frameElement.style.height = h + 'px';
+        }
+      } catch(e) {}
+    }
+    window.addEventListener('load', updateFrameHeight);
+    setTimeout(updateFrameHeight, 800);
+    setTimeout(updateFrameHeight, 2000);
+  <\/script>
+</body>
+</html>`);
+    docObj.close();
+  } catch (err) {
+    console.error('Error rendering ad iframe:', err);
+  }
+}
+
+// Render Global Scripts (Popunder & Social Bar) attached to document.body
+function renderGlobalAdScript(tagId, config) {
+  const existing = document.getElementById(tagId);
+  if (!config || !config.enabled || !config.code || !config.code.trim()) {
+    if (existing) existing.remove();
+    return;
+  }
+
+  const codeStr = config.code.trim();
+  if (existing && existing.dataset.adCodeLen === String(codeStr.length)) {
+    return; // Already active with identical script
+  }
+  if (existing) existing.remove();
+
+  const container = document.createElement('div');
+  container.id = tagId;
+  container.dataset.adCodeLen = String(codeStr.length);
+  container.style.display = 'none';
+
+  const temp = document.createElement('div');
+  temp.innerHTML = codeStr;
+
+  const scripts = temp.querySelectorAll('script');
+  if (scripts.length > 0) {
+    scripts.forEach(oldScript => {
+      const s = document.createElement('script');
+      Array.from(oldScript.attributes).forEach(attr => s.setAttribute(attr.name, attr.value));
+      if (oldScript.src) {
+        s.src = oldScript.src;
+      } else {
+        s.textContent = oldScript.textContent;
+      }
+      s.async = true;
+      container.appendChild(s);
+    });
+  } else {
+    container.innerHTML = codeStr;
+  }
+
+  document.body.appendChild(container);
+}
+
 // Load and Render Dynamic Ads (or completely hide placeholders if disabled)
 async function loadAndRenderAds() {
   try {
-    const res = await fetch('/api/ads');
+    const res = await fetch(`/api/ads?_t=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) return;
     const ads = await res.json();
 
-    const slots = [
-      { id: 'ad-slot-top', config: ads.top_banner },
-      { id: 'ad-slot-middle', config: ads.middle_banner },
-      { id: 'ad-slot-sidebar', config: ads.sidebar_banner },
-      { id: 'ad-slot-sidebar-right', config: ads.sidebar_banner },
-      { id: 'ad-slot-bottom', config: ads.bottom_banner }
+    const bannerSlots = [
+      { id: 'ad-slot-top', config: ads.top_banner, defaultHeight: 90 },
+      { id: 'ad-slot-middle', config: ads.middle_banner, defaultHeight: 250 },
+      { id: 'ad-slot-sidebar', config: ads.sidebar_banner, defaultHeight: 600 },
+      { id: 'ad-slot-sidebar-right', config: ads.sidebar_banner, defaultHeight: 600 },
+      { id: 'ad-slot-bottom', config: ads.bottom_banner, defaultHeight: 90 }
     ];
 
-    slots.forEach(slot => {
+    if (!ads || !ads.master_enabled) {
+      bannerSlots.forEach(slot => {
+        const el = document.getElementById(slot.id);
+        if (el) {
+          el.classList.add('hidden');
+          el.innerHTML = '';
+        }
+      });
+      renderGlobalAdScript('adsterra-popunder-script', null);
+      renderGlobalAdScript('adsterra-socialbar-script', null);
+      return;
+    }
+
+    bannerSlots.forEach(slot => {
       const el = document.getElementById(slot.id);
       if (!el) return;
 
-      const isEnabled = ads.master_enabled && slot.config && slot.config.enabled && slot.config.code && slot.config.code.trim();
+      const isEnabled = slot.config && slot.config.enabled && slot.config.code && slot.config.code.trim();
       if (!isEnabled) {
-        // Completely hide the container - zero placeholder clutter
         el.classList.add('hidden');
         el.innerHTML = '';
       } else {
-        // Render custom ad script or HTML banner cleanly
         el.classList.remove('hidden');
-        el.innerHTML = `
-          <div class="w-full flex flex-col items-center justify-center overflow-hidden">
-            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Advertisement</span>
-            <div class="ad-rendered-content w-full flex items-center justify-center">
-              ${slot.config.code}
-            </div>
-          </div>
-        `;
-        // Execute any script tags dynamically
-        el.querySelectorAll('script').forEach(oldScript => {
-          const newScript = document.createElement('script');
-          Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-          newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-          oldScript.parentNode.replaceChild(newScript, oldScript);
-        });
+        renderBannerInIframe(el, slot.config.code, slot.defaultHeight);
       }
     });
+
+    // Render Global Scripts (Popunder & Social Bar)
+    renderGlobalAdScript('adsterra-popunder-script', ads.popunder);
+    renderGlobalAdScript('adsterra-socialbar-script', ads.social_bar);
+
   } catch (e) {
+    console.error('Error loading dynamic ads:', e);
     ['ad-slot-top', 'ad-slot-middle', 'ad-slot-sidebar', 'ad-slot-sidebar-right', 'ad-slot-bottom'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.add('hidden');
