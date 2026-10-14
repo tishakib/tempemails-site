@@ -1339,14 +1339,14 @@ function showToast(message, type = 'info') {
   }, 2800);
 }
 
-// Render Banner Ads inside an isolated iframe to allow document.write (Adsterra invoke.js) & isolate atOptions
-function renderBannerInIframe(container, rawCode, defaultHeight) {
+// Render Banner Ads inside an isolated iframe with srcdoc to isolate atOptions and preserve domain origin
+function renderBannerInIframe(container, rawCode, width, height) {
   if (!container || !rawCode || !rawCode.trim()) return;
 
   container.innerHTML = '';
 
   const wrapper = document.createElement('div');
-  wrapper.className = 'w-full flex flex-col items-center justify-center overflow-hidden';
+  wrapper.className = 'w-full flex flex-col items-center justify-center overflow-hidden my-1.5';
 
   const label = document.createElement('span');
   label.className = 'text-[9px] uppercase tracking-wider text-slate-400 font-semibold mb-1 select-none pointer-events-none';
@@ -1354,24 +1354,17 @@ function renderBannerInIframe(container, rawCode, defaultHeight) {
   wrapper.appendChild(label);
 
   const iframe = document.createElement('iframe');
-  iframe.className = 'w-full border-0 overflow-hidden';
-  iframe.style.width = '100%';
+  iframe.className = 'border-0 overflow-hidden';
+  iframe.style.width = width ? width + 'px' : '100%';
+  iframe.style.height = height ? height + 'px' : '90px';
+  iframe.style.maxWidth = '100%';
   iframe.style.border = 'none';
   iframe.style.overflow = 'hidden';
   iframe.scrolling = 'no';
-  iframe.style.minHeight = (defaultHeight || 90) + 'px';
-  iframe.style.background = 'transparent';
-  iframe.setAttribute('loading', 'lazy');
+  iframe.frameBorder = '0';
   iframe.setAttribute('title', 'Sponsored Advertisement');
 
-  wrapper.appendChild(iframe);
-  container.appendChild(wrapper);
-
-  try {
-    const doc = iframe.contentWindow || iframe.contentDocument;
-    const docObj = doc.document || doc;
-    docObj.open();
-    docObj.write(`<!DOCTYPE html>
+  const srcdocContent = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -1386,7 +1379,8 @@ function renderBannerInIframe(container, rawCode, defaultHeight) {
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100%;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
     }
   </style>
@@ -1394,66 +1388,60 @@ function renderBannerInIframe(container, rawCode, defaultHeight) {
 <body>
   ${rawCode}
   <script>
-    function updateFrameHeight() {
+    function notifyHeight() {
       try {
         var h = document.body.scrollHeight || document.documentElement.scrollHeight;
-        if (h > 30 && window.frameElement) {
+        if (h > 20 && window.frameElement) {
           window.frameElement.style.height = h + 'px';
         }
       } catch(e) {}
     }
-    window.addEventListener('load', updateFrameHeight);
-    setTimeout(updateFrameHeight, 800);
-    setTimeout(updateFrameHeight, 2000);
+    window.addEventListener('load', notifyHeight);
+    setTimeout(notifyHeight, 1000);
+    setTimeout(notifyHeight, 2500);
   <\/script>
 </body>
-</html>`);
-    docObj.close();
-  } catch (err) {
-    console.error('Error rendering ad iframe:', err);
-  }
+</html>`;
+
+  iframe.srcdoc = srcdocContent;
+  wrapper.appendChild(iframe);
+  container.appendChild(wrapper);
 }
 
-// Render Global Scripts (Popunder & Social Bar) attached to document.body
-function renderGlobalAdScript(tagId, config) {
+// Render Global Scripts (Popunder & Social Bar) directly on document.body without any hidden wrapper
+function renderGlobalScript(tagId, config) {
   const existing = document.getElementById(tagId);
   if (!config || !config.enabled || !config.code || !config.code.trim()) {
     if (existing) existing.remove();
     return;
   }
 
-  const codeStr = config.code.trim();
-  if (existing && existing.dataset.adCodeLen === String(codeStr.length)) {
-    return; // Already active with identical script
-  }
-  if (existing) existing.remove();
-
-  const container = document.createElement('div');
-  container.id = tagId;
-  container.dataset.adCodeLen = String(codeStr.length);
-  container.style.display = 'none';
+  // Deduplicate - do not re-insert identical active script
+  if (existing) return;
 
   const temp = document.createElement('div');
-  temp.innerHTML = codeStr;
+  temp.innerHTML = config.code.trim();
+  const scriptTag = temp.querySelector('script');
 
-  const scripts = temp.querySelectorAll('script');
-  if (scripts.length > 0) {
-    scripts.forEach(oldScript => {
-      const s = document.createElement('script');
-      Array.from(oldScript.attributes).forEach(attr => s.setAttribute(attr.name, attr.value));
-      if (oldScript.src) {
-        s.src = oldScript.src;
-      } else {
-        s.textContent = oldScript.textContent;
-      }
-      s.async = true;
-      container.appendChild(s);
-    });
+  const s = document.createElement('script');
+  s.id = tagId;
+  if (scriptTag) {
+    Array.from(scriptTag.attributes).forEach(attr => s.setAttribute(attr.name, attr.value));
+    if (scriptTag.src) {
+      s.src = scriptTag.src;
+    } else {
+      s.textContent = scriptTag.textContent;
+    }
   } else {
-    container.innerHTML = codeStr;
+    const match = config.code.match(/https?:\/\/[^\s"']+/);
+    if (match) {
+      s.src = match[0];
+    } else {
+      s.textContent = config.code;
+    }
   }
-
-  document.body.appendChild(container);
+  s.async = true;
+  document.body.appendChild(s);
 }
 
 // Load and Render Dynamic Ads (or completely hide placeholders if disabled)
@@ -1463,51 +1451,107 @@ async function loadAndRenderAds() {
     if (!res.ok) return;
     const ads = await res.json();
 
-    const bannerSlots = [
-      { id: 'ad-slot-top', config: ads.top_banner, defaultHeight: 90 },
-      { id: 'ad-slot-middle', config: ads.middle_banner, defaultHeight: 250 },
-      { id: 'ad-slot-sidebar', config: ads.sidebar_banner, defaultHeight: 600 },
-      { id: 'ad-slot-sidebar-right', config: ads.sidebar_banner, defaultHeight: 600 },
-      { id: 'ad-slot-bottom', config: ads.bottom_banner, defaultHeight: 90 }
-    ];
+    const topSlot = document.getElementById('ad-slot-top');
+    const topDesktop = document.getElementById('ad-slot-top-desktop');
+    const topMobile = document.getElementById('ad-slot-top-mobile');
+    const middleSlot = document.getElementById('ad-slot-middle');
+    const sidebarSlot = document.getElementById('ad-slot-sidebar');
+    const sidebarRightSlot = document.getElementById('ad-slot-sidebar-right');
+    const bottomSlot = document.getElementById('ad-slot-bottom');
 
     if (!ads || !ads.master_enabled) {
-      bannerSlots.forEach(slot => {
-        const el = document.getElementById(slot.id);
+      [topSlot, middleSlot, sidebarSlot, sidebarRightSlot, bottomSlot].forEach(el => {
         if (el) {
           el.classList.add('hidden');
           el.innerHTML = '';
         }
       });
-      renderGlobalAdScript('adsterra-popunder-script', null);
-      renderGlobalAdScript('adsterra-socialbar-script', null);
+      renderGlobalScript('adsterra-popunder-script', null);
+      renderGlobalScript('adsterra-socialbar-script', null);
       return;
     }
 
-    bannerSlots.forEach(slot => {
-      const el = document.getElementById(slot.id);
-      if (!el) return;
+    // 1. Top Header Ads (Responsive: Desktop 728x90, Mobile 320x50)
+    let hasTopAd = false;
+    if (topDesktop && ads.top_banner && ads.top_banner.enabled && ads.top_banner.code && ads.top_banner.code.trim()) {
+      topDesktop.classList.remove('hidden');
+      renderBannerInIframe(topDesktop, ads.top_banner.code, 728, 90);
+      hasTopAd = true;
+    } else if (topDesktop) {
+      topDesktop.classList.add('hidden');
+      topDesktop.innerHTML = '';
+    }
 
-      const isEnabled = slot.config && slot.config.enabled && slot.config.code && slot.config.code.trim();
-      if (!isEnabled) {
-        el.classList.add('hidden');
-        el.innerHTML = '';
+    if (topMobile && ads.top_banner_mobile && ads.top_banner_mobile.enabled && ads.top_banner_mobile.code && ads.top_banner_mobile.code.trim()) {
+      topMobile.classList.remove('hidden');
+      renderBannerInIframe(topMobile, ads.top_banner_mobile.code, 320, 50);
+      hasTopAd = true;
+    } else if (topMobile && ads.top_banner && ads.top_banner.enabled && ads.top_banner.code) {
+      // Fallback: use top_banner if mobile-specific not defined
+      topMobile.classList.remove('hidden');
+      renderBannerInIframe(topMobile, ads.top_banner.code, 728, 90);
+      hasTopAd = true;
+    } else if (topMobile) {
+      topMobile.classList.add('hidden');
+      topMobile.innerHTML = '';
+    }
+
+    if (topSlot) {
+      if (hasTopAd) topSlot.classList.remove('hidden');
+      else topSlot.classList.add('hidden');
+    }
+
+    // 2. Middle In-Feed Banner (300x250)
+    if (middleSlot) {
+      if (ads.middle_banner && ads.middle_banner.enabled && ads.middle_banner.code && ads.middle_banner.code.trim()) {
+        middleSlot.classList.remove('hidden');
+        renderBannerInIframe(middleSlot, ads.middle_banner.code, 300, 250);
       } else {
-        el.classList.remove('hidden');
-        renderBannerInIframe(el, slot.config.code, slot.defaultHeight);
+        middleSlot.classList.add('hidden');
+        middleSlot.innerHTML = '';
       }
-    });
+    }
 
-    // Render Global Scripts (Popunder & Social Bar)
-    renderGlobalAdScript('adsterra-popunder-script', ads.popunder);
-    renderGlobalAdScript('adsterra-socialbar-script', ads.social_bar);
+    // 3. Left Sidebar Banner (160x600)
+    if (sidebarSlot) {
+      if (ads.sidebar_banner && ads.sidebar_banner.enabled && ads.sidebar_banner.code && ads.sidebar_banner.code.trim()) {
+        sidebarSlot.classList.remove('hidden');
+        renderBannerInIframe(sidebarSlot, ads.sidebar_banner.code, 160, 600);
+      } else {
+        sidebarSlot.classList.add('hidden');
+        sidebarSlot.innerHTML = '';
+      }
+    }
+
+    // 4. Right Sidebar Banner (160x300 or 160x600)
+    if (sidebarRightSlot) {
+      const rightConfig = ads.sidebar_banner_right || ads.sidebar_banner;
+      if (rightConfig && rightConfig.enabled && rightConfig.code && rightConfig.code.trim()) {
+        sidebarRightSlot.classList.remove('hidden');
+        renderBannerInIframe(sidebarRightSlot, rightConfig.code, 160, 300);
+      } else {
+        sidebarRightSlot.classList.add('hidden');
+        sidebarRightSlot.innerHTML = '';
+      }
+    }
+
+    // 5. Bottom Leaderboard Banner (468x60 / 728x90)
+    if (bottomSlot) {
+      if (ads.bottom_banner && ads.bottom_banner.enabled && ads.bottom_banner.code && ads.bottom_banner.code.trim()) {
+        bottomSlot.classList.remove('hidden');
+        renderBannerInIframe(bottomSlot, ads.bottom_banner.code, 468, 60);
+      } else {
+        bottomSlot.classList.add('hidden');
+        bottomSlot.innerHTML = '';
+      }
+    }
+
+    // 6. Global Popunder & Social Bar (Direct injection into body)
+    renderGlobalScript('adsterra-popunder-script', ads.popunder);
+    renderGlobalScript('adsterra-socialbar-script', ads.social_bar);
 
   } catch (e) {
     console.error('Error loading dynamic ads:', e);
-    ['ad-slot-top', 'ad-slot-middle', 'ad-slot-sidebar', 'ad-slot-sidebar-right', 'ad-slot-bottom'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('hidden');
-    });
   }
 }
 

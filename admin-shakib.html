@@ -507,16 +507,16 @@
           </label>
         </div>
 
-        <!-- 6 Ad Slots Grid -->
+        <!-- 8 Ad Slots Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          <!-- Slot 1: Top Leaderboard -->
+          <!-- Slot 1: Top Leaderboard (Desktop) -->
           <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Slot 1 &bull; Header</span>
-                <h4 class="font-bold text-white text-sm">Top Leaderboard Banner</h4>
-                <p class="text-[11px] text-slate-400">Position: Above the temporary email generator box</p>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Slot 1 &bull; Desktop Header</span>
+                <h4 class="font-bold text-white text-sm">Top Leaderboard 728x90</h4>
+                <p class="text-[11px] text-slate-400">Position: Above generator box on Desktop screens (&ge;768px)</p>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" id="ad-top-enabled" class="sr-only peer" checked>
@@ -524,9 +524,8 @@
               </label>
             </div>
             <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
-              <span class="font-semibold text-slate-300">Recommended Size:</span>
-              <span class="font-mono text-emerald-400">728x90 (Desktop)</span> &bull;
-              <span class="font-mono text-emerald-400">320x50 (Mobile)</span>
+              <span class="font-semibold text-slate-300">Format:</span>
+              <span class="font-mono text-emerald-400">728x90 (Desktop Header)</span>
             </div>
             <div>
               <div class="flex items-center justify-between mb-1.5">
@@ -540,12 +539,41 @@
             </div>
           </div>
 
-          <!-- Slot 2: In-Feed Middle -->
+          <!-- Slot 2: Top Mobile Banner (Mobile) -->
           <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-400">Slot 2 &bull; Content</span>
-                <h4 class="font-bold text-white text-sm">In-Feed Responsive Banner</h4>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-teal-400">Slot 2 &bull; Mobile Header</span>
+                <h4 class="font-bold text-white text-sm">Mobile Responsive Banner 320x50</h4>
+                <p class="text-[11px] text-slate-400">Position: Above generator box on Mobile phones (&lt;768px)</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="ad-top-mobile-enabled" class="sr-only peer" checked>
+                <div class="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
+              <span class="font-semibold text-slate-300">Format:</span>
+              <span class="font-mono text-teal-400">320x50 (Mobile Responsive Header)</span>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-semibold text-slate-400">AdSense / Adsterra / HTML Code:</label>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="insertAdSenseTemplate('top-mobile')" class="text-[10px] text-red-400 hover:text-red-300">+ AdSense</button>
+                  <button type="button" onclick="insertAdsterraBannerTemplate('top-mobile', 320, 50)" class="text-[10px] text-teal-400 hover:text-teal-300">+ Adsterra 320x50</button>
+                </div>
+              </div>
+              <textarea id="ad-top-mobile-code" rows="4" placeholder="<script ...></script>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+            </div>
+          </div>
+
+          <!-- Slot 3: In-Feed Middle -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-400">Slot 3 &bull; Content</span>
+                <h4 class="font-bold text-white text-sm">In-Feed Responsive Banner 300x250</h4>
                 <p class="text-[11px] text-slate-400">Position: Between active inbox and guide content</p>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
@@ -554,9 +582,8 @@
               </label>
             </div>
             <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
-              <span class="font-semibold text-slate-300">Recommended Size:</span>
-              <span class="font-mono text-blue-400">300x250 (Medium Rectangle)</span> &bull;
-              <span class="font-mono text-blue-400">728x90 (Desktop)</span>
+              <span class="font-semibold text-slate-300">Format:</span>
+              <span class="font-mono text-blue-400">300x250 (Medium Rectangle)</span>
             </div>
             <div>
               <div class="flex items-center justify-between mb-1.5">
@@ -566,17 +593,17 @@
                   <button type="button" onclick="insertAdsterraBannerTemplate('middle', 300, 250)" class="text-[10px] text-blue-400 hover:text-blue-300">+ Adsterra 300x250</button>
                 </div>
               </div>
-              <textarea id="ad-middle-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+              <textarea id="ad-middle-code" rows="4" placeholder="<script ...></script>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
             </div>
           </div>
 
-          <!-- Slot 3: Sidebar Skyscraper -->
+          <!-- Slot 4: Left Sidebar Skyscraper -->
           <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400">Slot 3 &bull; Sidebar</span>
-                <h4 class="font-bold text-white text-sm">Sidebar Sticky Skyscraper</h4>
-                <p class="text-[11px] text-slate-400">Position: Sticky Desktop Sidebars (Left / Right)</p>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400">Slot 4 &bull; Left Sidebar</span>
+                <h4 class="font-bold text-white text-sm">Left Sidebar Skyscraper 160x600</h4>
+                <p class="text-[11px] text-slate-400">Position: Sticky Desktop Left Sidebar</p>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" id="ad-sidebar-enabled" class="sr-only peer" checked>
@@ -584,9 +611,8 @@
               </label>
             </div>
             <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
-              <span class="font-semibold text-slate-300">Recommended Size:</span>
-              <span class="font-mono text-purple-400">160x600 (Desktop)</span> &bull;
-              <span class="font-mono text-purple-400">300x600 (Wide)</span>
+              <span class="font-semibold text-slate-300">Format:</span>
+              <span class="font-mono text-purple-400">160x600 (Desktop Skyscraper)</span>
             </div>
             <div>
               <div class="flex items-center justify-between mb-1.5">
@@ -596,16 +622,45 @@
                   <button type="button" onclick="insertAdsterraBannerTemplate('sidebar', 160, 600)" class="text-[10px] text-purple-400 hover:text-purple-300">+ Adsterra 160x600</button>
                 </div>
               </div>
-              <textarea id="ad-sidebar-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+              <textarea id="ad-sidebar-code" rows="4" placeholder="<script ...></script>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
             </div>
           </div>
 
-          <!-- Slot 4: Bottom Banner -->
+          <!-- Slot 5: Right Sidebar Banner -->
           <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Slot 4 &bull; Footer</span>
-                <h4 class="font-bold text-white text-sm">Bottom Leaderboard Banner</h4>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-pink-400">Slot 5 &bull; Right Sidebar</span>
+                <h4 class="font-bold text-white text-sm">Right Sidebar Banner 160x300</h4>
+                <p class="text-[11px] text-slate-400">Position: Sticky Desktop Right Sidebar</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="ad-sidebar-right-enabled" class="sr-only peer" checked>
+                <div class="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
+              <span class="font-semibold text-slate-300">Format:</span>
+              <span class="font-mono text-pink-400">160x300 (Sidebar Banner)</span>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-semibold text-slate-400">AdSense / Adsterra / HTML Code:</label>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="insertAdSenseTemplate('sidebar-right')" class="text-[10px] text-red-400 hover:text-red-300">+ AdSense</button>
+                  <button type="button" onclick="insertAdsterraBannerTemplate('sidebar-right', 160, 300)" class="text-[10px] text-pink-400 hover:text-pink-300">+ Adsterra 160x300</button>
+                </div>
+              </div>
+              <textarea id="ad-sidebar-right-code" rows="4" placeholder="<script ...></script>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+            </div>
+          </div>
+
+          <!-- Slot 6: Bottom Banner -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Slot 6 &bull; Footer</span>
+                <h4 class="font-bold text-white text-sm">Bottom Leaderboard 468x60</h4>
                 <p class="text-[11px] text-slate-400">Position: Above the Website Footer</p>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
@@ -614,27 +669,26 @@
               </label>
             </div>
             <div class="flex items-center gap-2 text-[11px] text-slate-400 bg-slate-800/60 p-2.5 rounded-xl">
-              <span class="font-semibold text-slate-300">Recommended Size:</span>
-              <span class="font-mono text-emerald-400">728x90 (Desktop)</span> &bull;
-              <span class="font-mono text-emerald-400">320x50 (Mobile)</span>
+              <span class="font-semibold text-slate-300">Format:</span>
+              <span class="font-mono text-emerald-400">468x60 (or 728x90)</span>
             </div>
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <label class="text-xs font-semibold text-slate-400">AdSense / Adsterra / HTML Code:</label>
                 <div class="flex items-center gap-2">
                   <button type="button" onclick="insertAdSenseTemplate('bottom')" class="text-[10px] text-red-400 hover:text-red-300">+ AdSense</button>
-                  <button type="button" onclick="insertAdsterraBannerTemplate('bottom', 728, 90)" class="text-[10px] text-emerald-400 hover:text-emerald-300">+ Adsterra 728x90</button>
+                  <button type="button" onclick="insertAdsterraBannerTemplate('bottom', 468, 60)" class="text-[10px] text-emerald-400 hover:text-emerald-300">+ Adsterra 468x60</button>
                 </div>
               </div>
-              <textarea id="ad-bottom-code" rows="4" placeholder="<script ...></script><ins class='adsbygoogle' ...></ins>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
+              <textarea id="ad-bottom-code" rows="4" placeholder="<script ...></script>" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-[#F4413D]"></textarea>
             </div>
           </div>
 
-          <!-- Slot 5: Popunder (Onclick High CPM Ad) -->
+          <!-- Slot 7: Popunder (Onclick High CPM Ad) -->
           <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Slot 5 &bull; Popunder (High CPM)</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Slot 7 &bull; Popunder (High CPM)</span>
                 <h4 class="font-bold text-white text-sm">Popunder / Onclick Script</h4>
                 <p class="text-[11px] text-slate-400">Opens ad tab behind visitor clicks. Highest revenue Adsterra format.</p>
               </div>
@@ -657,11 +711,11 @@
             </div>
           </div>
 
-          <!-- Slot 6: Social Bar / In-Page Push -->
+          <!-- Slot 8: Social Bar / In-Page Push -->
           <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400">Slot 6 &bull; Social Bar (High CTR)</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400">Slot 8 &bull; Social Bar (High CTR)</span>
                 <h4 class="font-bold text-white text-sm">Social Bar / In-Page Push Script</h4>
                 <p class="text-[11px] text-slate-400">Floating push notification bar. High clicks without breaking layout.</p>
               </div>
@@ -1440,6 +1494,10 @@
         document.getElementById('ad-top-enabled').checked = ads.top_banner.enabled !== false;
         document.getElementById('ad-top-code').value = ads.top_banner.code || '';
       }
+      if (ads.top_banner_mobile) {
+        document.getElementById('ad-top-mobile-enabled').checked = ads.top_banner_mobile.enabled !== false;
+        document.getElementById('ad-top-mobile-code').value = ads.top_banner_mobile.code || '';
+      }
       if (ads.middle_banner) {
         document.getElementById('ad-middle-enabled').checked = ads.middle_banner.enabled !== false;
         document.getElementById('ad-middle-code').value = ads.middle_banner.code || '';
@@ -1447,6 +1505,10 @@
       if (ads.sidebar_banner) {
         document.getElementById('ad-sidebar-enabled').checked = ads.sidebar_banner.enabled !== false;
         document.getElementById('ad-sidebar-code').value = ads.sidebar_banner.code || '';
+      }
+      if (ads.sidebar_banner_right) {
+        document.getElementById('ad-sidebar-right-enabled').checked = ads.sidebar_banner_right.enabled !== false;
+        document.getElementById('ad-sidebar-right-code').value = ads.sidebar_banner_right.code || '';
       }
       if (ads.bottom_banner) {
         document.getElementById('ad-bottom-enabled').checked = ads.bottom_banner.enabled !== false;
@@ -1464,7 +1526,7 @@
 
     function hasConfiguredAds(adsObj) {
       if (!adsObj) return false;
-      const slots = ['top_banner', 'middle_banner', 'sidebar_banner', 'bottom_banner', 'popunder', 'social_bar'];
+      const slots = ['top_banner', 'top_banner_mobile', 'middle_banner', 'sidebar_banner', 'sidebar_banner_right', 'bottom_banner', 'popunder', 'social_bar'];
       return slots.some(k => adsObj[k] && adsObj[k].code && adsObj[k].code.trim().length > 0);
     }
 
@@ -1525,6 +1587,10 @@
           enabled: document.getElementById('ad-top-enabled').checked,
           code: document.getElementById('ad-top-code').value.trim()
         },
+        top_banner_mobile: {
+          enabled: document.getElementById('ad-top-mobile-enabled').checked,
+          code: document.getElementById('ad-top-mobile-code').value.trim()
+        },
         middle_banner: {
           enabled: document.getElementById('ad-middle-enabled').checked,
           code: document.getElementById('ad-middle-code').value.trim()
@@ -1532,6 +1598,10 @@
         sidebar_banner: {
           enabled: document.getElementById('ad-sidebar-enabled').checked,
           code: document.getElementById('ad-sidebar-code').value.trim()
+        },
+        sidebar_banner_right: {
+          enabled: document.getElementById('ad-sidebar-right-enabled').checked,
+          code: document.getElementById('ad-sidebar-right-code').value.trim()
         },
         bottom_banner: {
           enabled: document.getElementById('ad-bottom-enabled').checked,

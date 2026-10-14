@@ -1386,8 +1386,10 @@ function syncBlogStaticFiles(store) {
 
     if (body.master_enabled !== undefined) store.ads.master_enabled = Boolean(body.master_enabled);
     if (body.top_banner) store.ads.top_banner = body.top_banner;
+    if (body.top_banner_mobile) store.ads.top_banner_mobile = body.top_banner_mobile;
     if (body.middle_banner) store.ads.middle_banner = body.middle_banner;
     if (body.sidebar_banner) store.ads.sidebar_banner = body.sidebar_banner;
+    if (body.sidebar_banner_right) store.ads.sidebar_banner_right = body.sidebar_banner_right;
     if (body.bottom_banner) store.ads.bottom_banner = body.bottom_banner;
     if (body.popunder) store.ads.popunder = body.popunder;
     if (body.social_bar) store.ads.social_bar = body.social_bar;
