@@ -490,3 +490,19 @@ html.dark .lang-subtitle {
   color: #94A3B8 !important;
 }
 
+/* ==========================================================================
+   SIDEBAR AD SLOTS: STRICTLY DESKTOP ONLY (>=1280px)
+   Completely hidden on Mobile and Tablet (<1280px) to prevent vertical layout shifts
+   ========================================================================== */
+#ad-slot-sidebar,
+#ad-slot-sidebar-right {
+  display: none !important;
+}
+
+@media (min-width: 1280px) {
+  #ad-slot-sidebar.active-sidebar-ad,
+  #ad-slot-sidebar-right.active-sidebar-ad {
+    display: block !important;
+  }
+}
+

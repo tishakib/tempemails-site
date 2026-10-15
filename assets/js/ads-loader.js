@@ -248,24 +248,32 @@
       }
     }
 
-    // 3. Left Sidebar Banner (160x600)
+    // 3. Left Sidebar Banner (160x600 - Strictly Desktop >= 1280px)
     if (sidebarSlot) {
       if (ads.sidebar_banner && ads.sidebar_banner.enabled && ads.sidebar_banner.code && ads.sidebar_banner.code.trim()) {
+        sidebarSlot.classList.add('active-sidebar-ad');
         sidebarSlot.classList.remove('hidden');
-        renderBannerInIframe(sidebarSlot, ads.sidebar_banner.code, 160, 600);
+        if (window.innerWidth >= 1280) {
+          renderBannerInIframe(sidebarSlot, ads.sidebar_banner.code, 160, 600);
+        }
       } else {
+        sidebarSlot.classList.remove('active-sidebar-ad');
         sidebarSlot.classList.add('hidden');
         sidebarSlot.innerHTML = '';
       }
     }
 
-    // 4. Right Sidebar Banner (160x300 or fallback 160x600)
+    // 4. Right Sidebar Banner (160x300 - Strictly Desktop >= 1280px)
     if (sidebarRightSlot) {
       const rightConfig = ads.sidebar_banner_right || ads.sidebar_banner;
       if (rightConfig && rightConfig.enabled && rightConfig.code && rightConfig.code.trim()) {
+        sidebarRightSlot.classList.add('active-sidebar-ad');
         sidebarRightSlot.classList.remove('hidden');
-        renderBannerInIframe(sidebarRightSlot, rightConfig.code, 160, 300);
+        if (window.innerWidth >= 1280) {
+          renderBannerInIframe(sidebarRightSlot, rightConfig.code, 160, 300);
+        }
       } else {
+        sidebarRightSlot.classList.remove('active-sidebar-ad');
         sidebarRightSlot.classList.add('hidden');
         sidebarRightSlot.innerHTML = '';
       }
